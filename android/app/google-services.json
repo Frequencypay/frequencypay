@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "354756252068",
+    "firebase_url": "https://frequencypay-60f47.firebaseio.com",
+    "project_id": "frequencypay-60f47",
+    "storage_bucket": "frequencypay-60f47.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:354756252068:android:0fa00cc83a63ad77957131",
+        "android_client_info": {
+          "package_name": "frequency.frequencypay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "354756252068-3kh0i33fstjvoe3h78rb5aaf4bfn7bgk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdgmno3CoGZojqo0v5LZqCOkYElPX_k-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "354756252068-3kh0i33fstjvoe3h78rb5aaf4bfn7bgk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
