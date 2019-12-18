@@ -90,9 +90,9 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Flutter login demo'),
-        ),
+        resizeToAvoidBottomInset: false,
+
+        backgroundColor: Colors.white,
         body: Stack(
           children: <Widget>[
             _showForm(),
@@ -139,12 +139,12 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
         padding: EdgeInsets.all(16.0),
         child: new Form(
           key: _formKey,
-          child: new ListView(
-            shrinkWrap: true,
+          child: new Column(
             children: <Widget>[
-              showLogo(),
-              showEmailInput(),
-              showPasswordInput(),
+
+              logo(),
+              emailInput(),
+              passwordInput(),
               showPrimaryButton(),
               showSecondaryButton(),
               showErrorMessage(),
@@ -170,23 +170,16 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
     }
   }
 
-  Widget showLogo() {
-    return new Hero(
-      tag: 'hero',
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 70.0, 0.0, 0.0),
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 48.0,
-          child: Image.asset('assets/flutter-icon.png'),
-        ),
-      ),
-    );
+  Widget logo() {
+    return
+      Image.asset('assets/frequency.png',fit: BoxFit.scaleDown, );
+
+
   }
 
-  Widget showEmailInput() {
+  Widget emailInput() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
+      padding: const EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 0.0),
       child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
@@ -203,7 +196,7 @@ class _LoginSignupPageState extends State<LoginSignupPage> {
     );
   }
 
-  Widget showPasswordInput() {
+  Widget passwordInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
