@@ -1,242 +1,216 @@
 import 'package:flutter/material.dart';
-import 'package:frequencypay/services/authentication.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:frequencypay/pages/home_page.dart';
 
-class LoginSignupPage extends StatefulWidget {
-  LoginSignupPage({this.auth, this.loginCallback});
-
-  final BaseAuth auth;
-  final VoidCallback loginCallback;
+class RegisterPage extends StatefulWidget {
+  RegisterPage({Key key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => new _LoginSignupPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginSignupPageState extends State<LoginSignupPage> {
-  final _formKey = new GlobalKey<FormState>();
-
-  String _email;
-  String _password;
-  String _errorMessage;
-
-  bool _isLoginForm;
-  bool _isLoading;
-
-  // Check if form is valid before perform login or signup
-  bool validateAndSave() {
-    final form = _formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      return true;
-    }
-    return false;
-  }
-
-  // Perform login or signup
-  void validateAndSubmit() async {
-    setState(() {
-      _errorMessage = "";
-      _isLoading = true;
-    });
-    if (validateAndSave()) {
-      String userId = "";
-      try {
-        if (_isLoginForm) {
-          userId = await widget.auth.signIn(_email, _password);
-          print('Signed in: $userId');
-        } else {
-          userId = await widget.auth.signUp(_email, _password);
-          //widget.auth.sendEmailVerification();
-          //_showVerifyEmailSentDialog();
-          print('Signed up user: $userId');
-        }
-        setState(() {
-          _isLoading = false;
-        });
-
-        if (userId.length > 0 && userId != null && _isLoginForm) {
-          widget.loginCallback();
-        }
-      } catch (e) {
-        print('Error: $e');
-        setState(() {
-          _isLoading = false;
-          _errorMessage = e.message;
-          _formKey.currentState.reset();
-        });
-      }
-    }
-  }
+class _RegisterPageState extends State<RegisterPage> {
+  final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
+  TextEditingController firstNameInputController;
+  TextEditingController lastNameInputController;
+  TextEditingController emailInputController;
+  TextEditingController pwdInputController;
+  TextEditingController confirmPwdInputController;
 
   @override
-  void initState() {
-    _errorMessage = "";
-    _isLoading = false;
-    _isLoginForm = true;
+  initState() {
+    firstNameInputController = new TextEditingController();
+    lastNameInputController = new TextEditingController();
+    emailInputController = new TextEditingController();
+    pwdInputController = new TextEditingController();
+    confirmPwdInputController = new TextEditingController();
     super.initState();
   }
 
-  void resetForm() {
-    _formKey.currentState.reset();
-    _errorMessage = "";
+  String emailValidator(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value)) {
+      return 'Email format is invalid';
+    } else {
+      return null;
+    }
   }
 
-  void toggleFormMode() {
-    resetForm();
-    setState(() {
-      _isLoginForm = !_isLoginForm;
-    });
+  String pwdValidator(String value) {
+    if (value.length < 8) {
+      return 'Password must be longer than 8 characters';
+    } else {
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        resizeToAvoidBottomInset: false,
-
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
-  }
-
-  Widget _showCircularProgress() {
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-    return Container(
-      height: 0.0,
-      width: 0.0,
-    );
-  }
-
-//  void _showVerifyEmailSentDialog() {
-//    showDialog(
-//      context: context,
-//      builder: (BuildContext context) {
-//        // return object of type Dialog
-//        return AlertDialog(
-//          title: new Text("Verify your account"),
-//          content:
-//              new Text("Link to verify account has been sent to your email"),
-//          actions: <Widget>[
-//            new FlatButton(
-//              child: new Text("Dismiss"),
-//              onPressed: () {
-//                toggleFormMode();
-//                Navigator.of(context).pop();
-//              },
-//            ),
-//          ],
-//        );
-//      },
-//    );
-//  }
-
-  Widget _showForm() {
-    return new Container(
-        padding: EdgeInsets.all(16.0),
-        child: new Form(
-          key: _formKey,
-          child: new Column(
-            children: <Widget>[
-
-              logo(),
-              emailInput(),
-              passwordInput(),
-              showPrimaryButton(),
-              showSecondaryButton(),
-              showErrorMessage(),
-            ],
-          ),
-        ));
-  }
-
-  Widget showErrorMessage() {
-    if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Text(
-        _errorMessage,
-        style: TextStyle(
-            fontSize: 13.0,
-            color: Colors.red,
-            height: 1.0,
-            fontWeight: FontWeight.w300),
-      );
-    } else {
-      return new Container(
-        height: 0.0,
-      );
-    }
+    return Scaffold(
+      backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text("Register"),
+        ),
+        body: Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+                child: Form(
+                  key: _registerFormKey,
+                  child: Column(
+                    children: <Widget>[
+                      logo(),
+                      firstNameInput(),
+                      lastNameInput(),
+                      emailInput(),
+                      passwordInput(),
+                      passwordConfirmInput(),
+                      registerButton(),
+                      Text("Already have an account?"),
+                      FlatButton(
+                        child: Text("Login here!"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  ),
+                ))));
   }
 
   Widget logo() {
     return
       Image.asset('assets/frequency.png',fit: BoxFit.scaleDown, );
+  }
 
+  Widget firstNameInput(){
+    return
+      TextFormField(
+        decoration: InputDecoration(
+            labelText: 'First Name*', hintText: "John"),
+        controller: firstNameInputController,
+        validator: (value) {
+          // ignore: missing_return
+          if (value.length < 3) {
+            return "Please enter a valid first name.";
+          }
+        },
+      );
+  }
 
+  Widget lastNameInput(){
+    return
+      TextFormField(
+          decoration: InputDecoration(
+              labelText: 'Last Name*', hintText: "Doe"),
+          controller: lastNameInputController,
+          validator: (value) {
+            // ignore: missing_return
+            if (value.length < 3) {
+              return "Please enter a valid last name.";
+            }
+          });
   }
 
   Widget emailInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 25.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Email',
-            icon: new Icon(
-              Icons.mail,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
-      ),
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: 'Email*', hintText: "john.doe@gmail.com"),
+      controller: emailInputController,
+      keyboardType: TextInputType.emailAddress,
+      validator: emailValidator,
     );
   }
 
-  Widget passwordInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
+  Widget passwordInput(){
+    return
+      TextFormField(
+        decoration: InputDecoration(
+            labelText: 'Password*', hintText: "********"),
+        controller: pwdInputController,
         obscureText: true,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Password',
-            icon: new Icon(
-              Icons.lock,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => _password = value.trim(),
-      ),
-    );
+        validator: pwdValidator,
+      );
   }
 
-  Widget showSecondaryButton() {
-    return new FlatButton(
-        child: new Text(
-            _isLoginForm ? 'Create an account' : 'Have an account? Sign in',
-            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-        onPressed: toggleFormMode);
+  Widget passwordConfirmInput(){
+    return
+      TextFormField(
+        decoration: InputDecoration(
+            labelText: 'Confirm Password*', hintText: "********"),
+        controller: confirmPwdInputController,
+        obscureText: true,
+        validator: pwdValidator,
+      );
   }
 
-  Widget showPrimaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.blue,
-            child: new Text(_isLoginForm ? 'Login' : 'Create account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-            onPressed: validateAndSubmit,
-          ),
-        ));
+  Widget registerButton(){
+    return
+      RaisedButton(
+        child: Text("Register"),
+        color: Theme.of(context).primaryColor,
+        textColor: Colors.white,
+        onPressed: _registerUser,
+      );
+  }
+
+  void _registerUser(){
+    if (_registerFormKey.currentState.validate()) {
+      if (pwdInputController.text ==
+          confirmPwdInputController.text) {
+        FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+            email: emailInputController.text,
+            password: pwdInputController.text)
+            .then((currentUser) => Firestore.instance
+            .collection("users")
+            .document(currentUser.user.uid)
+            .setData({
+          "uid": currentUser.user.uid,
+          "fname": firstNameInputController.text,
+          "surname": lastNameInputController.text,
+          "email": emailInputController.text,
+        })
+            .then((result) => [
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                    title:
+                    firstNameInputController
+                        .text +
+                        "'s Tasks",
+                    uid: currentUser.user.uid,
+                  )),
+                  (_) => false),
+          firstNameInputController.clear(),
+          lastNameInputController.clear(),
+          emailInputController.clear(),
+          pwdInputController.clear(),
+          confirmPwdInputController.clear()
+        ])
+            .catchError((err) => print(err)))
+            .catchError((err) => print(err));
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text("The passwords do not match"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Close"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
+    }
   }
 }

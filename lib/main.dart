@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:frequencypay/services/authentication.dart';
-import 'package:frequencypay/pages/root_page.dart';
+import 'package:frequencypay/pages/home_page.dart';
+import 'package:frequencypay/pages/login_page.dart';
+import 'package:frequencypay/pages/splash_page.dart';
+import 'package:frequencypay/pages/login_signup_page.dart';
+import 'package:frequencypay/pages/task.dart';
 
-void main() {
-  runApp(new MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-        title: 'Flutter login demo',
+    return MaterialApp(
+        title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
-        theme: new ThemeData(
-          primarySwatch: Colors.blue,
+        theme: ThemeData(
+          primarySwatch: Colors.green,
         ),
-        home: new RootPage(auth: new Auth()));
+        home: SplashPage(),
+        routes: <String, WidgetBuilder>{
+          '/task': (BuildContext context) => TaskPage(title: 'Task'),
+          '/home': (BuildContext context) => HomePage(title: 'Home'),
+          '/login': (BuildContext context) => LoginPage(),
+          '/register': (BuildContext context) => RegisterPage(),
+        });
   }
 }
