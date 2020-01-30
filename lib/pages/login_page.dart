@@ -62,6 +62,7 @@ class _LoginPageState extends State<LoginPage> {
                       submitButton(),
                       Text("Don't have an account yet?"),
                       register(),
+                      forgotPassword(),
                     ],
                   ),
                 ))));
@@ -134,5 +135,15 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushNamed(context, "/register");
         },
       );
+  }
+
+  Widget forgotPassword(){
+    return
+        FlatButton(
+          child: Text("Forgot Password"),
+          onPressed: (){
+            Navigator.pushNamed(context, "/forgotPassword");
+          },
+        );
   }
 }
