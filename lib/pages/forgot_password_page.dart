@@ -13,6 +13,12 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
   final GlobalKey<FormState> _forgotPasswordKey = GlobalKey<FormState>();
   TextEditingController emailInputController;
 
+  @override
+  initState(){
+    emailInputController = new TextEditingController();
+    super.initState();
+  }
+
   String emailValidator(String value) {
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\['
@@ -41,6 +47,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
               children: <Widget>[
                 logo(),
                 emailInput(),
+                resetPasswordButton(),
               ],
             )),
       ),
@@ -75,6 +82,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
   void _resetPassword(){
     if (_forgotPasswordKey.currentState.validate()) {
       FirebaseAuth.instance.sendPasswordResetEmail(email: emailInputController.text);
+      Navigator.popAndPushNamed(context, "/login");
     }
   }
 }
