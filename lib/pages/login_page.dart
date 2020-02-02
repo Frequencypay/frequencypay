@@ -60,8 +60,6 @@ class _LoginPageState extends State<LoginPage> {
                       passwordInput(),
                       Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),),
                       submitButton(),
-                      Text("Don't have an account yet?"),
-                      register(),
                       forgotPassword(),
                     ],
                   ),
@@ -127,15 +125,7 @@ class _LoginPageState extends State<LoginPage> {
       );
   }
 
-  Widget register(){
-    return
-      FlatButton(
-        child: Text("Register here!"),
-        onPressed: () {
-          Navigator.pushNamed(context, "/register");
-        },
-      );
-  }
+
 
   Widget forgotPassword(){
     return
