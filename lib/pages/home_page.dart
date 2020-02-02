@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/models/todo.dart';
+import 'package:frequencypay/pages/settings_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.uid}) : super(key: key); //update this to include the uid in the constructor
@@ -47,7 +48,17 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushReplacementNamed(context, "/login"))
                   .catchError((err) => print(err));
             },
-          )
+          ),
+          FlatButton(
+            child: Text("Profile"),
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsPage()));
+            },
+          ),
         ],
       ),
       body: Center(
