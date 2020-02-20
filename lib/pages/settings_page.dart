@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -57,6 +58,17 @@ class SettingsPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(builder: (context) => SubPage()),
                 );
+              },
+            ),
+            FlatButton(
+              child: Text("Log Out"),
+              textColor: Colors.black,
+              onPressed: () {
+                FirebaseAuth.instance
+                    .signOut()
+                    .then((result) =>
+                    Navigator.pushReplacementNamed(context, "/login"))
+                    .catchError((err) => print(err));
               },
             ),
           ],
