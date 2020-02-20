@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/models/todo.dart';
+import 'package:frequencypay/pages/settings_page.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.uid}) : super(key: key); //update this to include the uid in the constructor
@@ -38,16 +39,14 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           FlatButton(
-            child: Text("Log Out"),
-            textColor: Colors.white,
+            child: Icon(Icons.settings),
             onPressed: () {
-              FirebaseAuth.instance
-                  .signOut()
-                  .then((result) =>
-                  Navigator.pushReplacementNamed(context, "/login"))
-                  .catchError((err) => print(err));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsPage()));
             },
-          )
+          ),
         ],
       ),
       body: Center(
