@@ -1,12 +1,11 @@
-import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:frequencypay/models/todo.dart';
+import 'package:frequencypay/services/PlaidRepo.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'file:///Users/joshuashewmaker/StudioProjects/frequencypay/plaid/plaid_link_network.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title, this.uid}) : super(key: key); //update this to include the uid in the constructor
+  HomePage({Key key, this.title, this.uid}) : super(key: key);
   final String title;
   final String uid; //include this
 
@@ -15,20 +14,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController taskTitleInputController;
-  TextEditingController taskDescripInputController;
   FirebaseUser currentUser;
 
   @override
   initState() {
-    taskTitleInputController = new TextEditingController();
-    taskDescripInputController = new TextEditingController();
     this.getCurrentUser();
     super.initState();
   }
 
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
+  }
+
+  showPlaidView(){
+    bool plaidSandbox = true;
+    String clientID = "5cb68305fede9b00136aebb1";
+    String secret = "54621c4436011f708c7916587c6fa8";
+
+    Configuration configuration = Configuration(
+        plaidPublicKey: '5e8f6927464aa029be1a265eb95b79',
+        plaidBaseUrl: 'https://cdn.plaid.com/link/v2/stable/link.html',
+        plaidEnvironment: plaidSandbox ? 'sandbox' : 'production',
+        environmentPlaidPathAccessToken:
+        'https://sandbox.plaid.com/item/public_token/exchange',
+        environmentPlaidPathStripeToken:
+        'https://sandbox.plaid.com/processor/stripe/bank_account_token/create',
+        plaidClientId: clientID,
+        secret: plaidSandbox ? secret : '',
+        clientName: 'ClientName',
+        webhook: 'http://requestb.in',
+        product: 'auth',
+        selectAccount: 'true'
+    );
+
+    PlaidLink plaidLink = PlaidLink(configuration);
+    plaidLink.launch(context, (Result result) {
+      getAccessToken(clientID, secret, result.token);
+    }, stripeToken: false);
+  }
+
+  getAccessToken( clientID,  secretKey, publicToken){
+  PlaidRepo plaid = PlaidRepo();
+  plaid.signInWithCredentials(clientID, secretKey, publicToken);
+
   }
 
   @override
@@ -50,98 +78,9 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Center(
-        child: Container(
-            padding: const EdgeInsets.all(20.0),
-            child: StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance
-                  .collection("users")
-                  .document(widget.uid)
-                  .collection('tasks')
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError)
-                  return new Text('Error: ${snapshot.error}');
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return new Text('Loading...');
-                  default:
-                    return new ListView(
-                      children: snapshot.data.documents
-                          .map((DocumentSnapshot document) {
-                        return new CustomCard(
-                          title: document['title'],
-                          description: document['description'],
-                        );
-                      }).toList(),
-                    );
-                }
-              },
-            )),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showDialog,
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  _showDialog() async {
-    await showDialog<String>(
-      context: context,
-      child: AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
-        content: Column(
-          children: <Widget>[
-            Text("Please fill all fields to create a new task"),
-            Expanded(
-              child: TextField(
-                autofocus: true,
-                decoration: InputDecoration(labelText: 'Task Title*'),
-                controller: taskTitleInputController,
-              ),
-            ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(labelText: 'Task Description*'),
-                controller: taskDescripInputController,
-              ),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          FlatButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                taskTitleInputController.clear();
-                taskDescripInputController.clear();
-                Navigator.pop(context);
-              }),
-          FlatButton(
-              child: Text('Add'),
-              onPressed: () {
-                if (taskDescripInputController.text.isNotEmpty &&
-                    taskTitleInputController.text.isNotEmpty) {
-                  Firestore.instance
-                      .collection("users")
-                      .document(widget.uid)
-                      .collection('tasks')
-                      .add({
-                    "title": taskTitleInputController.text,
-                    "description": taskDescripInputController.text
-                  })
-                      .then((result) => {
-                    Navigator.pop(context),
-                    taskTitleInputController.clear(),
-                    taskDescripInputController.clear(),
-                  })
-                      .catchError((err) => print(err));
-                }
-              })
-        ],
-      ),
+      body: Column(children: <Widget>[
+        MaterialButton(child: Text("Button"), onPressed: showPlaidView,)
+      ],),
     );
   }
 }
