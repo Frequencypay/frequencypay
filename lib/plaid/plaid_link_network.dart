@@ -7,7 +7,26 @@ import 'package:webview_flutter/webview_flutter.dart';
 class PlaidLink {
   Configuration _configuration;
 
-  PlaidLink(Configuration configuration) {
+  PlaidLink() {
+    bool plaidSandbox = true;
+    String clientID = "5cb68305fede9b00136aebb1";
+    String secret = "54621c4436011f708c7916587c6fa8";
+
+    Configuration configuration = Configuration(
+        plaidPublicKey: '5e8f6927464aa029be1a265eb95b79',
+        plaidBaseUrl: 'https://cdn.plaid.com/link/v2/stable/link.html',
+        plaidEnvironment: plaidSandbox ? 'sandbox' : 'production',
+        environmentPlaidPathAccessToken:
+        'https://sandbox.plaid.com/item/public_token/exchange',
+        environmentPlaidPathStripeToken:
+        'https://sandbox.plaid.com/processor/stripe/bank_account_token/create',
+        plaidClientId: clientID,
+        secret: plaidSandbox ? secret : '',
+        clientName: 'ClientName',
+        webhook: 'http://requestb.in',
+        product: 'auth',
+        selectAccount: 'true'
+    );
     this._configuration = configuration;
   }
 
@@ -159,10 +178,10 @@ class Configuration {
         @required this.environmentPlaidPathStripeToken,
         @required this.plaidClientId,
         @required this.secret,
-      @required this.clientName,
-      @required this.webhook,
-      @required this.product,
-      @required this.selectAccount,});
+        @required this.clientName,
+        @required this.webhook,
+        @required this.product,
+        @required this.selectAccount,});
 }
 
 class Result {
