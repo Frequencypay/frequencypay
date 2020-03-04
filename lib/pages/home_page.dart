@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:frequencypay/services/PlaidRepo.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:frequencypay/plaid/plaid_link_network.dart';
+import 'package:frequencypay/pages/settings_page.dart';
+
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.uid}) : super(key: key);
@@ -66,16 +69,14 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           FlatButton(
-            child: Text("Log Out"),
-            textColor: Colors.white,
+            child: Icon(Icons.settings),
             onPressed: () {
-              FirebaseAuth.instance
-                  .signOut()
-                  .then((result) =>
-                  Navigator.pushReplacementNamed(context, "/login"))
-                  .catchError((err) => print(err));
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SettingsPage()));
             },
-          )
+          ),
         ],
       ),
       body: Column(children: <Widget>[
