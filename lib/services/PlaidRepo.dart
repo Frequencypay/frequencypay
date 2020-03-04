@@ -8,8 +8,8 @@ class PlaidRepo {
 
   Future<PlaidModel> signInWithCredentials(String clientID, String secretKey, String publicToken) async {
     Map body = {
-      "client_id": "5cb68305fede9b00136aebb1",
-      "secret": "54621c4436011f708c7916587c6fa8",
+      "client_id": clientID,
+      "secret": secretKey,
       "public_token": publicToken,
     };
     final response = await _networkUtil.postPlaidLink("/item/public_token/exchange", body: body);
