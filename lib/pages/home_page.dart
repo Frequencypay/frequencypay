@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/services/PlaidRepo.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'file:///Users/joshuashewmaker/StudioProjects/frequencypay/plaid/plaid_link_network.dart';
+import 'package:frequencypay/plaid/plaid_link_network.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.uid}) : super(key: key);
