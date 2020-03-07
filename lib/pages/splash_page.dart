@@ -29,7 +29,6 @@ class _SplashPageState extends State<SplashPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => HomePage(
-                        title: result["fname"] + "'s Tasks",
                         uid: currentUser.uid,
                       ))))
               .catchError((err) => print(err))
@@ -44,7 +43,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       body: Center(
         child: Container(
-          child: Text("Loading..."),
+          child: Image.asset('assets/bank.png',),
         ),
       ),
     );

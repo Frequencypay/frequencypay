@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:frequencypay/plaid/plaid_link_webview.dart';
+import 'package:frequencypay/services/plaid_token_repo.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -60,6 +62,11 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              title: Text('Connect to Plaid'),
+              trailing: Icon(Icons.keyboard_arrow_right),
+              onTap: () => showPlaidView(context),
+            ),
             FlatButton(
               child: Text("Log Out"),
               textColor: Colors.black,
@@ -75,6 +82,19 @@ class SettingsPage extends StatelessWidget {
         )
     );
   }
+
+  showPlaidView(var context) {
+    PlaidLink plaidLink = PlaidLink();
+    plaidLink.launch(context, (Result result) {
+      getAccessToken(result.token);
+    }, stripeToken: false);
+  }
+
+  getAccessToken(publicToken) {
+    PlaidTokenRepo plaid = PlaidTokenRepo();
+    plaid.publicTokenExchangeRequest(publicToken);
+  }
+
 }
 
 class SubPage extends StatelessWidget {
@@ -94,4 +114,6 @@ class SubPage extends StatelessWidget {
       ),
     );
   }
+
+
 }

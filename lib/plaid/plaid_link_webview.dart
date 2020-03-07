@@ -24,7 +24,7 @@ class PlaidLink {
         secret: plaidSandbox ? secret : '',
         clientName: 'ClientName',
         webhook: 'http://requestb.in',
-        product: 'auth',
+        product: 'auth, transaction',
         selectAccount: 'true'
     );
     this._configuration = configuration;
