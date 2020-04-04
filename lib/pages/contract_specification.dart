@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frequencypay/pages/manual_expense_input.dart';
 
 class ContractSpecification extends StatefulWidget {
   @override
@@ -70,7 +71,11 @@ class _ContractSpecificationState extends State<ContractSpecification> {
                 Expanded(
                   flex:1,
                   child: Container(
-                    child: CircleAvatar(backgroundColor: Colors.green, radius: 30),
+                    child: GestureDetector(
+                      onTap: () => {Navigator.push(context, MaterialPageRoute(builder: (context) => ManualBillInput()))},
+                      child: CircleAvatar(backgroundColor: Colors.green, radius: 30,
+                      ),
+                    ),
                     padding: EdgeInsets.all(3),
                   ),
                 ),
