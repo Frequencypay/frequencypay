@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/pages/contract_specification.dart';
 import 'package:frequencypay/services/PlaidRepo.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:frequencypay/plaid/plaid_link_network.dart';
@@ -80,7 +81,15 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Column(children: <Widget>[
-        MaterialButton(child: Text("Button"), onPressed: showPlaidView,)
+        MaterialButton(
+          child: Text("Plaid View"),
+          onPressed: showPlaidView,
+        ),
+        MaterialButton(
+            child: Text("Contract Creation"),
+            onPressed: () => {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ContractSpecification()))
+            })
       ],),
     );
   }
