@@ -7,6 +7,10 @@ import 'package:frequencypay/services/CustomException.dart';
 class NetworkUtil {
   //Sandbox URL
   final String _baseUrl = "https://sandbox.plaid.com";
+  final Map plaidKeys = {
+    "client_id": "5cb68305fede9b00136aebb1",
+    "secret": "54621c4436011f708c7916587c6fa8",
+  };
 
   // next three lines makes this class a Singleton
   static NetworkUtil _instance = new NetworkUtil.internal();
@@ -26,6 +30,7 @@ class NetworkUtil {
 
   Future<dynamic> postPlaidLink(String url, {Map body} ) async{
     var responseJson;
+    body.addAll(plaidKeys);
     try{
       final response = await http.post(_baseUrl + url,
         headers: {"Content-Type": "application/json"},
