@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:frequencypay/plaid/models/plaid_public_token_exchange_response_model.dart';
 import 'package:frequencypay/plaid/plaid_link_webview.dart';
 import 'package:frequencypay/services/plaid_token_repo.dart';
 
@@ -91,8 +92,14 @@ class SettingsPage extends StatelessWidget {
   }
 
   getAccessToken(publicToken) {
+    PlaidPublicTokenExchangeResponseModel tokenExchangeResponseModel;
+    String accessToken;
     PlaidTokenRepo plaid = PlaidTokenRepo();
-    plaid.publicTokenExchangeRequest(publicToken);
+    plaid.publicTokenExchangeRequest(publicToken).then((tokenExchangeResponseModel){
+      accessToken = tokenExchangeResponseModel.access_token;
+
+    });
+
   }
 
 }
