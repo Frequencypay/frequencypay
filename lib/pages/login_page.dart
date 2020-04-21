@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 
+import 'home screens/home_pages_group.dart';
+
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -113,11 +115,12 @@ class _LoginPageState extends State<LoginPage> {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => HomePage(
+                        builder: (context) => /*HomePage(
                           title: result["fname"] +
-                              "'s Tasks",
-                          uid: currentUser.user.uid,
-                        ))))
+                              "'s Tasks",*/
+                          HomePagesGroup(userInfo: result, uid: currentUser.user.uid),
+                          /*uid: currentUser.user.uid,
+                        )*/)))
                 .catchError((err) => print(err)))
                 .catchError((err) => print(err));
           }

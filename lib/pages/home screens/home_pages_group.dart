@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/config%20screens/config_menu_page.dart';
 import 'package:frequencypay/pages/home screens/overview_home_page.dart';
@@ -11,6 +12,12 @@ import 'package:frequencypay/plaid/plaid_link_network.dart';
 import 'package:frequencypay/pages/settings_page.dart';
 
 class HomePagesGroup extends StatefulWidget {
+
+  final DocumentSnapshot userInfo;
+  final String uid;
+
+  HomePagesGroup({this.userInfo, this.uid});
+
   @override
   _HomePagesGroupState createState() => _HomePagesGroupState();
 }
@@ -86,11 +93,11 @@ class _HomePagesGroupState extends State<HomePagesGroup> {
   }
 
   Widget buildOverviewScreen() {
-    return OverviewHomePage();
+    return OverviewHomePage(userInfo:widget.userInfo, uid:widget.uid);
   }
 
   Widget buildTransactionScreen() {
-    return TransactionHomePage();
+    return TransactionHomePage(userInfo:widget.userInfo, uid:widget.uid);
   }
 
   Widget buildToolsScreen() {

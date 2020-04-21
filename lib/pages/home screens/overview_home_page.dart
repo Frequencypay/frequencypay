@@ -1,6 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OverviewHomePage extends StatefulWidget {
+
+  final DocumentSnapshot userInfo;
+  final String uid;
+
+  OverviewHomePage({this.userInfo, this.uid});
+
   @override
   _OverviewHomePageState createState() => _OverviewHomePageState();
 }
@@ -24,7 +31,7 @@ class _OverviewHomePageState extends State<OverviewHomePage> {
                               child: Expanded(
                                   flex: 4,
                                   child: Column(children: <Widget>[
-                                    Text("<Firstname> <Lastname>",
+                                    Text(widget.userInfo["fname"] + widget.userInfo["surname"],
                                         style: TextStyle(
                                             fontSize: 30, color: Colors.white)),
                                     Text("<@Usertag>",

@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 
+import 'home screens/home_pages_group.dart';
+
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
 
@@ -28,10 +30,11 @@ class _SplashPageState extends State<SplashPage> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => HomePage(
+                      builder: (context) => /*HomePage(
                         title: result["fname"] + "'s Tasks",
                         uid: currentUser.uid,
-                      ))))
+                      )*/
+                      HomePagesGroup(userInfo: result, uid: currentUser.uid))))
               .catchError((err) => print(err))
         }
     })
