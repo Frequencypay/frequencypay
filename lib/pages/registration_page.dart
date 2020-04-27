@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 
+import 'home screens/home_pages_group.dart';
+import 'login_page.dart';
+
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key key}) : super(key: key);
 
@@ -177,13 +180,15 @@ class _RegisterPageState extends State<RegisterPage> {
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
-                  builder: (context) => HomePage(
+                  builder: (context) => /*HomePage(
                     title:
                     firstNameInputController
                         .text +
                         "'s Tasks",
                     uid: currentUser.user.uid,
-                  )),
+                  )*/
+                  //HomePagesGroup(userInfo: currentUser, uid: currentUser.user.uid)),
+                  LoginPage()),
                   (_) => false),
           firstNameInputController.clear(),
           lastNameInputController.clear(),

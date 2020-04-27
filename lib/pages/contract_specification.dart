@@ -124,8 +124,6 @@ class _ContractSpecificationState extends State<ContractSpecification> {
               ],
             ),
 
-            SizedBox(height: 10,),
-
             Row(
               children: <Widget>[
                 Text("Amount Repaid: ",style:TextStyle(color: Colors.grey,fontSize: 15.0)),
