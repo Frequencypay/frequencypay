@@ -3,8 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 
+import 'authenticate/loading.dart';
+
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  //LoginPage({Key key}) : super(key: key);
+  final Function toggleView;
+  LoginPage({this.toggleView});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -14,6 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
+  bool loading= false;
 
   @override
   initState() {
@@ -46,7 +51,18 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Login"),
+          title: Text("Sign In"),
+          backgroundColor: Colors.blue,
+          elevation: 0.0,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon:Icon(Icons.person_add, color: Colors.white,),
+              label: Text("Register",style: TextStyle(color: Colors.white),),
+              onPressed: (){
+                widget.toggleView();
+              },
+            )
+          ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),
@@ -56,10 +72,13 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     children: <Widget>[
                       logo(),
+                      SizedBox(height:20.0),
                       emailInput(),
+                      SizedBox(height:20.0),
                       passwordInput(),
-                      Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0),),
+                      SizedBox(height:20.0),
                       submitButton(),
+                      SizedBox(height:10.0),
                       forgotPassword(),
                     ],
                   ),
@@ -99,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Text("Login"),
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
-        onPressed: () {
+        onPressed: () async {
           if (_loginFormKey.currentState.validate()) {
             FirebaseAuth.instance
                 .signInWithEmailAndPassword(
@@ -122,8 +141,6 @@ class _LoginPageState extends State<LoginPage> {
         },
       );
   }
-
-
 
   Widget forgotPassword(){
     return
