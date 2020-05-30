@@ -4,7 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 
 class RegisterPage extends StatefulWidget {
-  RegisterPage({Key key}) : super(key: key);
+  final Function toggleView;
+  //RegisterPage({Key key} ) : super(key: key) ;
+  RegisterPage({this.toggleView});
+
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -17,6 +20,8 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   TextEditingController confirmPwdInputController;
+  TextEditingController usernameInputController;
+  TextEditingController phoneInputController;
 
   @override
   initState() {
@@ -25,6 +30,8 @@ class _RegisterPageState extends State<RegisterPage> {
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     confirmPwdInputController = new TextEditingController();
+    usernameInputController = new TextEditingController();
+    phoneInputController=new TextEditingController();
     super.initState();
   }
 
@@ -53,6 +60,17 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text("Register"),
+          backgroundColor: Colors.blue,
+          elevation: 0.0,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon:Icon(Icons.person, color: Colors.white,),
+              label: Text("Log In",style: TextStyle(color: Colors.white),),
+              onPressed: (){
+                widget.toggleView();
+              },
+            )
+          ],
         ),
         body: Container(
             padding: const EdgeInsets.all(20.0),
@@ -62,11 +80,37 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Column(
                     children: <Widget>[
                       logo(),
-                      firstNameInput(),
-                      lastNameInput(),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: firstNameInput(),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Text(" "),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: lastNameInput(),
+                          )
+                        ],
+                      ),
+
+                      SizedBox(height: 10.0,),
                       emailInput(),
+                      SizedBox(height: 10.0,),
                       passwordInput(),
+                      SizedBox(height: 10.0,),
                       passwordConfirmInput(),
+                      SizedBox(height: 10.0,),
+                      usernameInput(),
+                      SizedBox(height: 10.0,),
+                      phoneNumber(),
+                      SizedBox(height: 10.0,),
+
+
+
                       registerButton(),
                       Text("Already have an account?"),
                       FlatButton(
@@ -86,65 +130,101 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget firstNameInput(){
-    return
-      TextFormField(
-        decoration: InputDecoration(
-            labelText: 'First Name*', hintText: "John"),
-        controller: firstNameInputController,
-        validator: (value) {
-          // ignore: missing_return
-          if (value.length < 3) {
-            return "Please enter a valid first name.";
-          }
-        },
-      );
+    return  TextFormField(
+      controller: firstNameInputController,
+      decoration: InputDecoration(
+        labelText: 'First Name',
+        hintText: "John",
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+    );
   }
 
   Widget lastNameInput(){
-    return
-      TextFormField(
-          decoration: InputDecoration(
-              labelText: 'Last Name*', hintText: "Doe"),
-          controller: lastNameInputController,
-          validator: (value) {
-            // ignore: missing_return
-            if (value.length < 3) {
-              return "Please enter a valid last name.";
-            }
-          });
+    return TextFormField(
+      controller: lastNameInputController,
+      decoration: InputDecoration(
+        labelText: 'Last Name',
+        hintText: "Smith",
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+    );
   }
 
-  Widget emailInput() {
+  Widget emailInput(){
     return TextFormField(
-      decoration: InputDecoration(
-          labelText: 'Email*', hintText: "john.doe@gmail.com"),
       controller: emailInputController,
-      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        hintText: "infofrequency@frequency.com",
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
       validator: emailValidator,
     );
   }
 
+
   Widget passwordInput(){
-    return
-      TextFormField(
-        decoration: InputDecoration(
-            labelText: 'Password*', hintText: "********"),
-        controller: pwdInputController,
-        obscureText: true,
-        validator: pwdValidator,
-      );
+    return TextFormField(
+      controller: pwdInputController,
+      decoration: InputDecoration(
+        labelText: 'Password',
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+      validator: pwdValidator,
+      obscureText: true,
+    );
   }
 
+
   Widget passwordConfirmInput(){
-    return
-      TextFormField(
-        decoration: InputDecoration(
-            labelText: 'Confirm Password*', hintText: "********"),
-        controller: confirmPwdInputController,
-        obscureText: true,
-        validator: pwdValidator,
-      );
+    return TextFormField(
+      controller: confirmPwdInputController,
+      decoration: InputDecoration(
+        labelText: 'Confirm Password',
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+      validator: pwdValidator,
+      obscureText: true,
+    );
   }
+
+  Widget usernameInput(){ // will have some validation in the future
+    return TextFormField(
+      controller: usernameInputController,
+      decoration: InputDecoration(
+        labelText: 'Username',
+        hintText: 'john123',
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+    );
+  }
+
+  Widget phoneNumber(){ // will have some validation in the future
+    return TextFormField(
+      controller: phoneInputController,
+      decoration: InputDecoration(
+        labelText: 'Phone Number',
+        hintText: '(000)-000-0000',
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+    );
+  }
+
 
   Widget registerButton(){
     return
@@ -172,6 +252,11 @@ class _RegisterPageState extends State<RegisterPage> {
           "fname": firstNameInputController.text,
           "surname": lastNameInputController.text,
           "email": emailInputController.text,
+          "phone":phoneInputController.text,
+          "username":usernameInputController.text,
+          "activeContracts":0,
+          "latePayments":0,
+          "completeContracts":0,
         })
             .then((result) => [
           Navigator.pushAndRemoveUntil(
