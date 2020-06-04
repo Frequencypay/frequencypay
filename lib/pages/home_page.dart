@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/profile_page.dart';
+import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
 
 import '../services/firebase_authentication.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage> {
 
   static const Color blueHighlight = const Color(0xFF3665FF);
 
-  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen()];
+  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
   int selectedBottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
