@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frequencypay/pages/login_page.dart';
-import 'package:frequencypay/pages/registration_page.dart';
+import 'package:frequencypay/pages/login/login_page.dart';
+import 'package:frequencypay/pages/login/registration_page.dart';
 
 class Authenticate extends StatefulWidget {
   @override

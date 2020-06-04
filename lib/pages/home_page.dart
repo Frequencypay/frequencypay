@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frequencypay/pages/settings_page.dart';
 
 import '../services/firebase_authentication.dart';
-import 'settings_page.dart';
 
 class HomePage extends StatefulWidget {
   final String uid; //include this
@@ -36,7 +34,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.settings, color: Colors.white,),
             label: Text("Settings", style: TextStyle(color:Colors.white)),
             onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+              //Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
             },
           ),
 
