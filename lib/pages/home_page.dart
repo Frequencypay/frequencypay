@@ -25,36 +25,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome!"),
-        backgroundColor: Colors.blue,
-        elevation: 0.0,
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.settings, color: Colors.white,),
-            label: Text("Settings", style: TextStyle(color:Colors.white)),
-            onPressed: (){
-              //Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-            },
-          ),
 
-          FlatButton.icon(
-            icon: Icon(Icons.person,color: Colors.white,),
-            label: Text("Log out",style: TextStyle(color: Colors.white),),
-            onPressed: () async {
-              await _auth.signOut();
 
-            },
-          ),
-
-        ],
-      ),
-
-      body: Column(
-        children: <Widget>[
-          Text(""),
-        ],
-      ),
+      body:
     );
   }
 
