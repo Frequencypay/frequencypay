@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:frequencypay/pages/contract_details.dart';
 
 class UserBills extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class UserBills extends StatefulWidget {
 }
 
 class _UserBillsState extends State<UserBills> {
+  double percentComplete;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,6 +100,7 @@ class _UserBillsState extends State<UserBills> {
             ),
             Text("     "),
             Column(
+
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text("$contractName",style: TextStyle(fontSize: 16),),
@@ -106,6 +109,16 @@ class _UserBillsState extends State<UserBills> {
                 getProgress(totalAmount, amountPaid),
                 SizedBox(height: 5,),
                 Text("\$ $totalAmount",style: TextStyle(fontSize: 16),),
+                FlatButton.icon(
+                  icon: Icon(Icons.expand_less),
+                  label: Text("View Details"),
+                  onPressed: (){
+                    setPercentComplete(totalAmount, amountPaid);
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context)=>ContractDetails(percentComplete: percentComplete)),
+                    );
+                  },
+                )
               ],
             )
           ],
@@ -131,12 +144,17 @@ class _UserBillsState extends State<UserBills> {
   }
 
   Widget getProgress(double totalAmount, double amountPaid){
-    double percentLeft=amountPaid/totalAmount;
+    setPercentComplete(totalAmount, amountPaid);
     return new LinearPercentIndicator(
       width: 200,
       lineHeight: 5.0,
-      percent: percentLeft,
+      percent: percentComplete,
       progressColor: Colors.deepPurple,
     );
   }
+
+  void setPercentComplete(double totalAmount, double amountPaid){
+    percentComplete=amountPaid/totalAmount;
+  }
+
 }
