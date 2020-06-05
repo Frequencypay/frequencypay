@@ -6,6 +6,7 @@ import 'package:frequencypay/pages/user_contracts_page.dart';
 
 import '../services/firebase_authentication.dart';
 import 'landing_page.dart';
+import 'loan_request_page.dart';
 
 class HomePage extends StatefulWidget {
   final String uid; //include this
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   static const Color blueHighlight = const Color(0xFF3665FF);
 
-  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
+  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), LoanRequest()];
   int selectedBottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
