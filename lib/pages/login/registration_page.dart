@@ -15,8 +15,9 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _registerFormKey = GlobalKey<FormState>();
-  TextEditingController firstNameInputController;
-  TextEditingController lastNameInputController;
+  //TextEditingController firstNameInputController;
+  //TextEditingController lastNameInputController;
+  TextEditingController nameInputController;
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   TextEditingController confirmPwdInputController;
@@ -25,8 +26,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   initState() {
-    firstNameInputController = new TextEditingController();
-    lastNameInputController = new TextEditingController();
+    //firstNameInputController = new TextEditingController();
+    //lastNameInputController = new TextEditingController();
+    nameInputController=new TextEditingController();
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     confirmPwdInputController = new TextEditingController();
@@ -84,16 +86,13 @@ class _RegisterPageState extends State<RegisterPage> {
                         children: <Widget>[
                           Expanded(
                             flex: 4,
-                            child: firstNameInput(),
+                            child: nameInput(),
                           ),
                           Expanded(
                             flex: 1,
                             child: Text(" "),
                           ),
-                          Expanded(
-                            flex: 4,
-                            child: lastNameInput(),
-                          )
+
                         ],
                       ),
 
@@ -129,6 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
       Image.asset('assets/frequency.png',fit: BoxFit.scaleDown, );
   }
 
+  /*
   Widget firstNameInput(){
     return  TextFormField(
       controller: firstNameInputController,
@@ -141,7 +141,9 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
+*/
 
+  /*
   Widget lastNameInput(){
     return TextFormField(
       controller: lastNameInputController,
@@ -153,6 +155,21 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+   */
+
+  Widget nameInput(){
+    return TextFormField(
+      controller: nameInputController,
+      decoration: InputDecoration(
+        labelText: 'Name',
+        hintText: "JohnSmith",
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green, width: 2.0),
+        ),
+      ),
+    );
+
   }
 
   Widget emailInput(){
@@ -237,9 +254,25 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _registerUser(){
+    String name=nameInputController.text;
+    List<String> splitList=name.split(" ");
+    List<String> indexList=[];
+
     if (_registerFormKey.currentState.validate()) {
       if (pwdInputController.text ==
           confirmPwdInputController.text) {
+
+        //for searching functionality:
+        for(int i=0; i<splitList.length;i++){
+          for(int y=1; y<splitList[i].length+1;y++){
+            if(i==1){ // we are on last name
+              indexList.add(splitList[i-1].toLowerCase()+" "+splitList[i].substring(0,y).toLowerCase());
+            }
+            indexList.add(splitList[i].substring(0,y).toLowerCase());
+            print((splitList[i].substring(0,y).toLowerCase()));
+          }
+        }
+
         FirebaseAuth.instance
             .createUserWithEmailAndPassword(
             email: emailInputController.text,
@@ -249,8 +282,7 @@ class _RegisterPageState extends State<RegisterPage> {
             .document(currentUser.user.uid)
             .setData({
           "uid": currentUser.user.uid,
-          "fname": firstNameInputController.text,
-          "surname": lastNameInputController.text,
+          "name":nameInputController.text,
           "email": emailInputController.text,
           "phone":phoneInputController.text,
           "username":usernameInputController.text,
@@ -266,8 +298,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     uid: currentUser.user.uid,
                   )),
                   (_) => false),
-          firstNameInputController.clear(),
-          lastNameInputController.clear(),
+          //firstNameInputController.clear(),
+          //lastNameInputController.clear(),
+          nameInputController.clear(),
           emailInputController.clear(),
           pwdInputController.clear(),
           confirmPwdInputController.clear()

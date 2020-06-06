@@ -100,6 +100,7 @@ class _LandingPageState extends State<LandingPage> {
 
               SizedBox(height: 30),
 
+
               //CONTACTS
               Row(children: <Widget> [
                 Expanded(flex: 1, child: Container()),
@@ -114,7 +115,9 @@ class _LandingPageState extends State<LandingPage> {
                 itemBuilder: (context, index) => CircleAvatar(),
 
               ))
+
             ],
+
           ),
 
         ])

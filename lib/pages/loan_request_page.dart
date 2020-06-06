@@ -1,16 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoanRequest extends StatefulWidget {
+  String value;
+  LoanRequest({Key key, @required this.value}) :super(key:key);
   @override
-  _LoanRequestState createState() => _LoanRequestState();
+  _LoanRequestState createState() => _LoanRequestState(value);
 }
 
 class _LoanRequestState extends State<LoanRequest> {
+  TextEditingController dueDateInputController;
+  String value; // lender name (transferred from search screen)
+  _LoanRequestState(this.value);
   double amount=0;
   double paymentsOf=0;
   int weeks=0;
   double paymentsTotal=0;
+
+  @override
+  initState() {
+    dueDateInputController = new TextEditingController();
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,9 +90,12 @@ class _LoanRequestState extends State<LoanRequest> {
       children: <Widget>[
         SizedBox(height: 13,),
         Text("Select Lender",style: TextStyle(fontSize: 20,color: Colors.blue),),
+        Text("Lender: $value",style: TextStyle(fontSize: 12,color: Colors.grey),),
         FlatButton.icon(
           icon: Icon(Icons.add_circle_outline,color: Colors.green,size: 40,),
-          onPressed: (){},
+          onPressed: (){
+            Navigator.pushNamed(context, '/search_data');
+          },
           label: Text(""),
         )
       ],
@@ -91,7 +107,13 @@ class _LoanRequestState extends State<LoanRequest> {
       children: <Widget>[
         Text("Due Date",style: TextStyle(fontSize: 20,color: Colors.blue),),
         SizedBox(height: 10,),
-        Text("05/25/2020",style: TextStyle(fontSize: 20,color: Colors.grey),),
+        TextFormField(
+          controller: dueDateInputController,
+          decoration: InputDecoration(
+            hintText: "eg: 5/25/2020",
+          ),
+        ),
+
       ],
     );
   }
@@ -271,11 +293,21 @@ class _LoanRequestState extends State<LoanRequest> {
       color: Colors.blue,
       child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18),),
       onPressed: (){
-        amount=0;
-        paymentsOf=0;
-        weeks=0;
-        paymentsTotal=0;
+        sumbitContract();
+        Navigator.pushNamed(context, '/');
       },
     );
+  }
+
+  void sumbitContract(){
+    Firestore.instance.collection('contracts').document().setData({
+      'lender':value,
+      'borrower':"user",
+      'due_date':dueDateInputController.text,
+      'bill_amount':amount,
+      'payments_of': paymentsOf,
+      'weeks': weeks,
+      'total_num_of_payments':paymentsTotal,
+    });
   }
 }
