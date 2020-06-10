@@ -64,9 +64,8 @@ class _SearchResultsState extends State<SearchResults> {
                         Column(
                           children: <Widget>[
                             Text(document['name'],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
-                            Text(document["Email"]),
-                            Text(document["Age"]),
-                            Text(document["Username"]),
+                            Text(document["email"]),
+                            Text(document["username"]),
                             RaisedButton(
                               child: Text("Select",style: TextStyle(color: Colors.white),),
                               onPressed: (){

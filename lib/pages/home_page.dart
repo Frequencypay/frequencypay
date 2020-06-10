@@ -52,8 +52,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem> [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Padding(padding: EdgeInsets.all(0))
+              icon: Icon(Icons.home),
+              title: Padding(padding: EdgeInsets.all(0))
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),

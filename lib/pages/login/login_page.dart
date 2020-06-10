@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
+import 'package:frequencypay/pages/landing_page.dart';
 
 import '../authenticate/loading.dart';
 
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
               icon:Icon(Icons.person_add, color: Colors.white,),
               label: Text("Register",style: TextStyle(color: Colors.white),),
               onPressed: (){
-                widget.toggleView();
+                Navigator.pushNamed(context, '/register');
               },
             )
           ],

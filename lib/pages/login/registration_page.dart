@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
+import 'package:frequencypay/pages/landing_page.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function toggleView;
@@ -69,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
               icon:Icon(Icons.person, color: Colors.white,),
               label: Text("Log In",style: TextStyle(color: Colors.white),),
               onPressed: (){
-                widget.toggleView();
+                Navigator.pushNamed(context, '/login');
               },
             )
           ],
@@ -288,6 +289,7 @@ class _RegisterPageState extends State<RegisterPage> {
           "username":usernameInputController.text,
           "activeContracts":0,
           "latePayments":0,
+          "searchIndex":indexList,
           "completeContracts":0,
         })
             .then((result) => [

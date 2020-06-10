@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class LoanRequest extends StatefulWidget {
 
 class _LoanRequestState extends State<LoanRequest> {
   TextEditingController dueDateInputController;
+  FirebaseUser currentUser;
   String value; // lender name (transferred from search screen)
   _LoanRequestState(this.value);
   double amount=0;
@@ -21,8 +23,8 @@ class _LoanRequestState extends State<LoanRequest> {
   @override
   initState() {
     dueDateInputController = new TextEditingController();
-
-    super.initState();
+      this.getCurrentUser();
+      super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -94,7 +96,7 @@ class _LoanRequestState extends State<LoanRequest> {
         FlatButton.icon(
           icon: Icon(Icons.add_circle_outline,color: Colors.green,size: 40,),
           onPressed: (){
-            Navigator.pushNamed(context, '/search_data');
+            Navigator.pushNamed(context, '/search_users');
           },
           label: Text(""),
         )
@@ -294,7 +296,7 @@ class _LoanRequestState extends State<LoanRequest> {
       child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18),),
       onPressed: (){
         sumbitContract();
-        Navigator.pushNamed(context, '/');
+        Navigator.pushNamed(context, '/home');
       },
     );
   }
@@ -302,12 +304,16 @@ class _LoanRequestState extends State<LoanRequest> {
   void sumbitContract(){
     Firestore.instance.collection('contracts').document().setData({
       'lender':value,
-      'borrower':"user",
+      'borrower':"current user",
       'due_date':dueDateInputController.text,
       'bill_amount':amount,
       'payments_of': paymentsOf,
       'weeks': weeks,
       'total_num_of_payments':paymentsTotal,
     });
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
   }
 }

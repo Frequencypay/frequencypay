@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:frequencypay/pages/profile_page.dart';
+import 'package:frequencypay/pages/user_bills_page.dart';
+import 'package:frequencypay/pages/user_contracts_page.dart';
+import '../services/firebase_authentication.dart';
+import 'landing_page.dart';
+import 'loan_request_page.dart';
 
 class LandingPage extends StatefulWidget {
+  final String uid;
+  LandingPage({Key key, this.uid}):super(key:key);
   @override
-  _LandingPageState createState() { return _LandingPageState();}
+  _LandingPageState createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
+  FirebaseUser currentUser;
+  final Auth _auth=Auth(); // instance to correctly sign out
+
+  @override
+  initState() {
+    this.getCurrentUser();
+    super.initState();
+  }
 
   static const Color blueHighlight = const Color(0xFF3665FF);
 
@@ -13,10 +31,26 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+        appBar: AppBar(
+          title: Text("Welcome!"),
+          backgroundColor: Colors.blue,
+          elevation: 0.0,
+          actions: <Widget>[
+
+            FlatButton.icon(
+              icon: Icon(Icons.person,color: Colors.white,),
+              label: Text("Log out",style: TextStyle(color: Colors.white),),
+              onPressed: () async {
+                await _auth.signOut();
+              },
+            ),
+          ],
+        ),
         body: ListView(children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+
 
               //ROW 1
               Row(
@@ -139,5 +173,9 @@ class _LandingPageState extends State<LandingPage> {
       ),
       Expanded( flex: 1, child: Container())
     ])));
+  }
+
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
   }
 }
