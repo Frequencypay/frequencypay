@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/authenticate/wrapper.dart';
-import 'package:frequencypay/pages/splash_page.dart';
 import 'package:frequencypay/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'services/firebase_authentication.dart';
 
-void main() => runApp(MyApp());
+void main() => {
+  runApp(MyApp()),
+  print("test")};
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -21,7 +22,6 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.green,
           ),
-          home: Wrapper(),
           routes: routes,
       ),
     );

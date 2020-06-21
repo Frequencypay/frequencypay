@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/authenticate/authenticate.dart';
+import 'package:frequencypay/pages/landing_page.dart';
 import 'package:provider/provider.dart';
 
 import '../home_page.dart';

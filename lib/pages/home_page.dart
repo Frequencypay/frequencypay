@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frequencypay/pages/settings_page.dart';
+import 'package:frequencypay/pages/profile_page.dart';
+import 'package:frequencypay/pages/user_bills_page.dart';
+import 'package:frequencypay/pages/user_contracts_page.dart';
 
 import '../services/firebase_authentication.dart';
-import 'settings_page.dart';
+import 'landing_page.dart';
+import 'loan_request_page.dart';
 
 class HomePage extends StatefulWidget {
   final String uid; //include this
@@ -15,6 +18,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
+  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), LoanRequest()];
+  int selectedBottomNavigationBarIndex = 0;
+
   FirebaseUser currentUser;
   final Auth _auth=Auth(); // instance to correctly sign out
 
@@ -24,38 +33,47 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  //When a bottom navigation bar icon is tapped
+  void _onItemTapped(int index) {
+
+    setState(() => {
+
+      //Set the selected index
+      selectedBottomNavigationBarIndex = index
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome!"),
-        backgroundColor: Colors.blue,
-        elevation: 0.0,
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.settings, color: Colors.white,),
-            label: Text("Settings", style: TextStyle(color:Colors.white)),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
-            },
-          ),
 
-          FlatButton.icon(
-            icon: Icon(Icons.person,color: Colors.white,),
-            label: Text("Log out",style: TextStyle(color: Colors.white),),
-            onPressed: () async {
-              await _auth.signOut();
+      body: bottomNavigationBarOptions.elementAt(selectedBottomNavigationBarIndex),
 
-            },
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem> [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Padding(padding: EdgeInsets.all(0))
           ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today),
+              title: Padding(padding: EdgeInsets.all(0))
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.inbox),
+              title: Padding(padding: EdgeInsets.all(0))
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_box),
+              title: Padding(padding: EdgeInsets.all(0))
+          )
 
         ],
-      ),
+        currentIndex: selectedBottomNavigationBarIndex,
+        selectedItemColor: blueHighlight,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
 
-      body: Column(
-        children: <Widget>[
-          Text(""),
-        ],
       ),
     );
   }
