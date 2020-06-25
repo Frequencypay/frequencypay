@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   static const Color blueHighlight = const Color(0xFF3665FF);
 
-  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), LoanRequest()];
+  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
   int selectedBottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
