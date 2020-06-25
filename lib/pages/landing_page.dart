@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
-import '../services/firebase_authentication.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
+import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
 import 'loan_request_page.dart';
 
@@ -17,11 +18,12 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   FirebaseUser currentUser;
-  final Auth _auth=Auth(); // instance to correctly sign out
+  //final Auth _auth=Auth(); {OLD AUTH, KEEP FOR REFERENCE}
+  final AuthService _auth=AuthService();
 
   @override
   initState() {
-    this.getCurrentUser();
+    //this.getCurrentUser();
     super.initState();
   }
 
@@ -31,31 +33,31 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Welcome!"),
-          backgroundColor: Colors.blue,
-          elevation: 0.0,
-          actions: <Widget>[
 
-            FlatButton.icon(
-              icon: Icon(Icons.person,color: Colors.white,),
-              label: Text("Log out",style: TextStyle(color: Colors.white),),
-              onPressed: () async {
-                await _auth.signOut();
-              },
-            ),
-          ],
-        ),
         body: ListView(children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SizedBox(width: 250,),
+                  FlatButton.icon(
+                    icon: Icon(Icons.person,color: Colors.grey,),
+                    label: Text("Log out",style: TextStyle(color: Colors.grey),),
+                    onPressed: () async {
+                      await _auth.signOut();
+                    },
+                  ),
+                ],
+              ),
 
 
               //ROW 1
               Row(
                 children: <Widget>[
+
                   Expanded(flex: 1, child: Container()),
+
                   Expanded(
                     flex: 5,
                     child: RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
@@ -175,7 +177,8 @@ class _LandingPageState extends State<LandingPage> {
     ])));
   }
 
-  void getCurrentUser() async {
-    currentUser = await FirebaseAuth.instance.currentUser();
-  }
+  //KEEP FOR REFERENCE
+//  void getCurrentUser() async {
+//    currentUser = await FirebaseAuth.instance.currentUser();
+//  }
 }

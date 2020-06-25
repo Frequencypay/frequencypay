@@ -274,6 +274,7 @@ class _RegisterPageState extends State<RegisterPage> {
           }
         }
 
+        //creates account and then sets data (2 in 1)
         FirebaseAuth.instance
             .createUserWithEmailAndPassword(
             email: emailInputController.text,

@@ -89,4 +89,5 @@ flutter:
 
   assets:
     - assets/frequency.png
+    - assets/temp_logo.png
     - assets/bank.png

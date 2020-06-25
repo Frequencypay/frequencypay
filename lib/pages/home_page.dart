@@ -4,7 +4,7 @@ import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
 
-import '../services/firebase_authentication.dart';
+import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
 import 'loan_request_page.dart';
 
