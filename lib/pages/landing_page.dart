@@ -18,7 +18,6 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   FirebaseUser currentUser;
-  //final Auth _auth=Auth(); {OLD AUTH, KEEP FOR REFERENCE}
   final AuthService _auth=AuthService();
 
   @override
@@ -178,7 +177,7 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   //KEEP FOR REFERENCE
-//  void getCurrentUser() async {
-//    currentUser = await FirebaseAuth.instance.currentUser();
-//  }
+  void getCurrentUser() async {
+    currentUser = await FirebaseAuth.instance.currentUser();
+  }
 }

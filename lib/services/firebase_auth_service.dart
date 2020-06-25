@@ -85,4 +85,11 @@ class AuthService{
 
   //validation
 
+  //get current user
+  Future<FirebaseUser> getCurrentUser() async {
+    FirebaseUser user = await _auth.currentUser();
+    return user;
+  }
+  
+
 }

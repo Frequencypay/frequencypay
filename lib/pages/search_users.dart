@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 class SearchData extends StatefulWidget {
   @override
@@ -8,6 +12,10 @@ class SearchData extends StatefulWidget {
 }
 
 class _SearchDataState extends State<SearchData> {
+  FirebaseUser currentUser;
+  final AuthService _auth=AuthService();
+
+
   TextEditingController searchInputController;
   String searchString;
 
@@ -17,8 +25,11 @@ class _SearchDataState extends State<SearchData> {
     super.initState();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    FirestoreService dbInstance=FirestoreService(uid: currentUser.uid);
     return Scaffold(
       appBar: AppBar(
         title: Text("Search"),
@@ -39,79 +50,22 @@ class _SearchDataState extends State<SearchData> {
                     },
                   ),
                 ),
-
               ],
-
             ),
-            SearchResults(),
-
           ],
         ),
       ),
 
     );
   }
-
-  Widget SearchResults(){
-    return Expanded(
-      child: StreamBuilder<QuerySnapshot>(
-        stream: (searchString==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: searchString).snapshots(),
-        builder: (context,snapshot){
-          if(snapshot.hasError){
-            return Text("Error");
-          }
-          switch(snapshot.connectionState){
-            case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
-            default:
-              return new ListView(
-                children: snapshot.data.documents.map((DocumentSnapshot document){
-                  return new Card(
-                    color: Colors.grey[200],
-
-                    child: Row(
-                      children: <Widget>[
-                        CircleAvatar(child: Text("profile pic"), radius: 40,),
-                        Padding(
-                          padding: EdgeInsets.all(50),
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Text(document['name'],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
-                            Text(document["email"]),
-                            Text(document["username"]),
-                            RaisedButton(
-                              child: Text("Select",style: TextStyle(color: Colors.white),),
-                              onPressed: (){
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context)=>LoanRequest(value: document['name'],),
-                                ));
-                              },
-                              color: Colors.blue,
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
-              );
-          }
-        },
-      ),
-    );
+  void getCurrentUser() async {
+    currentUser = await _auth.getCurrentUser();
   }
+
+
 }
 
 
 
 
-//            RaisedButton(
-//              padding: EdgeInsets.all(10),
-//              child: Text("Search", style: TextStyle(color: Colors.white, fontSize: 15)),
-//              color: Colors.blue,
-//              onPressed: (){
-//                Navigator.of(context).push(MaterialPageRoute(
-//                  builder: (context)=>SearchResults(value: searchString,),
-//                ));
-//              },
+
