@@ -90,6 +90,6 @@ class AuthService{
     FirebaseUser user = await _auth.currentUser();
     return user;
   }
-  
+
 
 }
