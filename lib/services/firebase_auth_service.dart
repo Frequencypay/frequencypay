@@ -11,6 +11,12 @@ class AuthService{
     return user != null ? User(uid:user.uid) :null; // get the model
   }
 
+  //create user object (from model class) based on FirebaseUser
+  //(Public version to avoid dependencies)
+  User userFromFirebaseUser(FirebaseUser user){
+  return user != null ? User(uid:user.uid) :null; // get the model
+  }
+
   //Auth change user stream
   Stream<User> get user{ //custom user model
     return _auth.onAuthStateChanged.map((FirebaseUser user) => _userFromFirebaseUser(user));

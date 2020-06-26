@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderDataService.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserModel.dart';
+import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
 
 //Events
 class ProfileEvent {
@@ -24,9 +27,9 @@ class ProfileIsLoadedState extends ProfileState {
 
   final _profile;
 
-  ProfileIsLoadedState(PlaceholderUserModel this._profile);
+  ProfileIsLoadedState(User this._profile);
 
-  PlaceholderUserModel get getProfile => _profile;
+  User get getProfile => _profile;
 }
 
 class ProfileIsNotLoadedState extends ProfileState {
@@ -35,9 +38,9 @@ class ProfileIsNotLoadedState extends ProfileState {
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
-  PlaceholderDataService service;
+  AuthService service;
 
-  ProfileBloc(PlaceholderDataService service);
+  ProfileBloc(AuthService service);
 
   @override
   ProfileState get initialState => ProfileIsLoadingState();
@@ -50,8 +53,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       try {
 
-        PlaceholderUserModel user = await service.getLocalUserModel();
-        yield ProfileIsLoadedState(user);
+        //TODO: May need to change into a "UserModel" instead
+        FirebaseUser currentFirebaseUser = await service.getCurrentUser();
+        User currentUser = await service.userFromFirebaseUser(currentFirebaseUser);
+
+        yield ProfileIsLoadedState(currentUser);
       } catch (_){
 
         print(_);

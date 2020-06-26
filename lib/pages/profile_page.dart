@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/profile_bloc.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
 
 void main() =>
     runApp(MaterialApp(
@@ -18,71 +19,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     //final profileBloc = BlocProvider.of<ProfileBloc>(context);
 
-    return Scaffold(
-      body:
+    return BlocProvider(
+      create: (context) => ProfileBloc(AuthService()),
+      child: Scaffold(
+        body:
 
-              Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SafeArea(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "  Your ",
-                          style: TextStyle(color: Colors.grey, fontSize: 30),
-                        ),
-                        Text(
-                          "Profile ",
-                          style: TextStyle(color: Colors.blue, fontSize: 30),
-                        ),
-                      ],
+                Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 20,
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    child: profileImg(),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    child: profileInfo(),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    "Confidence Rating",
-                    style: TextStyle(color: Colors.black54, fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    child: getConfidenceRating(),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    child: getMailandPhone(),
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      "Edit",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    SafeArea(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "  Your ",
+                            style: TextStyle(color: Colors.grey, fontSize: 30),
+                          ),
+                          Text(
+                            "Profile ",
+                            style: TextStyle(color: Colors.blue, fontSize: 30),
+                          ),
+                        ],
+                      ),
                     ),
-                    color: Colors.grey,
-                    onPressed: () {},
-                  )
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      child: profileImg(),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      child: profileInfo(),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      "Confidence Rating",
+                      style: TextStyle(color: Colors.black54, fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      child: getConfidenceRating(),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      child: getMailandPhone(),
+                    ),
+                    RaisedButton(
+                      child: Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      color: Colors.grey,
+                      onPressed: () {},
+                    )
+                    ,
+                  ]
                   ,
-                ]
-                ,
-              )
+                )
+      ),
     );
   }
 
