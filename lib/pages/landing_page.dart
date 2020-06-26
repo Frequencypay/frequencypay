@@ -8,6 +8,7 @@ import 'package:frequencypay/services/firebase_auth_service.dart';
 import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
 import 'loan_request_page.dart';
+import 'package:frequencypay/pages/temp_user_data.dart';
 
 class LandingPage extends StatefulWidget {
   final String uid;
@@ -48,6 +49,14 @@ class _LandingPageState extends State<LandingPage> {
                     },
                   ),
                 ],
+              ),
+
+              FlatButton.icon(
+                icon: Icon(Icons.person,color: Colors.grey,),
+                label: Text("Get current user data",style: TextStyle(color: Colors.grey),),
+                onPressed: ()  {
+                  Navigator.pushNamed(context, '/temp_user_data');
+                },
               ),
 
 

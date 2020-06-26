@@ -8,6 +8,7 @@ import 'package:frequencypay/pages/authenticate/forgot_password_page.dart';
 import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/vaulted_pages/search_results.dart';
 import 'package:frequencypay/pages/search_users.dart';
+import 'package:frequencypay/pages/temp_user_data.dart';
 import 'pages/authenticate/wrapper.dart';
 
 final routes = {
@@ -18,4 +19,5 @@ final routes = {
   '/forgotPassword': (BuildContext context) => new ForgotPasswordPage(),
   '/search_users':(context)=>SearchData(),
   '/loan_request_page':(context)=>LoanRequest(),
+  '/temp_user_data':(context)=>new currentUserData(),
 };
