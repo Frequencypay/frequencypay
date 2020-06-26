@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/profile_bloc.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/vaulted_pages/firebase_authentication.dart';
 
 void main() =>
     runApp(MaterialApp(
@@ -9,18 +10,27 @@ void main() =>
     ));
 
 class ProfileScreen extends StatefulWidget {
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  ProfileBloc createBloc(var context, ) {
+
+    ProfileBloc bloc = ProfileBloc(AuthService());
+
+    bloc.add(LoadProfileEvent());
+
+    return bloc;
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    //final profileBloc = BlocProvider.of<ProfileBloc>(context);
-
     return BlocProvider(
-      create: (context) => ProfileBloc(AuthService()),
+      create: (context) => createBloc(context),
       child: Scaffold(
         body:
 
