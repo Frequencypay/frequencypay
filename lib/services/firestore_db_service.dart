@@ -1,6 +1,7 @@
 // Service class containing all Firestore operations
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
 
 class FirestoreService{
@@ -74,7 +75,29 @@ class FirestoreService{
     );
   }
 
-  //Create a contract object
+
+
+
+
+
+  //userData from snapshot
+  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSOTM userData model
+  UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
+    return UserData(
+      uid:uid,
+      name: snapshot.data['name'],
+      email: snapshot.data['email'],
+      username: snapshot.data['username'],
+      phoneNumber: snapshot.data['phone']
+    );
+  }
+
+  //get user_data stream
+  Stream<UserData> get userData{ //the stream returns data based on UserData model, which is our model that we defined
+    return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot); // map what we get back to our custom model
+  }
+
+
 
 
 

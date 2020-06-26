@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:provider/provider.dart';
 
 class UserContractsPage extends StatefulWidget {
   @override
