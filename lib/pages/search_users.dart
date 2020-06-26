@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:frequencypay/pages/search_results.dart';
+import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/pages/loan_request_page.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 class SearchData extends StatefulWidget {
   @override
@@ -8,16 +12,24 @@ class SearchData extends StatefulWidget {
 }
 
 class _SearchDataState extends State<SearchData> {
+  FirebaseUser currentUser;
+  final AuthService _auth=AuthService();
+
+
   TextEditingController searchInputController;
   String searchString;
 
   @override
   initState() {
-    searchInputController=new TextEditingController();
+    searchInputController = new TextEditingController();
     super.initState();
   }
+
+
+
   @override
   Widget build(BuildContext context) {
+    FirestoreService dbInstance=FirestoreService(uid: currentUser.uid);
     return Scaffold(
       appBar: AppBar(
         title: Text("Search"),
@@ -31,45 +43,29 @@ class _SearchDataState extends State<SearchData> {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: TextField(
-                    onChanged: (value){
+                    onChanged: (value) {
                       setState(() {
-                        searchString=value.toLowerCase();
+                        searchString = value.toLowerCase();
                       });
                     },
                   ),
-                )
+                ),
               ],
             ),
-
-            RaisedButton(
-              padding: EdgeInsets.all(10),
-              child: Text("Search", style: TextStyle(color: Colors.white, fontSize: 15)),
-              color: Colors.blue,
-              onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context)=>SearchResults(value: searchString,),
-                ));
-              },
-            )
           ],
         ),
       ),
 
     );
-
+  }
+  void getCurrentUser() async {
+    currentUser = await _auth.getCurrentUser();
   }
 
-  Widget searchInput(){
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: 'Search User...',
-      ),
-      controller: searchInputController,
-      onChanged: (value){
-        setState(() {
-          searchString=value.toLowerCase();
-        });
-      },
-    );
-  }
+
 }
+
+
+
+
+

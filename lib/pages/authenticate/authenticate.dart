@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frequencypay/pages/login/login_page.dart';
-import 'package:frequencypay/pages/login/registration_page.dart';
+import 'package:frequencypay/pages/authenticate/register.dart';
+import 'package:frequencypay/pages/authenticate/sign_in.dart';
 
 class Authenticate extends StatefulWidget {
   @override
@@ -15,10 +15,10 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
    if(showSignIn==true){
-     return LoginPage(toggleView:toggleView);
+     return SignIn(toggleView:toggleView);
    }
    else{
-     return RegisterPage(toggleView:toggleView);
+     return Register(toggleView:toggleView);
    }
   }
 }
