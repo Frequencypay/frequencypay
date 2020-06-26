@@ -9,8 +9,7 @@ import 'vaulted_pages/firebase_authentication.dart';
 import 'package:frequencypay/models/user_model.dart';
 
 void main() => {
-  runApp(MyApp()),
-  print("test")};
+  runApp(MyApp())};
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.

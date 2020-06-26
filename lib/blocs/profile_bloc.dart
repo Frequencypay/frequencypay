@@ -4,6 +4,7 @@ import 'package:frequencypay/PLACEHOLDERS/PlaceholderDataService.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserModel.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
 class ProfileEvent {
@@ -27,9 +28,9 @@ class ProfileIsLoadedState extends ProfileState {
 
   final _profile;
 
-  ProfileIsLoadedState(User this._profile);
+  ProfileIsLoadedState(UserData this._profile);
 
-  User get getProfile => _profile;
+  UserData get getProfile => _profile;
 }
 
 class ProfileIsNotLoadedState extends ProfileState {
@@ -38,9 +39,9 @@ class ProfileIsNotLoadedState extends ProfileState {
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
-  AuthService service;
+  FirestoreService _service;
 
-  ProfileBloc(AuthService service);
+  ProfileBloc(FirestoreService this._service);
 
   @override
   ProfileState get initialState => ProfileIsLoadingState();
@@ -53,9 +54,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       try {
 
-        //TODO: May need to change into a "UserModel" instead
-        FirebaseUser currentFirebaseUser = await service.getCurrentUser();
-        User currentUser = await service.userFromFirebaseUser(currentFirebaseUser);
+        Stream<UserData> userStream = _service.userData;
+
+        UserData currentUser = await userStream.first;
 
         yield ProfileIsLoadedState(currentUser);
       } catch (_){
