@@ -76,6 +76,14 @@ class _LandingPageState extends State<LandingPage> {
                   },
                 ),
 
+              FlatButton.icon(
+                icon: Icon(Icons.person,color: Colors.grey,),
+                label: Text("Get contracts",style: TextStyle(color: Colors.grey),),
+                onPressed: ()  {
+                  Navigator.pushNamed(context, '/temp_contracts');
+                },
+              ),
+
 
                 //ROW 1
                 Row(

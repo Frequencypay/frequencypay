@@ -1,6 +1,7 @@
 // Service class containing all Firestore operations
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
 
@@ -10,9 +11,9 @@ class FirestoreService{
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
 
   //collection references (we can have one for each collection)
-  final CollectionReference userCollection=Firestore.instance.collection('users');
   final CollectionReference userDataCollection=Firestore.instance.collection('user_data');
   final CollectionReference contractCollection=Firestore.instance.collection('contracts');
+  final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills');
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
@@ -75,13 +76,22 @@ class FirestoreService{
     );
   }
 
-
-
-
+  //Create a contract object in the database
+  //This function is called whenever a loan request is submitted
+  Future createContract(String requester, String loaner, String dueDate, double numPayments, double amount, bool isActive) async{
+    return await contractCollection.document(uid).setData({
+      'requester':requester,
+      'loaner':loaner,
+      'dueDate':dueDate,
+      'numPayments':numPayments,
+      'amount':amount,
+      'isActive': isActive
+    });
+  }
 
 
   //userData from snapshot
-  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSOTM userData model
+  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
       uid:uid,
@@ -95,6 +105,26 @@ class FirestoreService{
   //get user_data stream
   Stream<UserData> get userData{ //the stream returns data based on UserData model, which is our model that we defined
     return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot); // map what we get back to our custom model
+  }
+
+  //contracts lists from snapshot
+  //THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACTS WE GET FROM DB INTO OUR CUSTOM userData model
+  List<Contract> _contractListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Contract(
+        requester: doc.data['requester'] ?? '',
+        loaner: doc.data['loaner'] ?? '',
+        dueDate: doc.data['dueDate'] ?? '',
+        numPayments: doc.data['numPayments'] ?? 0,
+        amount: doc.data['amount'] ?? 0,
+        isActive: doc.data['isActive'] ?? false
+      );
+    }).toList();
+  }
+
+  //get contracts stream
+  Stream<List<Contract>> get contracts{
+    return contractCollection.snapshots().map(_contractListFromSnapshot);
   }
 
 
