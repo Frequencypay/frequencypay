@@ -7,7 +7,8 @@ import 'package:frequencypay/pages/loan_request_page.dart';
 
 class FirestoreService{
   final String uid;
-  FirestoreService({this.uid}); // V.I. When we create an instance of this service class, the UID must be passed,
+  final String value;
+  FirestoreService({this.uid,this.value}); // V.I. When we create an instance of this service class, the UID must be passed,
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
 
   //collection references (we can have one for each collection)
@@ -26,54 +27,6 @@ class FirestoreService{
       'phone':phone,
       'searchIndex':indexList
     });
-  }
-
-  //Search for users //NEEDS SOME EXTRA WORK
-  Future searchUsers(String searchString) async{
-    StreamBuilder<QuerySnapshot>(
-      stream: (searchString==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: searchString).snapshots(),
-      builder: (context,snapshot){
-        if(snapshot.hasError){
-          return Text("Error");
-        }
-        switch(snapshot.connectionState){
-          case ConnectionState.waiting:
-            return Center(child: CircularProgressIndicator());
-          default: // return the list of results
-            return new ListView(
-              children: snapshot.data.documents.map((DocumentSnapshot document){
-                return new Card(
-                  color: Colors.grey[200],
-                  child: Row(
-                    children: <Widget>[
-                      CircleAvatar(child: Text("profile pic"), radius: 40,),
-                      Padding(
-                        padding: EdgeInsets.all(50),
-                      ),
-                      Column(
-                        children: <Widget>[
-                          Text(document['name'],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
-                          Text(document["email"]),
-                          Text(document["username"]),
-                          RaisedButton(
-                            child: Text("Select",style: TextStyle(color: Colors.white),),
-                            onPressed: (){
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context)=>LoanRequest(value: document['name'],),
-                              ));
-                            },
-                            color: Colors.blue,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            );
-        }
-      },
-    );
   }
 
   //Create a contract object in the database
@@ -126,6 +79,25 @@ class FirestoreService{
   Stream<List<Contract>> get contracts{
     return contractCollection.snapshots().map(_contractListFromSnapshot);
   }
+//userData from snapshot
+  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
+  UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
+    return UserData(
+        uid:uid,
+        name: snapshot.data['name'],
+        email: snapshot.data['email'],
+        username: snapshot.data['username'],
+        phoneNumber: snapshot.data['phone']
+    );
+  }
+
+  Stream <QuerySnapshot> get userSearchData{
+    return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
+  }
+
+
+
+
 
 
 

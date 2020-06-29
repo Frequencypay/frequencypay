@@ -17,6 +17,7 @@ class _currentUserDataState extends State<currentUserData> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Current User Data"),
+
       ),
       
       body: StreamBuilder<UserData>( //we get userData (custom model) from the stream
@@ -28,6 +29,7 @@ class _currentUserDataState extends State<currentUserData> {
             return SafeArea(
               child: Column(
                 children: <Widget>[
+
                   Row(
                     children: <Widget>[
                       Text("Name: "),

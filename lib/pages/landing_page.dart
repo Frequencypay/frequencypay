@@ -78,9 +78,9 @@ class _LandingPageState extends State<LandingPage> {
 
               FlatButton.icon(
                 icon: Icon(Icons.person,color: Colors.grey,),
-                label: Text("Get contracts",style: TextStyle(color: Colors.grey),),
+                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
                 onPressed: ()  {
-                  Navigator.pushNamed(context, '/temp_contracts');
+                  Navigator.pushNamed(context, '/loan_request_page');
                 },
               ),
 
