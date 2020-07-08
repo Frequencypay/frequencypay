@@ -112,9 +112,9 @@ class _UserContractsPageState extends State<UserContractsPage>
           return ListView.builder(
 
               itemBuilder: (context, index) {
-                return buildCompleteContractCard(index, state.getActiveContracts.contracts[index]);
+                return buildCompleteContractCard(index, state.getCompleteContracts.contracts[index]);
               },
-              itemCount: state.getActiveContracts.contracts.length,
+              itemCount: state.getCompleteContracts.contracts.length,
               shrinkWrap: true);
         } else if (state is UserContractsIsLoadingState) {
           return ListView.builder(
@@ -122,7 +122,7 @@ class _UserContractsPageState extends State<UserContractsPage>
               itemBuilder: (context, index) {
                 return buildCompleteContractCard(0, null);
               },
-              itemCount: 10,
+              itemCount: 2,
               shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
         } else {
           return Center(child: Text("error"));
@@ -131,20 +131,57 @@ class _UserContractsPageState extends State<UserContractsPage>
     }
 
   Widget buildActiveContractList() {
-    return ListView(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        children: <Widget>[
-          buildActiveContractCard(),
-          buildActiveContractCard(),
-        ]);
+
+    return BlocBuilder<UserContractsBloc, UserContractsState>(
+        builder: (context, state) {
+
+          if (state is UserContractsIsLoadedState) {
+            return ListView.builder(
+
+                itemBuilder: (context, index) {
+                  return buildActiveContractCard(index, state.getActiveContracts.contracts[index]);
+                },
+                itemCount: state.getActiveContracts.contracts.length,
+                shrinkWrap: true);
+          } else if (state is UserContractsIsLoadingState) {
+            return ListView.builder(
+
+                itemBuilder: (context, index) {
+                  return buildActiveContractCard(0, null);
+                },
+                itemCount: 2,
+                shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+          } else {
+            return Center(child: Text("error"));
+          }
+        });
   }
 
   Widget buildRepaymentContractList() {
-    return ListView(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        children: <Widget>[
-          buildRepaymentContractCard(),
-        ]);
+
+    return BlocBuilder<UserContractsBloc, UserContractsState>(
+        builder: (context, state) {
+
+          if (state is UserContractsIsLoadedState) {
+            return ListView.builder(
+
+                itemBuilder: (context, index) {
+                  return buildRepaymentContractCard(index, state.getPendingContracts.contracts[index]);
+                },
+                itemCount: state.getPendingContracts.contracts.length,
+                shrinkWrap: true);
+          } else if (state is UserContractsIsLoadingState) {
+            return ListView.builder(
+
+                itemBuilder: (context, index) {
+                  return buildRepaymentContractCard(0, null);
+                },
+                itemCount: 2,
+                shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+          } else {
+            return Center(child: Text("error"));
+          }
+        });
   }
 
   Widget buildCompleteContractCard(var index, Contract contract) {
@@ -194,8 +231,36 @@ class _UserContractsPageState extends State<UserContractsPage>
             ])));*/
   }
 
-  Widget buildActiveContractCard() {
+  Widget buildActiveContractCard(var index, Contract contract) {
     return Container(
+      height: 100,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Card(
+        elevation: 5,
+        child: InkWell(
+          onTap: () {
+
+            print("test");
+          },
+          child: ListTile(
+              leading: FlutterLogo(),
+              title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
+              subtitle: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 40.0, 0),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
+                  Text("<Time Left>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                  LinearProgressIndicator(),
+                  Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                  Align(
+                      alignment: Alignment.centerRight,
+                      child: Text("<Amount Left>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600], fontSize: 14)))
+                ]),
+              )
+          ),
+        ),
+      ),
+    );
+    /*return Container(
         height: 100,
         child: Card(
             elevation: 5,
@@ -218,11 +283,33 @@ class _UserContractsPageState extends State<UserContractsPage>
                     ]),
               ),
               Expanded(flex: 1, child: Container())
-            ])));
+            ])));*/
   }
 
-  Widget buildRepaymentContractCard() {
+  Widget buildRepaymentContractCard(var index, Contract contract) {
     return Container(
+      height: 100,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Card(
+        elevation: 5,
+        child: InkWell(
+          onTap: () {
+
+            print("test");
+          },
+          child: ListTile(
+              leading: FlutterLogo(),
+              title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
+              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
+                Text("<duration> repayment", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
+              ]),
+            trailing: Icon(Icons.priority_high, color: Colors.grey[700]),
+          ),
+        ),
+      ),
+    );
+    /*return Container(
         height: 100,
         child: Card(
             elevation: 5,
@@ -245,6 +332,6 @@ class _UserContractsPageState extends State<UserContractsPage>
                     ]),
               ),
               Expanded(flex: 1, child: Container())
-            ])));
+            ])));*/
   }
 }
