@@ -1,4 +1,4 @@
-class Contract{
+class Contract {
   //the contract properties we want:
   final String requester;
   final String loaner;
@@ -14,6 +14,14 @@ class Contract{
     this.numPayments,
     this.amount,
     this.isActive
-});
+  });
 
+}
+
+class ContractListModel {
+
+  //The contracts
+  List<Contract> contracts;
+
+  ContractListModel(List<Contract> this.contracts);
 }

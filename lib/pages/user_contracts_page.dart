@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frequencypay/blocs/user_contracts_bloc.dart';
+import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
 
@@ -18,69 +22,82 @@ class _UserContractsPageState extends State<UserContractsPage>
     super.initState();
   }
 
+  UserContractsBloc createBloc(var context,) {
+    final user = Provider.of<User>(context, listen: false);
+
+    UserContractsBloc bloc = UserContractsBloc(FirestoreService(uid: user.uid));
+
+    bloc.add(LoadUserContractsEvent());
+
+    return bloc;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-          body: Column(
-        children: <Widget>[
-          SizedBox(height: 20),
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: <Widget>[
-                Expanded(flex: 1, child: Container()),
-                Expanded(
-                  flex: 8,
-                  child: Container(
-                    child: RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                                fontFamily: 'Leelawadee UI', fontSize: 25),
-                            children: <TextSpan>[
-                          TextSpan(
-                              text: "Your ",
-                              style: TextStyle(color: Colors.black45)),
-                          TextSpan(
-                              text: "Contracts",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueHighlight))
-                        ])),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 15),
-          Expanded(
-            flex: 2,
-            child: TabBar(
-                labelStyle: TextStyle(
-                    fontFamily: 'Leelawadee UI',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black45,
-                tabs: <Widget>[
-                  Tab(text: "COMPLETE"),
-                  Tab(text: "ACTIVE"),
-                  Tab(text: "PENDING")
-                ]),
-          ),
-          SizedBox(height: 20),
-          Expanded(
-              flex: 20,
-              child: TabBarView(
+    return BlocProvider(
+      create: (context) => createBloc(context),
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+            body: Column(
+          children: <Widget>[
+            SizedBox(height: 20),
+            Expanded(
+              flex: 1,
+              child: Row(
                 children: <Widget>[
-                  buildCompleteContractList(),
-                  buildActiveContractList(),
-                  buildRepaymentContractList()
+                  Expanded(flex: 1, child: Container()),
+                  Expanded(
+                    flex: 8,
+                    child: Container(
+                      child: RichText(
+                          text: TextSpan(
+                              style: TextStyle(
+                                  fontFamily: 'Leelawadee UI', fontSize: 25),
+                              children: <TextSpan>[
+                            TextSpan(
+                                text: "Your ",
+                                style: TextStyle(color: Colors.black45)),
+                            TextSpan(
+                                text: "Contracts",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: blueHighlight))
+                          ])),
+                    ),
+                  ),
                 ],
-              ))
-        ],
-      )),
+              ),
+            ),
+            SizedBox(height: 15),
+            Expanded(
+              flex: 2,
+              child: TabBar(
+                  labelStyle: TextStyle(
+                      fontFamily: 'Leelawadee UI',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold),
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black45,
+                  tabs: <Widget>[
+                    Tab(text: "COMPLETE"),
+                    Tab(text: "ACTIVE"),
+                    Tab(text: "PENDING")
+                  ]),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+                flex: 20,
+                child: TabBarView(
+                  children: <Widget>[
+                    buildCompleteContractList(),
+                    buildActiveContractList(),
+                    buildRepaymentContractList()
+                  ],
+                ))
+          ],
+        )),
+      ),
     );
   }
 
@@ -88,14 +105,30 @@ class _UserContractsPageState extends State<UserContractsPage>
   //(ListView.builder is the way to implement)
   Widget buildCompleteContractList() {
 
-    return ListView(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        children: <Widget>[
-          buildCompleteContractCard(),
-          buildCompleteContractCard(),
-          buildCompleteContractCard(),
-        ]);
-  }
+    return BlocBuilder<UserContractsBloc, UserContractsState>(
+      builder: (context, state) {
+
+        if (state is UserContractsIsLoadedState) {
+          return ListView.builder(
+
+              itemBuilder: (context, index) {
+                return buildCompleteContractCard(index, state.getActiveContracts.contracts[index]);
+              },
+              itemCount: state.getActiveContracts.contracts.length,
+              shrinkWrap: true);
+        } else if (state is UserContractsIsLoadingState) {
+          return ListView.builder(
+
+              itemBuilder: (context, index) {
+                return buildCompleteContractCard(0, null);
+              },
+              itemCount: 10,
+              shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+        } else {
+          return Center(child: Text("error"));
+        }
+    });
+    }
 
   Widget buildActiveContractList() {
     return ListView(
@@ -114,8 +147,28 @@ class _UserContractsPageState extends State<UserContractsPage>
         ]);
   }
 
-  Widget buildCompleteContractCard() {
+  Widget buildCompleteContractCard(var index, Contract contract) {
     return Container(
+      height: 100,
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+      child: Card(
+        elevation: 5,
+        child: InkWell(
+          onTap: () {
+
+            print("test");
+          },
+          child: ListTile(
+            leading: FlutterLogo(),
+            title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
+            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
+              Text("Paid in full on <date>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+              Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
+            ])
+          ),
+        ),
+      ),
+    );/*Container(
         height: 100,
         child: Card(
             elevation: 5,
@@ -138,7 +191,7 @@ class _UserContractsPageState extends State<UserContractsPage>
                     ]),
               ),
               Expanded(flex: 1, child: Container())
-            ])));
+            ])));*/
   }
 
   Widget buildActiveContractCard() {

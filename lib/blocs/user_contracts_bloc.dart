@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderDataService.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserBillsModel.dart';
 import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserContractsModel.dart';
+import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
 class UserContractsEvent {
@@ -23,22 +25,26 @@ class UserContractsIsLoadingState extends UserContractsState {
 
 class UserContractsIsLoadedState extends UserContractsState {
 
-  final _contracts;
+  final _completeContracts;
+  final _activeContracts;
+  final _pendingContracts;
 
-  UserContractsIsLoadedState(PlaceholderUserContractsModel this._contracts);
+  UserContractsIsLoadedState(ContractListModel this._completeContracts, ContractListModel this._activeContracts, ContractListModel this._pendingContracts);
 
-  PlaceholderUserContractsModel get getContracts => _contracts;
+  ContractListModel get getCompleteContracts => _completeContracts;
+  ContractListModel get getActiveContracts => _activeContracts;
+  ContractListModel get getPendingContracts => _pendingContracts;
 }
 
-class UserBillsIsNotLoadedState extends UserContractsState {
+class UserContractsIsNotLoadedState extends UserContractsState {
 
 }
 
-class UserBillsBloc extends Bloc<UserContractsEvent, UserContractsState> {
+class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
-  PlaceholderDataService service;
+  FirestoreService _service;
 
-  UserBillsBloc(PlaceholderDataService service);
+  UserContractsBloc(FirestoreService this._service);
 
   @override
   UserContractsState get initialState => UserContractsIsLoadingState();
@@ -51,12 +57,15 @@ class UserBillsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
       try {
 
-        PlaceholderUserContractsModel contracts = await service.getLocalUserActiveContractsModel();
-        yield UserContractsIsLoadedState(contracts);
+
+        /*ContractListModel completeContracts = await _service.getCompleteUserContracts();
+        ContractListModel activeContracts = await _service.getActiveUserContracts();
+        ContractListModel pendingContracts = await _service.getPendingUserContracts();
+        yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);*/
       } catch (_){
 
         print(_);
-        yield UserBillsIsNotLoadedState();
+        yield UserContractsIsNotLoadedState();
       }
     }
   }

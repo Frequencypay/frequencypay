@@ -7,8 +7,7 @@ import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/vaulted_pages/firebase_authentication.dart';
 import 'package:provider/provider.dart';
 
-void main() =>
-    runApp(MaterialApp(
+void main() => runApp(MaterialApp(
       home: ProfileScreen(),
     ));
 
@@ -18,7 +17,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  ProfileBloc createBloc(var context,) {
+  ProfileBloc createBloc(
+    var context,
+  ) {
     final user = Provider.of<User>(context, listen: false);
 
     ProfileBloc bloc = ProfileBloc(FirestoreService(uid: user.uid));
@@ -34,69 +35,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
       create: (context) => createBloc(context),
       child: Scaffold(
           body: ListView(
+        children: <Widget>[
+          Column(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 20,
-                  ),
-                  SafeArea(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          "  Your ",
-                          style: TextStyle(color: Colors.grey, fontSize: 30),
-                        ),
-                        Text(
-                          "Profile ",
-                          style: TextStyle(color: Colors.blue, fontSize: 30),
-                        ),
-                      ],
+              SizedBox(
+                height: 20,
+              ),
+              SafeArea(
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "  Your ",
+                      style: TextStyle(color: Colors.grey, fontSize: 30),
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    child: profileImg(),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    child: profileInfo(),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    "Confidence Rating",
-                    style: TextStyle(color: Colors.black54, fontSize: 20),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Container(
-                    child: getConfidenceRating(),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    child: getMailandPhone(),
-                  ),
-                  RaisedButton(
-                    child: Text(
-                      "Edit",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    Text(
+                      "Profile ",
+                      style: TextStyle(color: Colors.blue, fontSize: 30),
                     ),
-                    color: Colors.grey,
-                    onPressed: () {},
-                  ),
-                ],
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                child: profileImg(),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                child: profileInfo(),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              Text(
+                "Confidence Rating",
+                style: TextStyle(color: Colors.black54, fontSize: 20),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                child: getConfidenceRating(),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                child: getMailandPhone(),
+              ),
+              RaisedButton(
+                child: Text(
+                  "Edit",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                color: Colors.grey,
+                onPressed: () {},
               ),
             ],
-          )),
+          ),
+        ],
+      )),
     );
   }
 
@@ -198,71 +199,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget getMailandPhone() {
     return Column(
       children: <Widget>[
-    Row(
-    children: <Widget>[
-      Text(
-      "  Email Address:",
-      style: TextStyle(color: Colors.blue, fontSize: 15),
-    ),
-    ],
-    ),
-    Row(
-    children: <Widget>[
-    BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-    if (state is ProfileIsLoadedState) {
-    return Text(
-    "  " + state.getProfile.email,
-    style: TextStyle(color: Colors.black54, fontSize: 15),
+        Row(
+          children: <Widget>[
+            Text(
+              "  Email Address:",
+              style: TextStyle(color: Colors.blue, fontSize: 15),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+              if (state is ProfileIsLoadedState) {
+                return Text(
+                  "  " + state.getProfile.email,
+                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                );
+              } else if (state is ProfileIsNotLoadedState) {
+                return Text(
+                  "  error",
+                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                );
+              } else {
+                return Text(
+                  "  <<email>>",
+                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                );
+              }
+            }),
+          ],
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          children: <Widget>[
+            Text(
+              "  Phone Number",
+              style: TextStyle(color: Colors.blue, fontSize: 15),
+            ),
+          ],
+        ),
+        Row(
+          children: <Widget>[
+            BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
+              if (state is ProfileIsLoadedState) {
+                return Text(
+                  "  " + state.getProfile.phoneNumber,
+                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                );
+              } else if (state is ProfileIsNotLoadedState) {
+                return Text(
+                  "  error",
+                  style: TextStyle(color: Colors.black54, fontSize: 15),
+                );
+              } else {
+                return Text(
+                  "  <<phone number>>",
+                  style: TextStyle(color: Colors.blue, fontSize: 15),
+                );
+              }
+            }),
+          ],
+        ),
+      ],
     );
-    } else if (state is ProfileIsNotLoadedState) {
-    return Text(
-    "  error",
-    style: TextStyle(color: Colors.black54, fontSize: 15),
-    );
-    } else {
-    return Text(
-    "  <<email>>",
-    style: TextStyle(color: Colors.black54, fontSize: 15),
-    );
-    }
-    }),
-    ],
-    ),
-    SizedBox(
-    height: 20,
-    ),
-    Row(
-    children: <Widget>[
-      Text(
-    "  Phone Number",
-    style: TextStyle(color: Colors.blue, fontSize: 15),
-    ),
-    ],
-    ),
-    Row(
-    children: <Widget>[
-      BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-        if (state is ProfileIsLoadedState) {
-          return Text(
-            "  " + state.getProfile.phoneNumber,
-            style: TextStyle(color: Colors.black54, fontSize: 15),
-          );
-        } else if (state is ProfileIsNotLoadedState) {
-          return Text(
-            "  error",
-            style: TextStyle(color: Colors.black54, fontSize: 15),
-          );
-        } else {
-          return Text(
-            "  <<phone number>>",
-            style: TextStyle(color: Colors.blue, fontSize: 15),
-          );
-        }
-      }),
-    ],
-    ),
-    ],
-    );
-    }
-
+  }
 }
