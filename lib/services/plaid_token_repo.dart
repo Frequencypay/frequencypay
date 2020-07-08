@@ -1,4 +1,4 @@
-import 'package:frequencypay/plaid/models/plaid_public_token_exchange_response_model.dart';
+import 'package:frequencypay/models/plaid/models.dart';
 import 'package:frequencypay/services/network_util.dart';
 import 'dart:async';
 
