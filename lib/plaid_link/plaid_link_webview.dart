@@ -83,9 +83,9 @@ class _WebViewPage {
       if (eventName == 'EXIT' || (url?.contains('/exit?') ?? false)) {
         this._closeWebView();
       }
-//      else if (eventName == 'HANDOFF') {
-//        this._closeWebView();
-//      }
+      else if (eventName == 'HANDOFF') {
+        this._closeWebView();
+      }
       dynamic token = queryParams['public_token'];
       dynamic accountId = queryParams['account_id'];
       if (token != null && accountId != null) {
@@ -113,6 +113,7 @@ class _WebViewPage {
         return NavigationDecision.navigate;
       },
     );
+
     return Scaffold(body: webView);
   }
 }
