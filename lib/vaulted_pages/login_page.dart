@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/pages/landing_page.dart';
 
-import '../authenticate/loading.dart';
+import '../pages/authenticate/loading.dart';
 
 class LoginPage extends StatefulWidget {
   //LoginPage({Key key}) : super(key: key);

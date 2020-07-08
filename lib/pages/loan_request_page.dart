@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 class LoanRequest extends StatefulWidget {
   String value;
@@ -301,16 +303,11 @@ class _LoanRequestState extends State<LoanRequest> {
     );
   }
 
-  void sumbitContract(){
-    Firestore.instance.collection('contracts').document().setData({
-      'lender':value,
-      'borrower':"current user",
-      'due_date':dueDateInputController.text,
-      'bill_amount':amount,
-      'payments_of': paymentsOf,
-      'weeks': weeks,
-      'total_num_of_payments':paymentsTotal,
-    });
+  void sumbitContract() async{
+    AuthService authInstance=new AuthService();
+    final user=authInstance.getCurrentUser();
+    //--------------------NEEDS REWORK
+    //await FirestoreService().createContract(requester, loaner, dueDate, numPayments, amount, isActive);
   }
 
   void getCurrentUser() async {
