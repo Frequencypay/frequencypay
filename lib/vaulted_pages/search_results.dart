@@ -46,6 +46,7 @@ class _SearchResultsState extends State<SearchResults> {
           if(snapshot.hasError){
             return Text("Error");
           }
+          //switch should be in the bloc
           switch(snapshot.connectionState){
             case ConnectionState.waiting:
               return Center(child: CircularProgressIndicator());
