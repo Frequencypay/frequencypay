@@ -22,6 +22,5 @@ class ContractListModel {
 
   //The contracts
   List<Contract> contracts;
-
   ContractListModel(List<Contract> this.contracts);
 }

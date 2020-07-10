@@ -14,7 +14,9 @@ class FirestoreService{
   //collection references (we can have one for each collection)
   final CollectionReference userDataCollection=Firestore.instance.collection('user_data');
   final CollectionReference contractCollection=Firestore.instance.collection('contracts');
-  final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills');
+  final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills'); //NOT USED YET
+
+  //CRUD OPERATIONS: CREATE
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
@@ -42,9 +44,10 @@ class FirestoreService{
     });
   }
 
+  //CRUD OPERATION: READ
 
   //userData from snapshot
-  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
+  //THIS IS THE FUNCTION THAT TRANSFORMS (WITH THE HELP OF THE STREAM) THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
       uid:uid,
@@ -60,27 +63,27 @@ class FirestoreService{
     return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot); // map what we get back to our custom model
   }
 
-  //contracts lists from snapshot
-  //THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACTS WE GET FROM DB INTO OUR CUSTOM userData model
-  List<Contract> _contractListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc){
-      return Contract(
-        requester: doc.data['requester'] ?? '',
-        loaner: doc.data['loaner'] ?? '',
-        dueDate: doc.data['dueDate'] ?? '',
-        numPayments: doc.data['numPayments'] ?? 0,
-        amount: doc.data['amount'] ?? 0,
-        isActive: doc.data['isActive'] ?? false
-      );
-    }).toList();
+
+
+//contract from snapshot (retrieves specific contract based on UID)
+// THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACT DATA WE GET FROM DB INTO OUR CUSTOM contract model
+
+  Contract _contractFromSnapshot(DocumentSnapshot snapshot){
+    return Contract(
+      amount: snapshot.data['amount'],
+      dueDate: snapshot.data['dueDate'],
+      isActive: snapshot.data['isActive'],
+      loaner: snapshot.data['loaner'],
+      numPayments: snapshot.data['numPayments'],
+      requester: snapshot.data['requester'],
+    );
   }
 
-  //get contracts stream
-  Stream<List<Contract>> get contracts{
-    return contractCollection.snapshots().map(_contractListFromSnapshot);
+  Stream<Contract> get contract{
+    return contractCollection.document(uid).snapshots().map(_contractFromSnapshot);
   }
-//userData from snapshot
-  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
+
+  //user search data from snapshot (retrieves specific contract based on UID)
   UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
         uid:uid,
