@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/authenticate/loading.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:provider/provider.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -11,12 +14,16 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  UserData currentuser=new UserData();
   final AuthService _auth =AuthService(); // instance of AuthService class (auth service class having all the authentication functionality) (disregard that its named the same thing)
+
   final _formKey=GlobalKey<FormState>();
   bool loading=false; //for the loading spinner
   TextEditingController emailInputController;
   TextEditingController pwdInputController;
   String error='';
+  bool checkBoxValue=false;
+  bool checkBoxValuefromDB;
 
   @override
   initState() {
@@ -28,6 +35,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+
     return loading ? Loading(): Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -56,8 +64,10 @@ class _SignInState extends State<SignIn> {
                 emailInput(),
                 SizedBox(height: 20,),
                 passwordInput(),
+                rememberMe(),
                 SizedBox(height: 20,),
                 signInButton(),
+
                 SizedBox(height: 5,),
                 forgotPassword(),
                 SizedBox(height: 20,),
@@ -108,6 +118,24 @@ class _SignInState extends State<SignIn> {
     );
   }
 
+  Widget rememberMe(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("Remember Me"),
+        Checkbox(
+          value: checkBoxValue,
+          onChanged:( bool value){
+            //change remember me value in db
+            setState(() {
+              checkBoxValue=value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   Widget signInButton(){
     return RaisedButton(
       color: Colors.blue,
@@ -116,6 +144,7 @@ class _SignInState extends State<SignIn> {
         if(_formKey.currentState.validate()){
           setState(()=>loading=true);
           dynamic result=await _auth.signInWithEmailAndPassword(emailInputController.text, pwdInputController.text);
+          //update checkbox value
           if(result==null){
             setState(() {
               error='could not sign in with those credentials';
@@ -131,12 +160,13 @@ class _SignInState extends State<SignIn> {
 
   Widget forgotPassword(){
     return RaisedButton(
-        color: Colors.green,
-        child: Text("Forgot Password",style: TextStyle(color: Colors.white),),
-        onPressed: (){
-          Navigator.pushNamed(context, "/forgotPassword");
-        },
-      );
-  }
+      color: Colors.green,
+      child: Text("Forgot Password",style: TextStyle(color: Colors.white),),
+      onPressed: (){
+        Navigator.pushNamed(context, "/forgotPassword");
+      },
+    );
   }
 
+
+}

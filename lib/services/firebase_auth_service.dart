@@ -48,7 +48,7 @@ class AuthService{
 
 
   //Register with email and password
-  Future registerWithEmailAndPassword(String email, String password,String name,String username, String phone) async{
+  Future registerWithEmailAndPassword(String email, String password,String name,String username, String phone,String pin) async{
     List<String> splitList=name.split(" ");
     List<String> indexList=[];
 
@@ -68,15 +68,14 @@ class AuthService{
       }
 
       //create a new document for the new user to save their user Data
-      await FirestoreService(uid: user.uid).setOrUpdateUserData(name, email, username, phone,indexList); //create an instance of the firestore db service (need to pass UID!) and then set the data for the first time
+      bool rememberMe = false;
+      await FirestoreService(uid: user.uid).setOrUpdateUserData(name, email, username, phone,indexList,pin,rememberMe); //create an instance of the firestore db service (need to pass UID!) and then set the data for the first time
       return _userFromFirebaseUser(user); // transform to our custom model
     } catch(e){
       print(e.toString());
       return null;
     }
   }
-
-
 
   //Sign out
   Future signOut() async{

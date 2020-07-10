@@ -4,7 +4,6 @@ import 'package:frequencypay/blocs/profile_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:frequencypay/vaulted_pages/firebase_authentication.dart';
 import 'package:provider/provider.dart';
 
 void main() =>

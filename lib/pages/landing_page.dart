@@ -76,13 +76,13 @@ class _LandingPageState extends State<LandingPage> {
                   },
                 ),
 
-              FlatButton.icon(
-                icon: Icon(Icons.person,color: Colors.grey,),
-                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
-                onPressed: ()  {
-                  Navigator.pushNamed(context, '/loan_request_page');
-                },
-              ),
+                FlatButton.icon(
+                  icon: Icon(Icons.person,color: Colors.grey,),
+                  label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
+                  onPressed: ()  {
+                    Navigator.pushNamed(context, '/loan_request_page');
+                  },
+                ),
 
 
                 //ROW 1
@@ -125,28 +125,28 @@ class _LandingPageState extends State<LandingPage> {
                 Row(children: <Widget>[
                   Expanded(flex: 1, child: Container()),
                   Expanded(
-                    flex: 5,
-                    child: Container(height: 130,
-                        child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            color: blueHighlight,
-                            elevation: 10,
-                            child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(children: <Widget> [
-                            Expanded(flex: 2,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget> [
-                                Expanded(flex: 1, child: Text("Congratulations!", style: TextStyle(fontSize: 18, color: Colors.white))),
-                                Expanded(flex: 2, child: Container()),
-                                Expanded(flex: 1, child: Text("<message>", style: TextStyle(fontSize: 12, color: Colors.white)))
-                              ]
-                            )),
-                            Expanded(flex: 1,
-                            child: Container())
-                          ]),
-                        )))
+                      flex: 5,
+                      child: Container(height: 130,
+                          child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              color: blueHighlight,
+                              elevation: 10,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: <Widget> [
+                                  Expanded(flex: 2,
+                                      child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget> [
+                                            Expanded(flex: 1, child: Text("Congratulations!", style: TextStyle(fontSize: 18, color: Colors.white))),
+                                            Expanded(flex: 2, child: Container()),
+                                            Expanded(flex: 1, child: Text("<message>", style: TextStyle(fontSize: 12, color: Colors.white)))
+                                          ]
+                                      )),
+                                  Expanded(flex: 1,
+                                      child: Container())
+                                ]),
+                              )))
                   ),
                   Expanded(flex: 1, child: Container())
                 ]),
@@ -158,26 +158,26 @@ class _LandingPageState extends State<LandingPage> {
                   children: <Widget>[
                     Expanded(flex: 1, child: Container()),
                     Expanded(
-                      flex: 5,
-                      child: Container(height: 100,
-                        child: Row(children: <Widget> [
-                          Expanded(flex: 1, child: Stack(children: <Widget> [
-                            Align(alignment: Alignment.center, child: SizedBox(width: 90, height: 90, child: CircularProgressIndicator(backgroundColor: Colors.grey[300], ))),
-                            Align(alignment: Alignment.center, child: Text("view\ncontracts", textAlign: TextAlign.center,))
-                          ])),
-                          Expanded(flex: 2, child:
-                          Column(children: <Widget> [
-                            Expanded(flex: 1, child: Text("Your Progress", style: TextStyle(fontSize: 18, color: Colors.grey))),
-                            Expanded(
-                              flex: 1,
-                              child: Column(children: <Widget> [
-                                Text("<x>% of loans paid off"),
-                                Text("<time> until paid in full", style: TextStyle(fontSize: 14, color: Colors.grey))
-                              ])
-                            ),
-                          ]))
-                        ]),
-                      )
+                        flex: 5,
+                        child: Container(height: 100,
+                          child: Row(children: <Widget> [
+                            Expanded(flex: 1, child: Stack(children: <Widget> [
+                              Align(alignment: Alignment.center, child: SizedBox(width: 90, height: 90, child: CircularProgressIndicator(backgroundColor: Colors.grey[300], ))),
+                              Align(alignment: Alignment.center, child: Text("view\ncontracts", textAlign: TextAlign.center,))
+                            ])),
+                            Expanded(flex: 2, child:
+                            Column(children: <Widget> [
+                              Expanded(flex: 1, child: Text("Your Progress", style: TextStyle(fontSize: 18, color: Colors.grey))),
+                              Expanded(
+                                  flex: 1,
+                                  child: Column(children: <Widget> [
+                                    Text("<x>% of loans paid off"),
+                                    Text("<time> until paid in full", style: TextStyle(fontSize: 14, color: Colors.grey))
+                                  ])
+                              ),
+                            ]))
+                          ]),
+                        )
                     ),
                     Expanded(flex: 1, child: Container())
                   ],
@@ -206,7 +206,7 @@ class _LandingPageState extends State<LandingPage> {
             ),
 
           ])
-          ),
+      ),
     );
   }
 

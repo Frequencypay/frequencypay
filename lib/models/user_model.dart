@@ -9,13 +9,17 @@ class UserData{
   final String email;
   final String username;
   final String phoneNumber;
+  final String pin;
+  final bool rememberMe;
 
   UserData({
     this.uid,
     this.name,
     this.email,
     this.username,
-    this.phoneNumber
+    this.phoneNumber,
+    this.pin,
+    this.rememberMe
 });
 }
 

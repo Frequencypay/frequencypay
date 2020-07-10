@@ -23,6 +23,7 @@ class _RegisterState extends State<Register> {
   TextEditingController confirmPwdInputController;
   TextEditingController usernameInputController;
   TextEditingController phoneInputController;
+  TextEditingController pinInputController;
 
   @override
   initState() {
@@ -32,6 +33,7 @@ class _RegisterState extends State<Register> {
     confirmPwdInputController = new TextEditingController();
     usernameInputController = new TextEditingController();
     phoneInputController=new TextEditingController();
+    pinInputController = new TextEditingController();
     super.initState();
   }
 
@@ -74,6 +76,8 @@ class _RegisterState extends State<Register> {
                 userNameInput(),
                 SizedBox(height: 10,),
                 phoneNumberInput(),
+                SizedBox(height: 10,),
+                pinInput(),
                 SizedBox(height: 10,),
                 registerButton(),
                 Text(error,style: TextStyle(color: Colors.red,fontSize: 18),),
@@ -194,7 +198,7 @@ class _RegisterState extends State<Register> {
       onPressed: () async {
         if(_formKey.currentState.validate()){
           loading=true;
-          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text,pwdInputController.text,nameInputController.text,usernameInputController.text,phoneInputController.text);
+          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text,pwdInputController.text,nameInputController.text,usernameInputController.text,phoneInputController.text,pinInputController.text);
           if(result==null){
             setState(() {
               error='Please enter a valid email';
@@ -206,6 +210,21 @@ class _RegisterState extends State<Register> {
         }
       },
     );
+  }
 
+  Widget pinInput(){
+    return TextFormField(
+      controller: pinInputController,
+      decoration: InputDecoration(
+        hintText:"4 Digit Pin",
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+        ),
+      ),
+      validator:(val)=> (val.length>4 || val.length<4) ? 'Enter a 4 digit pin' : null, // More validation will be added later
+    );
   }
 }

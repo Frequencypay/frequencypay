@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   initState() {
     this.getCurrentUser();
     super.initState();
+
   }
 
   //When a bottom navigation bar icon is tapped
@@ -45,9 +46,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       body: bottomNavigationBarOptions.elementAt(selectedBottomNavigationBarIndex),
+
 
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem> [
@@ -75,6 +78,7 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
 
       ),
+
     );
   }
 

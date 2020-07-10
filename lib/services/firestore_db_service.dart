@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/pages/authenticate/wakeup_auth.dart';
+import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
 
 class FirestoreService{
@@ -18,14 +20,22 @@ class FirestoreService{
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
-  Future setOrUpdateUserData(String name, String email,String username, String phone,List indexList ) async{
+  Future setOrUpdateUserData(String name, String email,String username, String phone,List indexList,String pin,bool rememberMe ) async{
     //if document doesn't exist yet, firestore creates one automatically
     return await userDataCollection.document(uid).setData({
       'name':name,
       'email':email,
       'username':username,
       'phone':phone,
-      'searchIndex':indexList
+      'searchIndex':indexList,
+      'PIN':pin,
+      'rememberMe':rememberMe
+    });
+  }
+
+  Future updateRememberMe(bool value) async{
+    return await userDataCollection.document(uid).setData({
+      'rememberMe':value
     });
   }
 
@@ -51,7 +61,9 @@ class FirestoreService{
       name: snapshot.data['name'],
       email: snapshot.data['email'],
       username: snapshot.data['username'],
-      phoneNumber: snapshot.data['phone']
+      phoneNumber: snapshot.data['phone'],
+      pin: snapshot.data['PIN'],
+      rememberMe: snapshot.data['rememberMe'],
     );
   }
 
@@ -79,21 +91,13 @@ class FirestoreService{
   Stream<List<Contract>> get contracts{
     return contractCollection.snapshots().map(_contractListFromSnapshot);
   }
-//userData from snapshot
-  //THIS IS THE FUNCTION THAT TRANSFORMS THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
-  UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
-    return UserData(
-        uid:uid,
-        name: snapshot.data['name'],
-        email: snapshot.data['email'],
-        username: snapshot.data['username'],
-        phoneNumber: snapshot.data['phone']
-    );
-  }
+
+
 
   Stream <QuerySnapshot> get userSearchData{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
+
 
 
 
