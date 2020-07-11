@@ -1,7 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:frequencypay/PLACEHOLDERS/PlaceholderDataService.dart';
-import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserBillsModel.dart';
-import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserContractsModel.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 

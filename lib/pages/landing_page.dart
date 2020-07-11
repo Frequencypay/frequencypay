@@ -213,7 +213,7 @@ class _LandingPageState extends State<LandingPage> {
 
       return SizedBox(width: MediaQuery.of(context).size.width/6);
     }
-    
+
     return CircleAvatar();
   }
 
