@@ -306,8 +306,7 @@ class _LoanRequestState extends State<LoanRequest> {
   void sumbitContract() async{
     AuthService authInstance=new AuthService();
     final user=authInstance.getCurrentUser();
-    //--------------------NEEDS REWORK
-    //await FirestoreService().createContract(requester, loaner, dueDate, numPayments, amount, isActive);
+    await FirestoreService().createContract(currentUser.email, value, dueDateInputController.text, paymentsOf, amount);
   }
 
   void getCurrentUser() async {

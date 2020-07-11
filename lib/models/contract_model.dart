@@ -6,6 +6,8 @@ class Contract {
   final double numPayments;
   final double amount;
   final bool isActive; //status: active or completed
+  final bool isComplete;
+  final bool isPending;
 
   Contract({
     this.requester,
@@ -13,13 +15,14 @@ class Contract {
     this.dueDate,
     this.numPayments,
     this.amount,
-    this.isActive
+    this.isActive,
+    this.isComplete,
+    this.isPending
   });
 
 }
 
 class ContractListModel {
-
   //The contracts
   List<Contract> contracts;
   ContractListModel(List<Contract> this.contracts);

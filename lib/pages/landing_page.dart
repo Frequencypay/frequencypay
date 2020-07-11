@@ -68,14 +68,6 @@ class _LandingPageState extends State<LandingPage> {
                   ],
                 ),
 
-                FlatButton.icon(
-                  icon: Icon(Icons.person,color: Colors.grey,),
-                  label: Text("Get current user data",style: TextStyle(color: Colors.grey),),
-                  onPressed: ()  {
-                    Navigator.pushNamed(context, '/temp_user_data');
-                  },
-                ),
-
               FlatButton.icon(
                 icon: Icon(Icons.person,color: Colors.grey,),
                 label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
@@ -83,6 +75,8 @@ class _LandingPageState extends State<LandingPage> {
                   Navigator.pushNamed(context, '/loan_request_page');
                 },
               ),
+
+
 
 
                 //ROW 1
