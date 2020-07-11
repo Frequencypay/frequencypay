@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
 class UserBillsEvent {
@@ -21,12 +23,12 @@ class UserBillsIsLoadingState extends UserBillsState {
 class UserBillsIsLoadedState extends UserBillsState {
 
   //final _expenses;
-  //final _activeContracts;
+  final _activeContracts;
 
-  //UserBillsIsLoadedState(PlaceholderUserBillsModel this._expenses, PlaceholderUserContractsModel this._activeContracts);
+  UserBillsIsLoadedState(ContractListModel this._activeContracts);
 
   //PlaceholderUserBillsModel get getExpenses => _expenses;
-  //PlaceholderUserContractsModel get getContracts => _activeContracts;
+  ContractListModel get getContracts => _activeContracts;
 }
 
 class UserBillsIsNotLoadedState extends UserBillsState {
@@ -35,9 +37,9 @@ class UserBillsIsNotLoadedState extends UserBillsState {
 
 class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
 
-  //PlaceholderDataService service;
+  FirestoreService _service;
 
-  //UserBillsBloc(PlaceholderDataService service);
+  UserBillsBloc(FirestoreService this._service);
 
   @override
   UserBillsState get initialState => UserBillsIsLoadingState();
@@ -51,8 +53,8 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
       try {
 
         //PlaceholderUserBillsModel userExpenses = await service.getLocalUserBillsModel();
-        //PlaceholderUserContractsModel activeContracts = await service.getLocalUserActiveContractsModel();
-        //yield UserBillsIsLoadedState(userExpenses, activeContracts);
+        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+        yield UserBillsIsLoadedState(activeContracts);
       } catch (_){
 
         print(_);
