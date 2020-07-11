@@ -149,7 +149,7 @@ class FirestoreService{
   }
 
   Stream<List<Contract>> get completeContracts{
-    return contractCollection.where("isActive"==false && "isComplete"==true && "isPending"==false&& "requester"==currentUser.email).snapshots().map(_activeContractListFromSnapshot);
+    return contractCollection.where("isActive"==false && "isComplete"==true && "isPending"==false&& "requester"==currentUser.email || "loaner"==currentUser.email).snapshots().map(_activeContractListFromSnapshot);
   }
 
 
