@@ -13,6 +13,8 @@ class ContractDetails extends StatefulWidget {
 
 class _ContractDetailsState extends State<ContractDetails> {
 
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   _ContractDetailsState();
 
   @override
@@ -32,6 +34,7 @@ class _ContractDetailsState extends State<ContractDetails> {
               SizedBox(height: 10,),
               Row(
                 children: <Widget>[
+                  BackButton(color: blueHighlight),
                   Text("  Your ",
                     style: TextStyle(color: Colors.grey, fontSize: 25),),
                   Text("Contract ",

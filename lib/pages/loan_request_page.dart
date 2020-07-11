@@ -13,6 +13,9 @@ class LoanRequest extends StatefulWidget {
 }
 
 class _LoanRequestState extends State<LoanRequest> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   TextEditingController dueDateInputController;
   FirebaseUser currentUser;
   String value; // lender name (transferred from search screen)
@@ -38,6 +41,7 @@ class _LoanRequestState extends State<LoanRequest> {
               SizedBox(height: 10,),
               Row(
                 children: <Widget>[
+                  BackButton(color: blueHighlight),
                   Text("  Contract ",
                     style: TextStyle(color: Colors.grey, fontSize: 25),),
                   Text("Creation ",
