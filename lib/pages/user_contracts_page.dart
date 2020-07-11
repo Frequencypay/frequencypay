@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_contracts_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
 
@@ -193,7 +194,8 @@ class _UserContractsPageState extends State<UserContractsPage>
         child: InkWell(
           onTap: () {
 
-            print("test");
+            //Transition to viewing the contract details using the contract loaded into this card
+            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
           },
           child: ListTile(
             leading: FlutterLogo(),
@@ -240,7 +242,8 @@ class _UserContractsPageState extends State<UserContractsPage>
         child: InkWell(
           onTap: () {
 
-            print("test");
+            //Transition to viewing the contract details using the contract loaded into this card
+            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
           },
           child: ListTile(
               leading: FlutterLogo(),
@@ -295,14 +298,15 @@ class _UserContractsPageState extends State<UserContractsPage>
         child: InkWell(
           onTap: () {
 
-            print("test");
+            //Transition to viewing the contract details using the contract loaded into this card
+            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
           },
           child: ListTile(
               leading: FlutterLogo(),
               title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
               subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
                 Text("<duration> repayment", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
+                Text(contract.amount.toString() + " from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
               ]),
             trailing: Icon(Icons.priority_high, color: Colors.grey[700]),
           ),

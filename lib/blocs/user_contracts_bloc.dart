@@ -60,8 +60,13 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
         /*ContractListModel completeContracts = await _service.getCompleteUserContracts();
         ContractListModel activeContracts = await _service.getActiveUserContracts();
-        ContractListModel pendingContracts = await _service.getPendingUserContracts();
-        yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);*/
+        ContractListModel pendingContracts = await _service.getPendingUserContracts();*/
+
+        ContractListModel completeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+        ContractListModel pendingContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+
+        yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);
       } catch (_){
 
         print(_);

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 
@@ -114,9 +115,7 @@ class _UserBillsState extends State<UserBills> {
                   label: Text("View Details"),
                   onPressed: (){
                     setPercentComplete(totalAmount, amountPaid);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context)=>ContractDetails(percentComplete: percentComplete)),
-                    );
+                    Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(null));
                   },
                 )
               ],

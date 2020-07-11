@@ -3,6 +3,7 @@ import 'package:frequencypay/pages/authenticate/authenticate.dart';
 import 'package:frequencypay/pages/authenticate/register.dart';
 import 'package:frequencypay/pages/authenticate/sign_in.dart';
 import 'package:frequencypay/pages/authenticate/wrapper.dart';
+import 'package:frequencypay/pages/contract_details.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
 import 'package:frequencypay/pages/authenticate/forgot_password_page.dart';
 import 'package:frequencypay/pages/home_page.dart';
@@ -20,5 +21,6 @@ final routes = {
   '/search_users':(context)=>SearchData(),
   '/loan_request_page':(context)=>LoanRequest(),
   '/temp_user_data':(context)=>new currentUserData(),
+  '/contract_details':(context)=>new ContractDetails()
 
 };
