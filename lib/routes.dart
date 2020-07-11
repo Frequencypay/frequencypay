@@ -19,6 +19,4 @@ final routes = {
   '/forgotPassword': (BuildContext context) => new ForgotPasswordPage(),
   '/search_users':(context)=>SearchData(),
   '/loan_request_page':(context)=>LoanRequest(),
-  '/temp_user_data':(context)=>new currentUserData(),
-
 };
