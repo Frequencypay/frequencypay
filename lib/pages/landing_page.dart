@@ -23,6 +23,9 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   FirebaseUser currentUser;
   final AuthService _auth=AuthService();
 
@@ -31,8 +34,6 @@ class _LandingPageState extends State<LandingPage> {
     //this.getCurrentUser();
     super.initState();
   }
-
-  static const Color blueHighlight = const Color(0xFF3665FF);
 
   LandingBloc createBloc(var context,) {
     final user = Provider.of<User>(context, listen: false);
@@ -191,7 +192,7 @@ class _LandingPageState extends State<LandingPage> {
                   itemCount: 20,
                   scrollDirection: Axis.horizontal,
                   separatorBuilder: (context, index) => SizedBox(width: 5),
-                  itemBuilder: (context, index) => CircleAvatar(),
+                  itemBuilder: (context, index) => buildContactListItem(context, index),
 
                 ))
 
@@ -204,21 +205,16 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget buildActiveContractCard() {
-    return Container(height: 100, child: Card(elevation: 5,child: Row(children: <Widget> [
-      Expanded(flex: 1, child: Container(padding: EdgeInsets.all(10), child: Text("ICON"))),
-      Expanded(
-        flex: 5,
-        child: Column( crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
-          Text("<Bill Issuer>"),
-          Text("<Time Left>"),
-          LinearProgressIndicator(),
-          Align(alignment: Alignment.centerRight, child: Text("<Amount Left>"))
+  //Populates the contact listview
+  Widget buildContactListItem(BuildContext context, int index) {
 
-        ]),
-      ),
-      Expanded( flex: 1, child: Container())
-    ])));
+    //Create some space on the left border
+    if (index == 0) {
+
+      return SizedBox(width: MediaQuery.of(context).size.width/6);
+    }
+    
+    return CircleAvatar();
   }
 
   //KEEP FOR REFERENCE
