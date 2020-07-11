@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_contracts_bloc.dart';
-import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:provider/provider.dart';
 
 class UserContractsPage extends StatefulWidget {
@@ -113,7 +112,7 @@ class _UserContractsPageState extends State<UserContractsPage>
           return ListView.builder(
 
               itemBuilder: (context, index) {
-                return buildCompleteContractCard(index, state.getCompleteContracts.contracts[index]);
+                return ContractCards.buildCompleteContractCard(context, state.getCompleteContracts.contracts[index]);
               },
               itemCount: state.getCompleteContracts.contracts.length,
               shrinkWrap: true);
@@ -121,7 +120,7 @@ class _UserContractsPageState extends State<UserContractsPage>
           return ListView.builder(
 
               itemBuilder: (context, index) {
-                return buildCompleteContractCard(0, null);
+                return ContractCards.buildCompleteContractCard(context, null);
               },
               itemCount: 2,
               shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
@@ -140,7 +139,7 @@ class _UserContractsPageState extends State<UserContractsPage>
             return ListView.builder(
 
                 itemBuilder: (context, index) {
-                  return buildActiveContractCard(index, state.getActiveContracts.contracts[index]);
+                  return ContractCards.buildActiveContractCard(context, state.getActiveContracts.contracts[index]);
                 },
                 itemCount: state.getActiveContracts.contracts.length,
                 shrinkWrap: true);
@@ -148,7 +147,7 @@ class _UserContractsPageState extends State<UserContractsPage>
             return ListView.builder(
 
                 itemBuilder: (context, index) {
-                  return buildActiveContractCard(0, null);
+                  return ContractCards.buildActiveContractCard(context, null);
                 },
                 itemCount: 2,
                 shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
@@ -167,7 +166,7 @@ class _UserContractsPageState extends State<UserContractsPage>
             return ListView.builder(
 
                 itemBuilder: (context, index) {
-                  return buildRepaymentContractCard(index, state.getPendingContracts.contracts[index]);
+                  return ContractCards.buildRepaymentContractCard(context, state.getPendingContracts.contracts[index]);
                 },
                 itemCount: state.getPendingContracts.contracts.length,
                 shrinkWrap: true);
@@ -175,7 +174,7 @@ class _UserContractsPageState extends State<UserContractsPage>
             return ListView.builder(
 
                 itemBuilder: (context, index) {
-                  return buildRepaymentContractCard(0, null);
+                  return ContractCards.buildRepaymentContractCard(context, null);
                 },
                 itemCount: 2,
                 shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
@@ -185,157 +184,5 @@ class _UserContractsPageState extends State<UserContractsPage>
         });
   }
 
-  Widget buildCompleteContractCard(var index, Contract contract) {
-    return Container(
-      height: 100,
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Card(
-        elevation: 5,
-        child: InkWell(
-          onTap: () {
 
-            //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
-          },
-          child: ListTile(
-            leading: FlutterLogo(),
-            title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
-              Text("Paid in full on <date>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-              Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
-            ])
-          ),
-        ),
-      ),
-    );/*Container(
-        height: 100,
-        child: Card(
-            elevation: 5,
-            child: Row(children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.all(10), child: Text("ICON"))),
-              Expanded(
-                flex: 5,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 15),
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-                      SizedBox(height: 2),
-                      Text("Paid in full on <date>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                      SizedBox(height: 2),
-                      Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
-                    ]),
-              ),
-              Expanded(flex: 1, child: Container())
-            ])));*/
-  }
-
-  Widget buildActiveContractCard(var index, Contract contract) {
-    return Container(
-      height: 100,
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Card(
-        elevation: 5,
-        child: InkWell(
-          onTap: () {
-
-            //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
-          },
-          child: ListTile(
-              leading: FlutterLogo(),
-              title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-              subtitle: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 40.0, 0),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
-                  Text("<Time Left>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                  LinearProgressIndicator(),
-                  Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Text("<Amount Left>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600], fontSize: 14)))
-                ]),
-              )
-          ),
-        ),
-      ),
-    );
-    /*return Container(
-        height: 100,
-        child: Card(
-            elevation: 5,
-            child: Row(children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.all(10), child: Text("ICON"))),
-              Expanded(
-                flex: 5,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-                      Text("<Time Left>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                      LinearProgressIndicator(),
-                      Align(
-                          alignment: Alignment.centerRight,
-                          child: Text("<Amount Left>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600], fontSize: 14)))
-                    ]),
-              ),
-              Expanded(flex: 1, child: Container())
-            ])));*/
-  }
-
-  Widget buildRepaymentContractCard(var index, Contract contract) {
-    return Container(
-      height: 100,
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: Card(
-        elevation: 5,
-        child: InkWell(
-          onTap: () {
-
-            //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(contract));
-          },
-          child: ListTile(
-              leading: FlutterLogo(),
-              title: Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
-                Text("<duration> repayment", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                Text(contract.amount.toString() + " from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
-              ]),
-            trailing: Icon(Icons.priority_high, color: Colors.grey[700]),
-          ),
-        ),
-      ),
-    );
-    /*return Container(
-        height: 100,
-        child: Card(
-            elevation: 5,
-            child: Row(children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.all(10), child: Text("ICON"))),
-              Expanded(
-                flex: 5,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 15),
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-                      SizedBox(height: 2),
-                      Text("<duration> repayment", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                      SizedBox(height: 2),
-                      Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
-                    ]),
-              ),
-              Expanded(flex: 1, child: Container())
-            ])));*/
-  }
 }
