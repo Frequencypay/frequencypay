@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
 
-  final HomeNavigationBarIndex bottomNavigationBarIndex = HomeNavigationBarIndex(0);
+  int bottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
   final Auth _auth=Auth(); // instance to correctly sign out
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     setState(() => {
 
       //Set the selected index
-      bottomNavigationBarIndex.value = index
+      bottomNavigationBarIndex = index
     });
   }
 
@@ -49,9 +49,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: Provider<int>(create: (context) => 1,
-          child: bottomNavigationBarOptions.elementAt(bottomNavigationBarIndex.value)
-      ),
+      body: bottomNavigationBarOptions.elementAt(bottomNavigationBarIndex),
 
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem> [
@@ -73,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           )
 
         ],
-        currentIndex: bottomNavigationBarIndex.value,
+        currentIndex: bottomNavigationBarIndex,
         selectedItemColor: blueHighlight,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
@@ -85,10 +83,4 @@ class _HomePageState extends State<HomePage> {
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
-}
-
-//Controls which tab the home screen is on
-class HomeNavigationBarIndex extends ValueNotifier<int> {
-
-  HomeNavigationBarIndex(int value) : super(value);
 }

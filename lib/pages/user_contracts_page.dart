@@ -22,7 +22,7 @@ class _UserContractsPageState extends State<UserContractsPage>
     super.initState();
   }
 
-  UserContractsBloc createBloc(var context,) {
+  UserContractsBloc createBloc(var context) {
     final user = Provider.of<User>(context, listen: false);
 
     UserContractsBloc bloc = UserContractsBloc(FirestoreService(uid: user.uid));
