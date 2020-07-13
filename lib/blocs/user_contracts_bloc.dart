@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
@@ -58,6 +59,9 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
         /*ContractListModel completeContracts = await _service.getCompleteUserContracts();
         ContractListModel activeContracts = await _service.getActiveUserContracts();
         ContractListModel pendingContracts = await _service.getPendingUserContracts();*/
+
+        Stream<UserData> userStream = _service.userData;
+        UserData currentUser = await userStream.first;
 
         ContractListModel completeContracts = ContractListModel(await _service.completeContracts.first);
         ContractListModel activeContracts = ContractListModel(await _service.activeContracts.first);

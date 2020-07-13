@@ -12,9 +12,11 @@ class FirestoreService{
   FirebaseUser currentUser;
   FirestoreService({
     this.uid,
-    this.value,
-    getCurrentUser(),
-  }); // V.I. When we create an instance of this service class, the UID must be passed,
+    this.value
+  }) {
+
+    getCurrentUser();
+  } // V.I. When we create an instance of this service class, the UID must be passed,
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
 
 
@@ -188,6 +190,8 @@ class FirestoreService{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
   void getCurrentUser() async {
+
+    print("USER: " + currentUser.toString());
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
