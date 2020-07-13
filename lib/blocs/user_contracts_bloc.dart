@@ -41,7 +41,7 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
   FirestoreService _service;
 
-  UserContractsBloc(FirestoreService this._service);
+  UserContractsBloc(this._service);
 
   @override
   UserContractsState get initialState => UserContractsIsLoadingState();
@@ -59,14 +59,14 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
         ContractListModel activeContracts = await _service.getActiveUserContracts();
         ContractListModel pendingContracts = await _service.getPendingUserContracts();*/
 
-        ContractListModel completeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
-        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
-        ContractListModel pendingContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+        ContractListModel completeContracts = ContractListModel(await _service.completeContracts.first);
+        ContractListModel activeContracts = ContractListModel(await _service.activeContracts.first);
+        ContractListModel pendingContracts = ContractListModel(await _service.pendingContracts.first);
 
         yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);
       } catch (_){
 
-        print(_);
+        print("Error loading contracts: " + _.toString());
         yield UserContractsIsNotLoadedState();
       }
     }

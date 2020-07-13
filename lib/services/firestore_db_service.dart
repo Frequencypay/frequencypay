@@ -107,7 +107,11 @@ class FirestoreService{
   }
 
   Stream<List<Contract>> get activeContracts{
-    return contractCollection.where("isActive"==true && "isComplete"==false && "isPending"==false&& "requester"==currentUser.email).snapshots().map(_activeContractListFromSnapshot);
+    return contractCollection.where('isActive', isEqualTo: true)
+        .where('isComplete', isEqualTo: false)
+        .where('isPending', isEqualTo: false)
+        .where('requester', isEqualTo: currentUser.email)
+        .snapshots().map(_activeContractListFromSnapshot);
   }
 
   //PENDING contract list from snapshots (retrieves all the pending contracts a user has)
@@ -128,7 +132,11 @@ class FirestoreService{
   }
 
   Stream<List<Contract>> get pendingContracts{
-    return contractCollection.where("isActive"==false && "isComplete"==false && "isPending"==true&& "requester"==currentUser.email).snapshots().map(_activeContractListFromSnapshot);
+    return contractCollection.where('isActive', isEqualTo: false)
+        .where('isComplete', isEqualTo: false)
+        .where('isPending', isEqualTo: true)
+        .where('requester', isEqualTo: currentUser.email)
+        .snapshots().map(_activeContractListFromSnapshot);
   }
 
   //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
@@ -149,7 +157,11 @@ class FirestoreService{
   }
 
   Stream<List<Contract>> get completeContracts{
-    return contractCollection.where("isActive"==false && "isComplete"==true && "isPending"==false&& "requester"==currentUser.email || "loaner"==currentUser.email).snapshots().map(_activeContractListFromSnapshot);
+    return contractCollection.where('isActive', isEqualTo: false)
+        .where('isComplete', isEqualTo: true)
+        .where('isPending', isEqualTo: false)
+        .where('requester', isEqualTo: currentUser.email)
+        .snapshots().map(_activeContractListFromSnapshot);
   }
 
 

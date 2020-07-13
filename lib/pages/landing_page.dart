@@ -211,7 +211,7 @@ class _LandingPageState extends State<LandingPage> {
     //Create some space on the left border
     if (index == 0) {
 
-      return SizedBox(width: MediaQuery.of(context).size.width/6);
+      return SizedBox(width: MediaQuery.of(context).size.width/7);
     }
 
     return CircleAvatar();
