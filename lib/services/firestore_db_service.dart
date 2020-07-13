@@ -116,14 +116,6 @@ class FirestoreService{
     }).toList();
   }
 
-  Stream<List<Contract>> get activeContracts{
-    return contractCollection.where('isActive', isEqualTo: true)
-        .where('isComplete', isEqualTo: false)
-        .where('isPending', isEqualTo: false)
-        .where('requester', isEqualTo: currentUser.email)
-        .snapshots().map(_activeContractListFromSnapshot);
-  }
-
   //PENDING contract list from snapshots (retrieves all the pending contracts a user has)
   //mapped to the custom contract model
   List<Contract> _pendingContractListFromSnapshot(QuerySnapshot snapshot){
@@ -140,24 +132,6 @@ class FirestoreService{
       );
     }).toList();
   }
-
-  /*Stream<List<Contract>> get pendingContracts{
-    Stream<List<Contract>> outboundPendingContractsStream = contractCollection.where('isActive', isEqualTo: false)
-        .where('isComplete', isEqualTo: false)
-        .where('isPending', isEqualTo: true)
-        .where('requester', isEqualTo: currentUser.email)
-        .snapshots().map(_activeContractListFromSnapshot);
-
-    Stream<List<Contract>> inboundPendingContractsStream = contractCollection.where('isActive', isEqualTo: false)
-        .where('isComplete', isEqualTo: false)
-        .where('isPending', isEqualTo: true)
-        .where('loaner', isEqualTo: currentUser.email)
-        .snapshots().map(_activeContractListFromSnapshot);
-
-    List<Contract> outboundPendingContracts = await outboundPendingContractsStream.first;
-
-    return
-  }*/
 
   Stream<List<Contract>> retrieveContracts(ContractSearchQuery query) {
 
@@ -205,14 +179,6 @@ class FirestoreService{
     }).toList();
   }
 
-  Stream<List<Contract>> get completeContracts{
-    return contractCollection.where('isActive', isEqualTo: false)
-        .where('isComplete', isEqualTo: true)
-        .where('isPending', isEqualTo: false)
-        .where('requester', isEqualTo: currentUser.email)
-        .snapshots().map(_activeContractListFromSnapshot);
-  }
-
 
 
   //user search data from snapshot (retrieves specific contract based on UID)
@@ -231,7 +197,6 @@ class FirestoreService{
   }
   void getCurrentUser() async {
 
-    print("USER: " + currentUser.toString());
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
