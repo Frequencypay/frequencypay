@@ -18,6 +18,11 @@ class FirestoreService{
   final CollectionReference contractCollection=Firestore.instance.collection('contracts');
   final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills'); //NOT USED YET
 
+  @override
+  initState() {
+    this.getCurrentUser();
+  }
+
   //CRUD OPERATIONS: CREATE
 
   //Set or Update user data
