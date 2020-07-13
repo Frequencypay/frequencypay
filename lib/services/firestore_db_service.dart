@@ -10,18 +10,20 @@ class FirestoreService{
   final String uid;
   final String value;
   FirebaseUser currentUser;
-  FirestoreService({this.uid,this.value}); // V.I. When we create an instance of this service class, the UID must be passed,
+  FirestoreService({
+    this.uid,
+    this.value,
+    getCurrentUser(),
+  }); // V.I. When we create an instance of this service class, the UID must be passed,
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
+
 
   //collection references (we can have one for each collection)
   final CollectionReference userDataCollection=Firestore.instance.collection('user_data');
   final CollectionReference contractCollection=Firestore.instance.collection('contracts');
   final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills'); //NOT USED YET
 
-  @override
-  initState() {
-    this.getCurrentUser();
-  }
+
 
   //CRUD OPERATIONS: CREATE
 
@@ -185,19 +187,9 @@ class FirestoreService{
   Stream <QuerySnapshot> get userSearchData{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
-
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
 
-
-
-
-
-
-
-
-
-
-
 }
+
