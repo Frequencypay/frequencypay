@@ -64,9 +64,13 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
         Stream<UserData> userStream = _service.userData;
         UserData currentUser = await userStream.first;
 
-        ContractListModel completeContracts = ContractListModel(await _service.completeContracts.first);
-        ContractListModel activeContracts = ContractListModel(await _service.activeContracts.first);
-        ContractListModel pendingContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first);
+        ContractListModel completeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.COMPLETE_CONTRACTS()).first);
+        ContractListModel activeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.ACTIVE_CONTRACTS()).first);
+
+        List<Contract> pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
+        pendingContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS()).first);
+
+        ContractListModel pendingContracts = ContractListModel(pendingContractsList);
 
         yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);
       } catch (_){
