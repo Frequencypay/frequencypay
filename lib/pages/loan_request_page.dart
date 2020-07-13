@@ -6,7 +6,10 @@ import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
 class LoanRequest extends StatefulWidget {
+
+  //The email identifier of the selected user
   String value;
+
   LoanRequest({Key key, @required this.value}) :super(key:key);
   @override
   _LoanRequestState createState() => _LoanRequestState(value);

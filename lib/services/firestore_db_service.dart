@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
+import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
 class FirestoreService{
   final String uid;
@@ -140,12 +141,51 @@ class FirestoreService{
     }).toList();
   }
 
-  Stream<List<Contract>> get pendingContracts{
-    return contractCollection.where('isActive', isEqualTo: false)
+  /*Stream<List<Contract>> get pendingContracts{
+    Stream<List<Contract>> outboundPendingContractsStream = contractCollection.where('isActive', isEqualTo: false)
         .where('isComplete', isEqualTo: false)
         .where('isPending', isEqualTo: true)
         .where('requester', isEqualTo: currentUser.email)
         .snapshots().map(_activeContractListFromSnapshot);
+
+    Stream<List<Contract>> inboundPendingContractsStream = contractCollection.where('isActive', isEqualTo: false)
+        .where('isComplete', isEqualTo: false)
+        .where('isPending', isEqualTo: true)
+        .where('loaner', isEqualTo: currentUser.email)
+        .snapshots().map(_activeContractListFromSnapshot);
+
+    List<Contract> outboundPendingContracts = await outboundPendingContractsStream.first;
+
+    return
+  }*/
+
+  Stream<List<Contract>> retrieveContracts(ContractSearchQuery query) {
+
+    //The resulting stream
+    Stream<List<Contract>> contractsStream;
+
+    //If the requester is required
+    if (query.requirementMode == REQUIREMENT_MODE.REQUESTER) {
+
+      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
+          .where('isComplete', isEqualTo: query.isComplete)
+          .where('isPending', isEqualTo: query.isPending)
+          .where('requester', isEqualTo: currentUser.email)
+          .snapshots().map(_activeContractListFromSnapshot);
+    }
+
+    //Assume loaner required otherwise
+    else {
+
+      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
+          .where('isComplete', isEqualTo: query.isComplete)
+          .where('isPending', isEqualTo: query.isPending)
+          .where('loaner', isEqualTo: currentUser.email)
+          .snapshots().map(_activeContractListFromSnapshot);
+    }
+
+    //Return the resulting contract stream
+    return contractsStream;
   }
 
   //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
 //Events
 class UserContractsEvent {
@@ -65,7 +66,7 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
         ContractListModel completeContracts = ContractListModel(await _service.completeContracts.first);
         ContractListModel activeContracts = ContractListModel(await _service.activeContracts.first);
-        ContractListModel pendingContracts = ContractListModel(await _service.pendingContracts.first);
+        ContractListModel pendingContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first);
 
         yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);
       } catch (_){
