@@ -10,7 +10,6 @@ import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
 import 'package:frequencypay/vaulted_pages/search_results.dart';
 import 'package:frequencypay/pages/search_users.dart';
-import 'package:frequencypay/pages/temp_user_data.dart';
 import 'pages/authenticate/wrapper.dart';
 
 final routes = {

@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/pages/profile_page.dart';
-import 'package:frequencypay/pages/user_bills_page.dart';
-import 'package:frequencypay/pages/user_contracts_page.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
-import '../vaulted_pages/firebase_authentication.dart';
-import 'landing_page.dart';
-import 'loan_request_page.dart';
-import 'package:frequencypay/pages/temp_user_data.dart';
 
 class LandingPage extends StatefulWidget {
   final String uid;
