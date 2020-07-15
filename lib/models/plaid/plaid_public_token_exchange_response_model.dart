@@ -1,23 +1,26 @@
-class PlaidPublicTokenExchangeResponseModel {
-  String access_token;
-  String item_id;
-  String request_id;
+import 'package:equatable/equatable.dart';
 
-  PlaidPublicTokenExchangeResponseModel({this.access_token, this.item_id, this.request_id});
+class PlaidPublicTokenExchangeResponseModel extends Equatable {
+  final String accessToken;
+  final String itemID;
+  final String requestID;
 
-  factory PlaidPublicTokenExchangeResponseModel.fromJson(Map<String, dynamic> json) {
+  const PlaidPublicTokenExchangeResponseModel({this.accessToken, this.itemID, this.requestID});
+
+  
+  @override
+  List<Object> get props => [
+    accessToken,
+    itemID,
+    requestID,
+  ];
+  
+  static PlaidPublicTokenExchangeResponseModel fromJson(Map<String, dynamic> json) {
     return PlaidPublicTokenExchangeResponseModel(
-      access_token: json['access_token'],
-      item_id: json['item_id'],
-      request_id: json['request_id'],
+      accessToken: json['access_token'],
+      itemID: json['item_id'],
+      requestID: json['request_id'],
     );
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['access_token'] = this.access_token;
-    data['item_id'] = this.item_id;
-    data['request_id'] = this.request_id;
-    return data;
-  }
+  
 }

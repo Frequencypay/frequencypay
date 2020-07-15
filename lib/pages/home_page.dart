@@ -6,7 +6,6 @@ import 'package:frequencypay/pages/user_contracts_page.dart';
 
 import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
-import 'loan_request_page.dart';
 
 class HomePage extends StatefulWidget {
   final String uid; //include this
@@ -18,14 +17,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   static const Color blueHighlight = const Color(0xFF3665FF);
 
-  static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
+  static List<Widget> bottomNavigationBarOptions = <Widget>[
+    LandingPage(),
+    UserContractsPage(),
+    ProfileScreen(),
+    UserBills()
+  ];
   int selectedBottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
-  final Auth _auth=Auth(); // instance to correctly sign out
+//  final Auth _auth = Auth(); // instance to correctly sign out
 
   @override
   initState() {
@@ -35,45 +38,36 @@ class _HomePageState extends State<HomePage> {
 
   //When a bottom navigation bar icon is tapped
   void _onItemTapped(int index) {
-
     setState(() => {
-
-      //Set the selected index
-      selectedBottomNavigationBarIndex = index
-    });
+          //Set the selected index
+          selectedBottomNavigationBarIndex = index
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: bottomNavigationBarOptions.elementAt(selectedBottomNavigationBarIndex),
-
+      body: bottomNavigationBarOptions
+          .elementAt(selectedBottomNavigationBarIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem> [
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Padding(padding: EdgeInsets.all(0))
-          ),
+              title: Padding(padding: EdgeInsets.all(0))),
           BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),
-              title: Padding(padding: EdgeInsets.all(0))
-          ),
+              title: Padding(padding: EdgeInsets.all(0))),
           BottomNavigationBarItem(
               icon: Icon(Icons.inbox),
-              title: Padding(padding: EdgeInsets.all(0))
-          ),
+              title: Padding(padding: EdgeInsets.all(0))),
           BottomNavigationBarItem(
               icon: Icon(Icons.account_box),
-              title: Padding(padding: EdgeInsets.all(0))
-          )
-
+              title: Padding(padding: EdgeInsets.all(0)))
         ],
         currentIndex: selectedBottomNavigationBarIndex,
         selectedItemColor: blueHighlight,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-
       ),
     );
   }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:frequencypay/pages/home_page.dart';
-import 'package:frequencypay/pages/landing_page.dart';
 
-import '../pages/authenticate/loading.dart';
 
 class LoginPage extends StatefulWidget {
   //LoginPage({Key key}) : super(key: key);
@@ -130,12 +127,9 @@ class _LoginPageState extends State<LoginPage> {
                 .document(currentUser.user.uid)
                 .get()
                 .then((DocumentSnapshot result) =>
-                Navigator.pushReplacement(
+                Navigator.pushReplacementNamed(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => HomePage(
-                          uid: currentUser.user.uid,
-                        ))))
+                    '/home'))
                 .catchError((err) => print(err)))
                 .catchError((err) => print(err));
           }

@@ -1,8 +1,29 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+//class PlaidLinkScreen extends StatefulWidget{
+//  @override
+//  State<PlaidLinkScreen> createState() => _PlaidLinkScreenState();
+//}
+//
+//class _PlaidLinkScreenState extends State<PlaidLinkScreen>{
+//  final TextEditingController _linkToken = TextEditingController();
+//
+//
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    PlaidLink _plaidLink = PlaidLink();
+//    return _plaidLink.launch(context, (result)  {
+//      result.token;
+//      _linkToken.text = result.token;
+//
+////        Navigator.pop(context, _linkToken.text);
+//    },);
+//  }
+//}
+
 
 class PlaidLink {
   Configuration _configuration;
@@ -40,7 +61,7 @@ class PlaidLink {
 
 class _WebViewPage {
   String _url;
-  Function(Result result) _success;
+  Function(Result) _success;
   Configuration _config;
   BuildContext _context;
 
@@ -83,13 +104,14 @@ class _WebViewPage {
       if (eventName == 'EXIT' || (url?.contains('/exit?') ?? false)) {
         this._closeWebView();
       }
-      else if (eventName == 'HANDOFF') {
+      else if (eventName == 'HANDOFF' || eventName == "unknown") {
         this._closeWebView();
       }
       dynamic token = queryParams['public_token'];
       dynamic accountId = queryParams['account_id'];
       if (token != null && accountId != null) {
           this._success(Result(token, accountId, queryParams));
+
       }
     }
   }

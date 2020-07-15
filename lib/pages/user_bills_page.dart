@@ -10,20 +10,36 @@ class UserBills extends StatefulWidget {
 
 class _UserBillsState extends State<UserBills> {
   double percentComplete;
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: RichText(
+          text: new TextSpan(
+            // Note: Styles for TextSpans must be explicitly defined.
+            // Child text spans will inherit styles from parent
+            style: new TextStyle(
+              fontSize: 25.0,
+              color: Colors.black45,
+            ),
+            children: <TextSpan>[
+              new TextSpan(text: 'Your '),
+              new TextSpan(
+                  text: 'Bills',
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, color: blueHighlight)),
+            ],
+          ),
+        ),centerTitle: false,
+        backgroundColor: Colors.white10,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 10,),
-              Row(
-                children: <Widget>[
-                  Text("  Your ",style: TextStyle(color: Colors.grey, fontSize: 30),),
-                  Text("Bills ",style: TextStyle(color: Colors.blue, fontSize: 30),),
-                ],
-              ),
 
               SizedBox(height: 20,),
               Row(

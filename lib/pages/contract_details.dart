@@ -13,10 +13,13 @@ class _ContractDetailsState extends State<ContractDetails> {
   double percentComplete;
 
   _ContractDetailsState(this.percentComplete);
-
+//  String contract(){
+//    Text('Contract', style: TextStyle(color: Colors.blue, fontSize: 25),);
+//  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+//      appBar: AppBar(title: Text('Your' + contract()),),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(

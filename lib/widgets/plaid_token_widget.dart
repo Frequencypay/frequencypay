@@ -1,111 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frequencypay/blocs/plaid/bloc.dart';
+import 'package:frequencypay/blocs/plaid/plaid_blocs.dart';
+import 'package:frequencypay/plaid_link/plaid_link_webview.dart';
+
 import 'package:frequencypay/blocs/profile_bloc.dart';
-import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:provider/provider.dart';
 
-void main() => runApp(MaterialApp(
-      home: ProfileScreen(),
-    ));
 
-class ProfileScreen extends StatefulWidget {
-  @override
-  _ProfileScreenState createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  String plaidText = "";
-  static const Color blueHighlight = const Color(0xFF3665FF);
-
-  ProfileBloc createBloc(
-    var context,
-  ) {
-    final user = Provider.of<User>(context, listen: false);
-
-    ProfileBloc bloc = ProfileBloc(FirestoreService(uid: user.uid));
-
-    bloc.add(LoadProfileEvent());
-
-    return bloc;
-  }
+class Plaidtoken extends StatelessWidget {
+  PlaidLink plaidLink = PlaidLink();
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => createBloc(context),
-      child: Scaffold(
-          appBar: AppBar(
-            title: RichText(
-              text: new TextSpan(
-                // Note: Styles for TextSpans must be explicitly defined.
-                // Child text spans will inherit styles from parent
-                style: new TextStyle(
-                  fontSize: 25.0,
-                  color: Colors.black45,
-                ),
-                children: <TextSpan>[
-                  new TextSpan(text: 'Your '),
-                  new TextSpan(
-                      text: 'Profile',
-                      style: new TextStyle(
-                          fontWeight: FontWeight.bold, color: blueHighlight)),
-                ],
-              ),
-            ),centerTitle: false,
-            backgroundColor: Colors.white10,
-            elevation: 0,
-          ),
-          body: ListView(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                child: profileImg(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                child: profileInfo(),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Text(
-                "Confidence Rating",
-                style: TextStyle(color: Colors.black54, fontSize: 20),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: getConfidenceRating(),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                child: getMailandPhone(),
-              ),
-              RaisedButton(
-                child: Text(
-                  "Edit",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                color: Colors.grey,
-                onPressed: () {},
-              ),
-//              RaisedButton(
-//                child: Text("Plaid"),
-//                color: Colors.blue,
-//                onPressed: showPlaidView,
-//              ),
-              SelectableText(plaidText),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Plaid'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () async {
+              await plaidLink.launch(context, (result) {
+                if(result.token != null){
+                  BlocProvider.of<PlaidBloc>(context).add(TokenRequested(publicToken: result.token));
+                }
+              });
+            },
+          )
         ],
-      )),
+      ),
+      body: Center(
+        child: BlocBuilder<PlaidBloc, PlaidState>(
+          builder: (context, state) {
+            if (state is PlaidInitial) {
+              return Center(
+                child: Text('Enter Plaid'),
+              );
+            }
+            if (state is PlaidLoadInProgress) {
+              return Center(child: CircularProgressIndicator());
+            }
+            if (state is PlaidLoadSuccess) {
+              final token = state.plaidPublicTokenExchangeResponseModel;
+              FlutterSecureStorage _storage = FlutterSecureStorage();
+              _storage.write(key: 'access_token', value: token.accessToken);
+
+              return ListView(
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+
+
+//                     SelectableText(plaidText),
+                      Text(token.accessToken),
+                    ],
+                  ),
+                ],
+              );
+            }
+            if (state is PlaidLoadFailure) {
+              return Text(
+                'Failure: Plaid did not return token',
+                style: TextStyle(color: Colors.red),
+              );
+            }
+            return CircularProgressIndicator();
+          },
+        ),
+      ),
     );
   }
 
@@ -273,26 +235,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ],
     );
   }
-
-//  showPlaidView() {
-//    String clientID = "5cb68305fede9b00136aebb1";
-//    String secret = "54621c4436011f708c7916587c6fa8";
-//
-//    PlaidLink plaidLink = PlaidLink();
-//    plaidLink.launch(context, (Result result) {
-//      getAccessToken(result.token);
-//    });
-//  }
-//
-//  getAccessToken(publicToken) async {
-//    PlaidPublicTokenExchangeResponseModel accessTokenModel;
-//
-//    PlaidRepository plaid = PlaidRepository();
-//    plaid.signInWithCredentials(publicToken).then((value) {
-//      setState(() {
-//        plaidText = value.accessToken;
-//      });
-//    });
-//    plaidText = accessTokenModel.accessToken;
-//  }
 }

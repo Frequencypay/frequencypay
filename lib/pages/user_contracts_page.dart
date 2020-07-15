@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:provider/provider.dart';
+
 
 class UserContractsPage extends StatefulWidget {
   @override
@@ -23,71 +22,63 @@ class _UserContractsPageState extends State<UserContractsPage>
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-          body: Column(
-        children: <Widget>[
-          SizedBox(height: 20),
-          Expanded(
-            flex: 1,
-            child: Row(
-              children: <Widget>[
-                Expanded(flex: 1, child: Container()),
-                Expanded(
-                  flex: 8,
-                  child: Container(
-                    child: RichText(
-                        text: TextSpan(
-                            style: TextStyle(
-                                fontFamily: 'Leelawadee UI', fontSize: 25),
-                            children: <TextSpan>[
-                          TextSpan(
-                              text: "Your ",
-                              style: TextStyle(color: Colors.black45)),
-                          TextSpan(
-                              text: "Contracts",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: blueHighlight))
-                        ])),
-                  ),
+          appBar: AppBar(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: new TextStyle(
+                  fontSize: 25.0,
+                  color: Colors.black45,
                 ),
-              ],
-            ),
-          ),
-          SizedBox(height: 15),
-          Expanded(
-            flex: 2,
-            child: TabBar(
-                labelStyle: TextStyle(
-                    fontFamily: 'Leelawadee UI',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold),
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black45,
-                tabs: <Widget>[
-                  Tab(text: "COMPLETE"),
-                  Tab(text: "ACTIVE"),
-                  Tab(text: "PENDING")
-                ]),
-          ),
-          SizedBox(height: 20),
-          Expanded(
-              flex: 20,
-              child: TabBarView(
-                children: <Widget>[
-                  buildCompleteContractList(),
-                  buildActiveContractList(),
-                  buildRepaymentContractList()
+                children: <TextSpan>[
+                  new TextSpan(text: 'Your '),
+                  new TextSpan(
+                      text: 'Contracts',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, color: blueHighlight)),
                 ],
-              ))
-        ],
-      )),
+              ),
+            ),centerTitle: false,
+            backgroundColor: Colors.white10,
+            elevation: 0,
+          ),
+          body: Column(
+            children: <Widget>[
+              SizedBox(height: 15),
+              Expanded(
+                flex: 2,
+                child: TabBar(
+                    labelStyle: TextStyle(
+                        fontFamily: 'Leelawadee UI',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.black45,
+                    tabs: <Widget>[
+                      Tab(text: "COMPLETE"),
+                      Tab(text: "ACTIVE"),
+                      Tab(text: "PENDING")
+                    ]),
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                  flex: 20,
+                  child: TabBarView(
+                    children: <Widget>[
+                      buildCompleteContractList(),
+                      buildActiveContractList(),
+                      buildRepaymentContractList()
+                    ],
+                  ))
+            ],
+          )),
     );
   }
 
   //Each of these need to retrieve the contracts and build the widgets for the list
   //(ListView.builder is the way to implement)
   Widget buildCompleteContractList() {
-
     return ListView(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         children: <Widget>[
@@ -130,11 +121,19 @@ class _UserContractsPageState extends State<UserContractsPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(height: 15),
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
+                      Text("<Bill Issuer>",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                              fontSize: 16)),
                       SizedBox(height: 2),
-                      Text("Paid in full on <date>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                      Text("Paid in full on <date>",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14)),
                       SizedBox(height: 2),
-                      Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
+                      Text("<amount> from <name>",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14))
                     ]),
               ),
               Expanded(flex: 1, child: Container())
@@ -156,12 +155,22 @@ class _UserContractsPageState extends State<UserContractsPage>
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
-                      Text("<Time Left>", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                      Text("<Bill Issuer>",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                              fontSize: 16)),
+                      Text("<Time Left>",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14)),
                       LinearProgressIndicator(),
                       Align(
                           alignment: Alignment.centerRight,
-                          child: Text("<Amount Left>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[600], fontSize: 14)))
+                          child: Text("<Amount Left>",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                  fontSize: 14)))
                     ]),
               ),
               Expanded(flex: 1, child: Container())
@@ -184,11 +193,19 @@ class _UserContractsPageState extends State<UserContractsPage>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       SizedBox(height: 15),
-                      Text("<Bill Issuer>", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey[700], fontSize: 16)),
+                      Text("<Bill Issuer>",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                              fontSize: 16)),
                       SizedBox(height: 2),
-                      Text("<duration> repayment", style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                      Text("<duration> repayment",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14)),
                       SizedBox(height: 2),
-                      Text("<amount> from <name>", style: TextStyle(color: Colors.grey[600], fontSize: 14))
+                      Text("<amount> from <name>",
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 14))
                     ]),
               ),
               Expanded(flex: 1, child: Container())
