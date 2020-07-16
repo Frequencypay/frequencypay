@@ -3,6 +3,8 @@
   as well as several presets to avoid dependencies in many
  */
 
+import 'package:frequencypay/models/contract_model.dart';
+
 enum REQUIREMENT_MODE {
 
   REQUESTER,
@@ -11,27 +13,23 @@ enum REQUIREMENT_MODE {
 
 class ContractSearchQuery {
 
-  bool isComplete;
-  bool isActive;
-  bool isPending;
+  CONTRACT_STATE state;
 
   REQUIREMENT_MODE requirementMode;
 
   //Standard constructor
-  ContractSearchQuery._(bool isComplete, bool isActive, bool isPending, REQUIREMENT_MODE requirementMode) {
+  ContractSearchQuery._(CONTRACT_STATE state, REQUIREMENT_MODE requirementMode) {
 
-    this.isComplete = isComplete;
-    this.isActive = isActive;
-    this.isPending = isPending;
+    this.state = state;
     this.requirementMode = requirementMode;
   }
 
   //Preset constructors
-  ContractSearchQuery.COMPLETE_CONTRACTS() : this._(true, false, false, REQUIREMENT_MODE.REQUESTER);
+  ContractSearchQuery.COMPLETE_CONTRACTS() : this._(CONTRACT_STATE.COMPLETED_CONTRACT, REQUIREMENT_MODE.REQUESTER);
 
-  ContractSearchQuery.ACTIVE_CONTRACTS() : this._(false, true, false, REQUIREMENT_MODE.REQUESTER);
+  ContractSearchQuery.ACTIVE_CONTRACTS() : this._(CONTRACT_STATE.ACTIVE_CONTRACT, REQUIREMENT_MODE.REQUESTER);
 
-  ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS() : this._(false, false, true, REQUIREMENT_MODE.REQUESTER);
+  ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS() : this._(CONTRACT_STATE.OPEN_REQUEST, REQUIREMENT_MODE.REQUESTER);
 
-  ContractSearchQuery.INBOUND_PENDING_CONTRACTS() : this._(false, false, true, REQUIREMENT_MODE.LOANER);
+  ContractSearchQuery.INBOUND_PENDING_CONTRACTS() : this._(CONTRACT_STATE.OPEN_REQUEST, REQUIREMENT_MODE.LOANER);
 }

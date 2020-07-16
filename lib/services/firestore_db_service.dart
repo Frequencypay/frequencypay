@@ -1,6 +1,7 @@
 // Service class containing all Firestore operations
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
@@ -56,9 +57,7 @@ class FirestoreService{
       'dueDate':dueDate,
       'numPayments':numPayments,
       'amount':amount,
-      'isActive': false,
-      'isPending':true,
-      'isComplete':false,
+      'state':CONTRACT_STATE.OPEN_REQUEST.toString()
     });
   }
 
@@ -98,9 +97,7 @@ class FirestoreService{
     return Contract(
       amount: snapshot.data['amount'],
       dueDate: snapshot.data['dueDate'],
-      isActive: snapshot.data['isActive'],
-      isComplete: snapshot.data['isComplete'],
-      isPending: snapshot.data['isPending'],
+      state: snapshot.data['state'],
       loaner: snapshot.data['loaner'],
       numPayments: snapshot.data['numPayments'],
       requester: snapshot.data['requester'],
@@ -118,9 +115,7 @@ class FirestoreService{
       return Contract(
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
+        state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
@@ -137,12 +132,29 @@ class FirestoreService{
       return Contract(
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
+        state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
+        requesterName: doc.data['requesterName']
+      );
+    }).toList();
+  }
+
+  //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
+  //mapped to the custom contract model
+  List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc) { //perform an action for each document
+      return Contract(
+        amount: doc.data['amount'],
+        dueDate: doc.data['dueData'],
+        state: contractStateFromString(doc.data['state']),
+        loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
+        numPayments: doc.data['numPayments'],
+        requester: doc.data['requester'],
+        requesterName: doc.data['requesterName'],
       );
     }).toList();
   }
@@ -154,46 +166,23 @@ class FirestoreService{
 
     //If the requester is required
     if (query.requirementMode == REQUIREMENT_MODE.REQUESTER) {
-
-      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
-          .where('isComplete', isEqualTo: query.isComplete)
-          .where('isPending', isEqualTo: query.isPending)
-          .where('requester', isEqualTo: currentUser.uid)
-          .snapshots().map(_activeContractListFromSnapshot);
+      contractsStream =
+          contractCollection.where('state', isEqualTo: query.state.toString())
+              .where('requester', isEqualTo: currentUser.uid)
+              .snapshots().map(_activeContractListFromSnapshot);
     }
 
     //Assume loaner required otherwise
     else {
-
-      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
-          .where('isComplete', isEqualTo: query.isComplete)
-          .where('isPending', isEqualTo: query.isPending)
-          .where('loaner', isEqualTo: currentUser.uid)
-          .snapshots().map(_activeContractListFromSnapshot);
+      contractsStream =
+          contractCollection.where('state', isEqualTo: query.state.toString())
+              .where('loaner', isEqualTo: currentUser.uid)
+              .snapshots().map(_activeContractListFromSnapshot);
     }
 
     //Return the resulting contract stream
     return contractsStream;
   }
-
-  //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
-  //mapped to the custom contract model
-  List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc) { //perform an action for each document
-      return Contract(
-        amount: doc.data['amount'],
-        dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
-        loaner: doc.data['loaner'],
-        numPayments: doc.data['numPayments'],
-        requester: doc.data['requester'],
-      );
-    }).toList();
-  }
-
-
 
   //user search data from snapshot (retrieves specific contract based on UID)
   UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
