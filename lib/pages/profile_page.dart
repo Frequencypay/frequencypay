@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/profile_bloc.dart';
@@ -6,6 +9,9 @@ import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/vaulted_pages/firebase_authentication.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart';
 
 void main() => runApp(MaterialApp(
       home: ProfileScreen(),
@@ -17,6 +23,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  File _image;
   ProfileBloc createBloc(
     var context,
   ) {
@@ -31,6 +38,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    Future getImage() async{
+      var image= await ImagePicker.pickImage(source: ImageSource.gallery);
+      setState(() {
+        _image=image;
+      });
+    }
+
+    Future uploadPic(BuildContext context) async{
+      String filename=basename(_image.path);
+      StorageReference firebaseStorageRef=FirebaseStorage.instance.ref().child(filename);
+      StorageUploadTask uploadTask=firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
+      setState(() {
+        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Profile Picture Uploaded"),));
+      });
+
+    }
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
@@ -59,7 +84,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 height: 30,
               ),
               Container(
-                child: profileImg(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+
+                    CircleAvatar(
+                        radius: 60,
+                        backgroundColor: Color(0xff476cfb),
+                        child: ClipOval(
+                          child: SizedBox(
+                            width: 180.0,
+                            height: 180.0 ,
+                            child:(_image !=null)?Image.file(_image,fit:BoxFit.fill):Icon(Icons.person,size: 80.0,) ,
+                          ),
+                        )
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top:60.0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.camera_alt,
+                          size: 30.0,
+                        ),
+                        onPressed: (){
+                          getImage();
+                        },
+                      ),
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(top:60.0),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.check,
+                          size: 30.0,
+                        ),
+                        onPressed: (){
+                          uploadPic(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
               ),
               SizedBox(
                 height: 10,
@@ -102,9 +169,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget profileImg() {
-    return CircleAvatar(
-      child: Text("loaded from DB"),
-      radius: 60,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+
+        CircleAvatar(
+          radius: 60,
+          backgroundColor: Color(0xff476cfb),
+          child: ClipOval(
+            child: SizedBox(
+              width: 180.0,
+              height: 180.0 ,
+              child:(_image !=null)?Image.file(_image,fit:BoxFit.fill):Icon(Icons.person,size: 80.0,) ,
+            ),
+          )
+        ),
+
+        Padding(
+          padding: EdgeInsets.only(top:60.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.camera_alt,
+              size: 30.0,
+            ),
+            onPressed: (){
+              //getImage();
+            },
+          ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.only(top:60.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.check,
+              size: 30.0,
+            ),
+            onPressed: (){
+              //uploadPic(context);
+            },
+          ),
+        )
+      ],
     );
   } // end profileImg
 
