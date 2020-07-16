@@ -47,10 +47,12 @@ class FirestoreService{
 
   //Create a contract object in the database
   //This function is called whenever a loan request is submitted
-  Future createContract(String requester, String loaner, String dueDate, double numPayments, double amount) async{
+  Future createContract(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
     return await contractCollection.document(uid).setData({
       'requester':requester,
       'loaner':loaner,
+      'requesterName':requesterName,
+      'loanerName':loanerName,
       'dueDate':dueDate,
       'numPayments':numPayments,
       'amount':amount,
@@ -60,13 +62,19 @@ class FirestoreService{
     });
   }
 
+  //Returns an arbitrary user based on the given uid
+  Stream<UserData> retrieveUser(String uid) {
+
+    return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
   //CRUD OPERATION: READ
 
   //userData from snapshot
   //THIS IS THE FUNCTION THAT TRANSFORMS (WITH THE HELP OF THE STREAM) THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
-      uid:uid,
+      uid:snapshot.documentID,
       fname: snapshot.data['fname'],
       lname: snapshot.data['lname'],
       email: snapshot.data['email'],
@@ -114,8 +122,10 @@ class FirestoreService{
         isComplete: doc.data['isComplete'],
         isPending: doc.data['isPending'],
         loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
+        requesterName: doc.data['requesterName']
       );
     }).toList();
   }
@@ -148,7 +158,7 @@ class FirestoreService{
       contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
           .where('isComplete', isEqualTo: query.isComplete)
           .where('isPending', isEqualTo: query.isPending)
-          .where('requester', isEqualTo: currentUser.email)
+          .where('requester', isEqualTo: currentUser.uid)
           .snapshots().map(_activeContractListFromSnapshot);
     }
 
@@ -158,7 +168,7 @@ class FirestoreService{
       contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
           .where('isComplete', isEqualTo: query.isComplete)
           .where('isPending', isEqualTo: query.isPending)
-          .where('loaner', isEqualTo: currentUser.email)
+          .where('loaner', isEqualTo: currentUser.uid)
           .snapshots().map(_activeContractListFromSnapshot);
     }
 

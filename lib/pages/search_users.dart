@@ -106,9 +106,12 @@ class _SearchDataState extends State<SearchData> {
                                       RaisedButton(
                                         child: Text("Select",style: TextStyle(color: Colors.white),),
                                         onPressed: (){
-                                          Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (context)=>LoanRequest(value: document['email'],),
-                                          ));
+
+                                          Navigator.pop(context, document.documentID);
+
+                                          /*Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context)=>LoanRequest(value: document['uid'],),
+                                          ));*/
                                         },
                                         color: Colors.blue,
                                       )

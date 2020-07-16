@@ -2,27 +2,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frequencypay/blocs/loan_request_bloc.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:provider/provider.dart';
 
 class LoanRequest extends StatefulWidget {
 
-  //The email identifier of the selected user
-  String value;
-
-  LoanRequest({Key key, @required this.value}) :super(key:key);
+  LoanRequest({Key key}) :super(key:key);
   @override
-  _LoanRequestState createState() => _LoanRequestState(value);
+  _LoanRequestState createState() => _LoanRequestState();
 }
 
 class _LoanRequestState extends State<LoanRequest> {
 
   static const Color blueHighlight = const Color(0xFF3665FF);
 
+  LoanRequestBloc bloc;
+
   TextEditingController dueDateInputController;
   FirebaseUser currentUser;
-  String value; // lender name (transferred from search screen)
-  _LoanRequestState(this.value);
+  _LoanRequestState();
   double amount=0;
   double paymentsOf=0;
   int weeks=0;
@@ -31,51 +33,66 @@ class _LoanRequestState extends State<LoanRequest> {
   @override
   initState() {
     dueDateInputController = new TextEditingController();
-      this.getCurrentUser();
-      super.initState();
+
+    this.getCurrentUser();
+    super.initState();
   }
+
+  LoanRequestBloc createBloc(var context,) {
+    final user = Provider.of<User>(context, listen: false);
+
+    bloc = LoanRequestBloc(FirestoreService(uid: user.uid));
+
+    bloc.add(LoadLoanRequestEvent());
+
+    return bloc;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 10,),
-              Row(
-                children: <Widget>[
-                  BackButton(color: blueHighlight),
-                  Text("  Contract ",
-                    style: TextStyle(color: Colors.grey, fontSize: 25),),
-                  Text("Creation ",
-                    style: TextStyle(color: Colors.blue, fontSize: 25),),
-                ],
-              ),
-              SizedBox(height: 20,),
-              getBillIssuer(),
-              SizedBox(height: 25,),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: selectLender(),
-                  ),
+    return BlocProvider(
+      create: (context) => createBloc(context),
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: SafeArea(
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 10,),
+                Row(
+                  children: <Widget>[
+                    BackButton(color: blueHighlight),
+                    Text("  Contract ",
+                      style: TextStyle(color: Colors.grey, fontSize: 25),),
+                    Text("Creation ",
+                      style: TextStyle(color: Colors.blue, fontSize: 25),),
+                  ],
+                ),
+                SizedBox(height: 20,),
+                getBillIssuer(),
+                SizedBox(height: 25,),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: selectLender(),
+                    ),
 
-                  Expanded(
-                    flex: 2,
-                    child: getDueDate(),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20,),
-              specifyBillAmt(),
-              SizedBox(height: 20,),
-              specifyRepaymentTerms(),
-              SizedBox(height: 20,),
-              specifyRepaymentMethod(),
-              SizedBox(height: 20,),
-              submitButton(),
-            ],
+                    Expanded(
+                      flex: 2,
+                      child: getDueDate(),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20,),
+                specifyBillAmt(),
+                SizedBox(height: 20,),
+                specifyRepaymentTerms(),
+                SizedBox(height: 20,),
+                specifyRepaymentMethod(),
+                SizedBox(height: 20,),
+                submitButton(),
+              ],
+            ),
           ),
         ),
       ),
@@ -96,21 +113,73 @@ class _LoanRequestState extends State<LoanRequest> {
     );
   }
 
-  Widget selectLender(){
-    return Column(
-      children: <Widget>[
-        SizedBox(height: 13,),
-        Text("Select Lender",style: TextStyle(fontSize: 20,color: Colors.blue),),
-        Text("Lender: $value",style: TextStyle(fontSize: 12,color: Colors.grey),),
-        FlatButton.icon(
-          icon: Icon(Icons.add_circle_outline,color: Colors.green,size: 40,),
-          onPressed: (){
-            Navigator.pushNamed(context, '/search_users');
-          },
-          label: Text(""),
-        )
-      ],
-    );
+  Widget selectLender() {
+    return BlocBuilder<LoanRequestBloc, LoanRequestState>(
+        builder: (context, state) {
+          if (state is LoanRequestIsLoadedState) {
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 13,),
+                Text("Select Lender",
+                  style: TextStyle(fontSize: 20, color: Colors.blue),),
+                Text("Lender: " + ((state.getLender == null) ? "none" : state.getLender.fname),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),),
+                FlatButton.icon(
+                  icon: Icon(
+                    Icons.add_circle_outline, color: Colors.green, size: 40,),
+                  onPressed: () {
+                    openLenderSelectionPage(context);
+                  },
+                  label: Text(""),
+                )
+              ],
+            );
+          } else if (state is LoanRequestIsNotLoadedState) {
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 13,),
+                Text("Select Lender",
+                  style: TextStyle(fontSize: 20, color: Colors.blue),),
+                Text("Lender: " + "error",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),),
+                FlatButton.icon(
+                  icon: Icon(
+                    Icons.add_circle_outline, color: Colors.green, size: 40,),
+                  onPressed: () {
+                    openLenderSelectionPage(context);
+                  },
+                  label: Text(""),
+                )
+              ],
+            );
+          } else {
+            return Column(
+              children: <Widget>[
+                SizedBox(height: 13,),
+                Text("Select Lender",
+                  style: TextStyle(fontSize: 20, color: Colors.blue),),
+                Text("Lender: ",
+                  style: TextStyle(fontSize: 12, color: Colors.grey),),
+                FlatButton.icon(
+                  icon: Icon(
+                    Icons.add_circle_outline, color: Colors.green, size: 40,),
+                  onPressed: () {
+                    openLenderSelectionPage(context);
+                  },
+                  label: Text(""),
+                )
+              ],
+            );
+          }
+        });
+  }
+
+  //Pushes to the user searching screen and receives the selected user
+  void openLenderSelectionPage(BuildContext context) async {
+
+    var result = await Navigator.pushNamed(context, '/search_users');
+
+    bloc.add(SetLenderLoanRequestEvent(result));
   }
 
   Widget getDueDate(){
@@ -299,21 +368,40 @@ class _LoanRequestState extends State<LoanRequest> {
     );
   }
 
-  Widget submitButton(){
-    return RaisedButton(
-      color: Colors.blue,
-      child: Text("Submit",style: TextStyle(color: Colors.white, fontSize: 18),),
-      onPressed: (){
-        sumbitContract();
-        Navigator.pushNamed(context, '/home');
-      },
-    );
+  Widget submitButton() {
+    return BlocBuilder<LoanRequestBloc, LoanRequestState>(
+        builder: (context, state) {
+          if (state is LoanRequestIsLoadedState) {
+            return RaisedButton(
+              color: Colors.blue,
+              child: Text(
+                "Submit", style: TextStyle(color: Colors.white, fontSize: 18),),
+              onPressed: () {
+                sumbitContract(state.getLocalUser, state.getLender);
+                Navigator.pop(context);
+              },
+            );
+          } else if (state is LoanRequestIsNotLoadedState) {
+            return RaisedButton(
+              color: Colors.blue,
+
+              child: Text(
+                "Submit", style: TextStyle(color: Colors.white, fontSize: 18),),
+            );
+          } else {
+            return RaisedButton(
+              color: Colors.blue,
+              child: Text(
+                "Submit", style: TextStyle(color: Colors.white, fontSize: 18),),
+            );
+          }
+        });
   }
 
-  void sumbitContract() async{
+  void sumbitContract(UserData localUser, UserData lender) async{
     AuthService authInstance=new AuthService();
     final user=authInstance.getCurrentUser();
-    await FirestoreService().createContract(currentUser.email, value, dueDateInputController.text, paymentsOf, amount);
+    await FirestoreService().createContract(currentUser.uid, lender.uid, localUser.fname, lender.fname, dueDateInputController.text, paymentsOf, amount);
   }
 
   void getCurrentUser() async {

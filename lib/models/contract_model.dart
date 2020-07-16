@@ -2,6 +2,8 @@ class Contract {
   //the contract properties we want:
   final String requester;
   final String loaner;
+  final String requesterName;
+  final String loanerName;
   final String dueDate;
   final double numPayments;
   final double amount;
@@ -12,6 +14,8 @@ class Contract {
   Contract({
     this.requester,
     this.loaner,
+    this.requesterName,
+    this.loanerName,
     this.dueDate,
     this.numPayments,
     this.amount,
