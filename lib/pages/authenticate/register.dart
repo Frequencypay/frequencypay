@@ -24,6 +24,7 @@ class _RegisterState extends State<Register> {
   TextEditingController confirmPwdInputController;
   TextEditingController usernameInputController;
   TextEditingController phoneInputController;
+  TextEditingController addressInputController;
 
   @override
   initState() {
@@ -34,6 +35,7 @@ class _RegisterState extends State<Register> {
     confirmPwdInputController = new TextEditingController();
     usernameInputController = new TextEditingController();
     phoneInputController=new TextEditingController();
+    addressInputController=new TextEditingController();
     super.initState();
   }
 
@@ -78,6 +80,8 @@ class _RegisterState extends State<Register> {
                 userNameInput(),
                 SizedBox(height: 10,),
                 phoneNumberInput(),
+                SizedBox(height: 10,),
+                addressInput(),
                 SizedBox(height: 10,),
                 registerButton(),
                 Text(error,style: TextStyle(color: Colors.red,fontSize: 18),),
@@ -207,6 +211,22 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  Widget addressInput(){
+    return TextFormField(
+      controller: addressInputController,
+      decoration: InputDecoration(
+        hintText:"Address",
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
+        ),
+      ),
+      validator:(val)=> val.isEmpty ? 'Enter a valid usernname' : null,
+    );
+  }
+
   Widget registerButton(){
     return RaisedButton(
       color: Colors.blue,
@@ -214,7 +234,7 @@ class _RegisterState extends State<Register> {
       onPressed: () async {
         if(_formKey.currentState.validate()){
           loading=true;
-          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text.trim(),pwdInputController.text,fnameInputController.text.trim(),lnameInputController.text.trim(),usernameInputController.text.trim(),phoneInputController.text.trim());
+          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text.trim(),pwdInputController.text,fnameInputController.text.trim(),lnameInputController.text.trim(),usernameInputController.text.trim(),phoneInputController.text.trim(), addressInputController.text.trim());
           if(result==null){
             setState(() {
               error='Please enter a valid email';

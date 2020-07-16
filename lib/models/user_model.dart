@@ -10,6 +10,7 @@ class UserData{
   final String email;
   final String username;
   final String phoneNumber;
+  final String address;
 
   UserData({
     this.uid,
@@ -17,7 +18,8 @@ class UserData{
     this.lname,
     this.email,
     this.username,
-    this.phoneNumber
+    this.phoneNumber,
+    this.address
 });
 }
 
