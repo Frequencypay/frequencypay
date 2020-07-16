@@ -5,14 +5,16 @@ class User{
 
 class UserData{
   final String uid;
-  final String name;
+  final String fname;
+  final String lname;
   final String email;
   final String username;
   final String phoneNumber;
 
   UserData({
     this.uid,
-    this.name,
+    this.fname,
+    this.lname,
     this.email,
     this.username,
     this.phoneNumber

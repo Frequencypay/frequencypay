@@ -32,10 +32,11 @@ class FirestoreService{
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
-  Future setOrUpdateUserData(String name, String email,String username, String phone,List indexList ) async{
+  Future setOrUpdateUserData(String fname, String lname, String email,String username, String phone,List indexList ) async{
     //if document doesn't exist yet, firestore creates one automatically
     return await userDataCollection.document(uid).setData({
-      'name':name,
+      'fname':fname,
+      'lname':lname,
       'email':email,
       'username':username,
       'phone':phone,
@@ -65,7 +66,8 @@ class FirestoreService{
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
       uid:uid,
-      name: snapshot.data['name'],
+      fname: snapshot.data['fname'],
+      lname: snapshot.data['lname'],
       email: snapshot.data['email'],
       username: snapshot.data['username'],
       phoneNumber: snapshot.data['phone']
@@ -185,7 +187,8 @@ class FirestoreService{
   UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
         uid:uid,
-        name: snapshot.data['name'],
+        fname: snapshot.data['fname'],
+        lname: snapshot.data['lname'],
         email: snapshot.data['email'],
         username: snapshot.data['username'],
         phoneNumber: snapshot.data['phone']

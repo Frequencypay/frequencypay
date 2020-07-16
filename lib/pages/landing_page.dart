@@ -84,7 +84,7 @@ class _LandingPageState extends State<LandingPage> {
                         if (state is LandingIsLoadedState) {
                           return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
                             TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-                            TextSpan(text: state.getProfile.name + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+                            TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
                             TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
                           ]));
                         } else if (state is LandingIsNotLoadedState) {

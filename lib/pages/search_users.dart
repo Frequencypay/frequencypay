@@ -100,7 +100,7 @@ class _SearchDataState extends State<SearchData> {
                                   SizedBox(width: 50,),
                                   Column(
                                     children: <Widget>[
-                                      Text(document['name'],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
+                                      Text(document["fname"] + " " + document["lname"],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
                                       Text(document["email"]),
                                       Text(document["username"]),
                                       RaisedButton(
