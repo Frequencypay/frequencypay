@@ -16,5 +16,4 @@ final routes = {
   '/search_users':(context)=>SearchData(),
   '/loan_request_page':(context)=>LoanRequest(value: "" ,),
   '/temp_user_data':(context)=>new currentUserData(),
-
 };
