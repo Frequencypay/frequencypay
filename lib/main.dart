@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frequencypay/blocs/plaid/bloc.dart';
 import 'package:frequencypay/blocs/plaid/simple_bloc_delegate.dart';
+import 'package:frequencypay/pages/authenticate/wrapper.dart';
 import 'package:frequencypay/repositories/plaid/plaid_api_client.dart';
 import 'package:frequencypay/repositories/plaid/plaid_repository.dart';
 import 'package:frequencypay/routes.dart';
@@ -9,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
-void main()  {
+void main() {
   BlocSupervisor.delegate = SimpleBlocDelegate();
 
   final PlaidRepository plaidRepository = PlaidRepository(
@@ -31,15 +33,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value( // New -> Provider Package
-      value: AuthService().user, // New -> listens to stream for authentication changes
+    return StreamProvider<User>.value(
+      // New -> Provider Package
+      value: AuthService()
+          .user, // New -> listens to stream for authentication changes
       child: MaterialApp(
-          title: 'FrequencyPay',
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          routes: routes,
+        title: 'FrequencyPay',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<PlaidBloc>(
+              create: (BuildContext context) =>
+                  PlaidBloc(plaidRepository: plaidRepository),
+            ),
+          ],
+          child: Wrapper(),
+        ),
+        routes: routes,
 
 //          routes: routes,
       ),

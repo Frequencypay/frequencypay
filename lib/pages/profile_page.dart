@@ -52,60 +52,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontWeight: FontWeight.bold, color: blueHighlight)),
                 ],
               ),
-            ),centerTitle: false,
+            ),
+            centerTitle: false,
             backgroundColor: Colors.white10,
             elevation: 0,
           ),
           body: ListView(
-        children: <Widget>[
-          Column(
             children: <Widget>[
-              Container(
-                child: profileImg(),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                child: profileInfo(),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Text(
-                "Confidence Rating",
-                style: TextStyle(color: Colors.black54, fontSize: 20),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: getConfidenceRating(),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                child: getMailandPhone(),
-              ),
-              RaisedButton(
-                child: Text(
-                  "Edit",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                color: Colors.grey,
-                onPressed: () {},
-              ),
+              Column(
+                children: <Widget>[
+                  Container(
+                    child: profileImg(),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: profileInfo(),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    "Confidence Rating",
+                    style: TextStyle(color: Colors.black54, fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: getConfidenceRating(),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    child: getMailandPhone(),
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "Edit",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    color: Colors.grey,
+                    onPressed: () {},
+                  ),
 //              RaisedButton(
 //                child: Text("Plaid"),
 //                color: Colors.blue,
 //                onPressed: showPlaidView,
 //              ),
-              SelectableText(plaidText),
+                  SelectableText(plaidText),
+                ],
+              ),
             ],
-          ),
-        ],
-      )),
+          )),
     );
   }
 

@@ -2,28 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-//class PlaidLinkScreen extends StatefulWidget{
-//  @override
-//  State<PlaidLinkScreen> createState() => _PlaidLinkScreenState();
-//}
-//
-//class _PlaidLinkScreenState extends State<PlaidLinkScreen>{
-//  final TextEditingController _linkToken = TextEditingController();
-//
-//
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    PlaidLink _plaidLink = PlaidLink();
-//    return _plaidLink.launch(context, (result)  {
-//      result.token;
-//      _linkToken.text = result.token;
-//
-////        Navigator.pop(context, _linkToken.text);
-//    },);
-//  }
-//}
-
 
 class PlaidLink {
   Configuration _configuration;
@@ -81,17 +59,17 @@ class _WebViewPage {
         '&webhook=https://requestb.in' +
         '&env=' +
         config.plaidEnvironment;
-    debugPrint('init plaid: ' + _url);
+//    debugPrint('init plaid: ' + _url);
   }
 
   _parseUrl(String url) {
     if (url?.isNotEmpty != null) {
       Uri uri = Uri.parse(url);
-      debugPrint('PLAID uri: ' + uri.toString());
+//      debugPrint('PLAID uri: ' + uri.toString());
       Map<String, String> queryParams = uri.queryParameters;
-      List<String> segments = uri.pathSegments;
-      debugPrint('queryParams: ' + queryParams?.toString());
-      debugPrint('segments: ' + segments?.toString());
+//      List<String> segments = uri.pathSegments;
+//      debugPrint('queryParams: ' + queryParams?.toString());
+//      debugPrint('segments: ' + segments?.toString());
       _processParams(queryParams, url);
     }
   }
@@ -99,7 +77,7 @@ class _WebViewPage {
   _processParams(Map<String, String> queryParams, String url) async {
     if (queryParams != null) {
       String eventName = queryParams['event_name'] ?? 'unknown';
-      debugPrint("PLAID Event name: " + eventName);
+//      debugPrint("PLAID Event name: " + eventName);
 
       if (eventName == 'EXIT' || (url?.contains('/exit?') ?? false)) {
         this._closeWebView();

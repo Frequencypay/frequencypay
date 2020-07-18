@@ -5,36 +5,87 @@ import 'package:frequencypay/blocs/plaid/bloc.dart';
 import 'package:frequencypay/blocs/plaid/plaid_blocs.dart';
 import 'package:frequencypay/plaid_link/plaid_link_webview.dart';
 
-import 'package:frequencypay/blocs/profile_bloc.dart';
+class PlaidToken extends StatefulWidget {
+  @override
+  _PlaidTokenState createState() => _PlaidTokenState();
+}
 
-
-class Plaidtoken extends StatelessWidget {
+class _PlaidTokenState extends State<PlaidToken> {
   PlaidLink plaidLink = PlaidLink();
+  static const Color blueHighlight = const Color(0xFF3665FF);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Plaid'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () async {
-              await plaidLink.launch(context, (result) {
-                if(result.token != null){
-                  BlocProvider.of<PlaidBloc>(context).add(TokenRequested(publicToken: result.token));
-                }
-              });
-            },
-          )
-        ],
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: RichText(
+          text: new TextSpan(
+            // Note: Styles for TextSpans must be explicitly defined.
+            // Child text spans will inherit styles from parent
+            style: new TextStyle(
+              fontSize: 25.0,
+              color: Colors.black45,
+            ),
+            children: <TextSpan>[
+              new TextSpan(text: 'Welcome To '),
+              new TextSpan(
+                  text: 'FrequencyPay!',
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, color: blueHighlight)),
+            ],
+          ),
+        ),
       ),
       body: Center(
         child: BlocBuilder<PlaidBloc, PlaidState>(
           builder: (context, state) {
             if (state is PlaidInitial) {
-              return Center(
-                child: Text('Enter Plaid'),
+              return Column(
+                children: <Widget>[
+                 
+                      Image.asset('assets/frequency.png', fit: BoxFit.scaleDown,),
+
+                  Container(
+                      padding: EdgeInsets.all(15),
+                      child: RichText(
+                        text: TextSpan(
+                            style: TextStyle(color: Colors.black),
+                            text:
+                                'We use Plaid to help track your expenses and and '
+                                'get you in tune with your finances. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget posuere dolor. Mauris imperdiet ac arcu sed accumsan. Nam congue sapien a feugiat facilisis. '),
+                      )),
+                  Expanded(
+                    child:  Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Colors.blue,
+                            child: Text("Launch Plaid"),
+                            textColor: Colors.white,
+                            onPressed: () => plaidLink.launch(context, (result) {
+                              if (result.token != null) {
+                                BlocProvider.of<PlaidBloc>(context)
+                                    .add(TokenRequested(publicToken: result.token));
+                              }
+                            }),
+                          ),
+                          RaisedButton(
+                            child: Text("No Thanks"),
+                            textColor: Colors.white,
+                            onPressed: () =>
+                                Navigator.of(context).pushReplacementNamed('/home'),
+                          ),
+//                          Padding(padding: EdgeInsets.fromLTRB(0,0,0,500))
+                        ],
+                      ),
+                    )
+                  ),
+                  Padding(padding: EdgeInsets.only(bottom: 40),)
+                ],
               );
             }
             if (state is PlaidLoadInProgress) {
@@ -45,18 +96,7 @@ class Plaidtoken extends StatelessWidget {
               FlutterSecureStorage _storage = FlutterSecureStorage();
               _storage.write(key: 'access_token', value: token.accessToken);
 
-              return ListView(
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-
-
-//                     SelectableText(plaidText),
-                      Text(token.accessToken),
-                    ],
-                  ),
-                ],
-              );
+              Navigator.of(context).pushReplacementNamed('/home');
             }
             if (state is PlaidLoadFailure) {
               return Text(
@@ -68,171 +108,6 @@ class Plaidtoken extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-
-  Widget profileImg() {
-    return CircleAvatar(
-      child: Text("loaded from DB"),
-      radius: 60,
-    );
-  } // end profileImg
-
-  Widget profileInfo() {
-    return Column(
-      children: <Widget>[
-        BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-          if (state is ProfileIsLoadedState) {
-            return Text(
-              state.getProfile.name,
-              style: TextStyle(color: Colors.black54, fontSize: 25),
-            );
-          } else if (state is ProfileIsNotLoadedState) {
-            return Text(
-              "error",
-              style: TextStyle(color: Colors.black54, fontSize: 25),
-            );
-          } else {
-            return Text(
-              "<<fname>> <<lname>>",
-              style: TextStyle(color: Colors.black54, fontSize: 25),
-            );
-          }
-        }),
-        BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-          if (state is ProfileIsLoadedState) {
-            return Text(
-              state.getProfile.username,
-              style: TextStyle(color: Colors.black54, fontSize: 17),
-            );
-          } else if (state is ProfileIsNotLoadedState) {
-            return Text(
-              "error",
-              style: TextStyle(color: Colors.black54, fontSize: 17),
-            );
-          } else {
-            return Text(
-              "<<fname>> <<lname>>",
-              style: TextStyle(color: Colors.black54, fontSize: 25),
-            );
-          }
-        }),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "x  Late Payments",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "y Active Contracts",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "z Complete Contracts",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  } // end profile info
-
-  Widget getConfidenceRating() {
-    return Container(
-      padding: EdgeInsets.all(20),
-      color: Colors.blue,
-      child: Text(
-        "100%",
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-    );
-  } // end getConfidenceRating
-
-  Widget getMailandPhone() {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Text(
-              "  Email Address:",
-              style: TextStyle(color: Colors.blue, fontSize: 15),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-              if (state is ProfileIsLoadedState) {
-                return Text(
-                  "  " + state.getProfile.email,
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                );
-              } else if (state is ProfileIsNotLoadedState) {
-                return Text(
-                  "  error",
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                );
-              } else {
-                return Text(
-                  "  <<email>>",
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                );
-              }
-            }),
-          ],
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Row(
-          children: <Widget>[
-            Text(
-              "  Phone Number",
-              style: TextStyle(color: Colors.blue, fontSize: 15),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
-              if (state is ProfileIsLoadedState) {
-                return Text(
-                  "  " + state.getProfile.phoneNumber,
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                );
-              } else if (state is ProfileIsNotLoadedState) {
-                return Text(
-                  "  error",
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                );
-              } else {
-                return Text(
-                  "  <<phone number>>",
-                  style: TextStyle(color: Colors.blue, fontSize: 15),
-                );
-              }
-            }),
-          ],
-        ),
-      ],
     );
   }
 }
