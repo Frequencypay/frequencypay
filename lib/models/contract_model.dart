@@ -2,25 +2,37 @@ class Contract {
   //the contract properties we want:
   final String requester;
   final String loaner;
+  final String requesterName;
+  final String loanerName;
   final String dueDate;
   final double numPayments;
   final double amount;
-  final bool isActive; //status: active or completed
-  final bool isComplete;
-  final bool isPending;
+  final CONTRACT_STATE state;
 
   Contract({
     this.requester,
     this.loaner,
+    this.requesterName,
+    this.loanerName,
     this.dueDate,
     this.numPayments,
     this.amount,
-    this.isActive,
-    this.isComplete,
-    this.isPending
+    this.state
   });
 
 }
+
+enum CONTRACT_STATE {
+
+  OPEN_REQUEST,
+  ACTIVE_CONTRACT,
+  COMPLETED_CONTRACT
+}
+
+CONTRACT_STATE contractStateFromString(String str) {
+  return CONTRACT_STATE.values.firstWhere((e) => e.toString() == str);
+}
+
 
 class ContractListModel {
   //The contracts

@@ -220,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
           if (state is ProfileIsLoadedState) {
             return Text(
-              state.getProfile.name,
+              state.getProfile.fname,
               style: TextStyle(color: Colors.black54, fontSize: 25),
             );
           } else if (state is ProfileIsNotLoadedState) {

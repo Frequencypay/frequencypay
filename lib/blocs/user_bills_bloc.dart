@@ -53,7 +53,7 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
       try {
 
         //PlaceholderUserBillsModel userExpenses = await service.getLocalUserBillsModel();
-        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, isActive: true)]);
+        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, state: CONTRACT_STATE.OPEN_REQUEST)]);
         yield UserBillsIsLoadedState(activeContracts);
       } catch (_){
 

@@ -1,6 +1,7 @@
 // Service class containing all Firestore operations
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
@@ -32,30 +33,38 @@ class FirestoreService{
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
-  Future setOrUpdateUserData(String name, String email,String username, String phone,List indexList ) async{
+  Future setOrUpdateUserData(String fname, String lname, String email,String username, String phone, String address, List indexList ) async{
     //if document doesn't exist yet, firestore creates one automatically
     return await userDataCollection.document(uid).setData({
-      'name':name,
+      'fname':fname,
+      'lname':lname,
       'email':email,
       'username':username,
       'phone':phone,
+      'address':address,
       'searchIndex':indexList
     });
   }
 
   //Create a contract object in the database
   //This function is called whenever a loan request is submitted
-  Future createContract(String requester, String loaner, String dueDate, double numPayments, double amount) async{
+  Future createContract(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
     return await contractCollection.document(uid).setData({
       'requester':requester,
       'loaner':loaner,
+      'requesterName':requesterName,
+      'loanerName':loanerName,
       'dueDate':dueDate,
       'numPayments':numPayments,
       'amount':amount,
-      'isActive': false,
-      'isPending':true,
-      'isComplete':false,
+      'state':CONTRACT_STATE.OPEN_REQUEST.toString()
     });
+  }
+
+  //Returns an arbitrary user based on the given uid
+  Stream<UserData> retrieveUser(String uid) {
+
+    return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot);
   }
 
   //CRUD OPERATION: READ
@@ -64,11 +73,13 @@ class FirestoreService{
   //THIS IS THE FUNCTION THAT TRANSFORMS (WITH THE HELP OF THE STREAM) THE USER DATA WE GET FROM DB INTO OUR CUSTOM userData model
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
-      uid:uid,
-      name: snapshot.data['name'],
+      uid:snapshot.documentID,
+      fname: snapshot.data['fname'],
+      lname: snapshot.data['lname'],
       email: snapshot.data['email'],
       username: snapshot.data['username'],
-      phoneNumber: snapshot.data['phone']
+      phoneNumber: snapshot.data['phone'],
+      address: snapshot.data['address']
     );
   }
 
@@ -86,9 +97,7 @@ class FirestoreService{
     return Contract(
       amount: snapshot.data['amount'],
       dueDate: snapshot.data['dueDate'],
-      isActive: snapshot.data['isActive'],
-      isComplete: snapshot.data['isComplete'],
-      isPending: snapshot.data['isPending'],
+      state: snapshot.data['state'],
       loaner: snapshot.data['loaner'],
       numPayments: snapshot.data['numPayments'],
       requester: snapshot.data['requester'],
@@ -106,12 +115,12 @@ class FirestoreService{
       return Contract(
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
+        state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
+        requesterName: doc.data['requesterName']
       );
     }).toList();
   }
@@ -123,12 +132,29 @@ class FirestoreService{
       return Contract(
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
+        state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
+        requesterName: doc.data['requesterName']
+      );
+    }).toList();
+  }
+
+  //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
+  //mapped to the custom contract model
+  List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc) { //perform an action for each document
+      return Contract(
+        amount: doc.data['amount'],
+        dueDate: doc.data['dueData'],
+        state: contractStateFromString(doc.data['state']),
+        loaner: doc.data['loaner'],
+        loanerName: doc.data['loanerName'],
+        numPayments: doc.data['numPayments'],
+        requester: doc.data['requester'],
+        requesterName: doc.data['requesterName'],
       );
     }).toList();
   }
@@ -140,55 +166,34 @@ class FirestoreService{
 
     //If the requester is required
     if (query.requirementMode == REQUIREMENT_MODE.REQUESTER) {
-
-      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
-          .where('isComplete', isEqualTo: query.isComplete)
-          .where('isPending', isEqualTo: query.isPending)
-          .where('requester', isEqualTo: currentUser.email)
-          .snapshots().map(_activeContractListFromSnapshot);
+      contractsStream =
+          contractCollection.where('state', isEqualTo: query.state.toString())
+              .where('requester', isEqualTo: currentUser.uid)
+              .snapshots().map(_activeContractListFromSnapshot);
     }
 
     //Assume loaner required otherwise
     else {
-
-      contractsStream = contractCollection.where('isActive', isEqualTo: query.isActive)
-          .where('isComplete', isEqualTo: query.isComplete)
-          .where('isPending', isEqualTo: query.isPending)
-          .where('loaner', isEqualTo: currentUser.email)
-          .snapshots().map(_activeContractListFromSnapshot);
+      contractsStream =
+          contractCollection.where('state', isEqualTo: query.state.toString())
+              .where('loaner', isEqualTo: currentUser.uid)
+              .snapshots().map(_activeContractListFromSnapshot);
     }
 
     //Return the resulting contract stream
     return contractsStream;
   }
 
-  //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
-  //mapped to the custom contract model
-  List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc) { //perform an action for each document
-      return Contract(
-        amount: doc.data['amount'],
-        dueDate: doc.data['dueData'],
-        isActive: doc.data['isActive'],
-        isComplete: doc.data['isComplete'],
-        isPending: doc.data['isPending'],
-        loaner: doc.data['loaner'],
-        numPayments: doc.data['numPayments'],
-        requester: doc.data['requester'],
-      );
-    }).toList();
-  }
-
-
-
   //user search data from snapshot (retrieves specific contract based on UID)
   UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot){
     return UserData(
         uid:uid,
-        name: snapshot.data['name'],
+        fname: snapshot.data['fname'],
+        lname: snapshot.data['lname'],
         email: snapshot.data['email'],
         username: snapshot.data['username'],
-        phoneNumber: snapshot.data['phone']
+        phoneNumber: snapshot.data['phone'],
+        address: snapshot.data['phone']
     );
   }
 

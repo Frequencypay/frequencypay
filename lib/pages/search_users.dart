@@ -100,15 +100,18 @@ class _SearchDataState extends State<SearchData> {
                                   SizedBox(width: 50,),
                                   Column(
                                     children: <Widget>[
-                                      Text(document['name'],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
+                                      Text(document["fname"] + " " + document["lname"],style: TextStyle(color: Colors.blueGrey,fontSize: 20),),
                                       Text(document["email"]),
                                       Text(document["username"]),
                                       RaisedButton(
                                         child: Text("Select",style: TextStyle(color: Colors.white),),
                                         onPressed: (){
-                                          Navigator.of(context).push(MaterialPageRoute(
-                                            builder: (context)=>LoanRequest(value: document['email'],),
-                                          ));
+
+                                          Navigator.pop(context, document.documentID);
+
+                                          /*Navigator.of(context).push(MaterialPageRoute(
+                                            builder: (context)=>LoanRequest(value: document['uid'],),
+                                          ));*/
                                         },
                                         color: Colors.blue,
                                       )

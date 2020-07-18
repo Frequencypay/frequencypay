@@ -117,13 +117,7 @@ class _UserContractsPageState extends State<UserContractsPage>
               itemCount: state.getCompleteContracts.contracts.length,
               shrinkWrap: true);
         } else if (state is UserContractsIsLoadingState) {
-          return ListView.builder(
-
-              itemBuilder: (context, index) {
-                return ContractCards.buildCompleteContractCard(context, null);
-              },
-              itemCount: 2,
-              shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+          return Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
         } else {
           return Center(child: Text("error"));
         }
@@ -144,13 +138,7 @@ class _UserContractsPageState extends State<UserContractsPage>
                 itemCount: state.getActiveContracts.contracts.length,
                 shrinkWrap: true);
           } else if (state is UserContractsIsLoadingState) {
-            return ListView.builder(
-
-                itemBuilder: (context, index) {
-                  return ContractCards.buildActiveContractCard(context, null);
-                },
-                itemCount: 2,
-                shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+            return Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
           } else {
             return Center(child: Text("error"));
           }
@@ -171,13 +159,7 @@ class _UserContractsPageState extends State<UserContractsPage>
                 itemCount: state.getPendingContracts.contracts.length,
                 shrinkWrap: true);
           } else if (state is UserContractsIsLoadingState) {
-            return ListView.builder(
-
-                itemBuilder: (context, index) {
-                  return ContractCards.buildRepaymentContractCard(context, null);
-                },
-                itemCount: 2,
-                shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+            return Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
           } else {
             return Center(child: Text("error"));
           }
