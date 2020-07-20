@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>354756252068-lrd6iae2dlcbqov4qqt84sit7b1b51vh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.354756252068-lrd6iae2dlcbqov4qqt84sit7b1b51vh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBs_TPupD6SurmymvVL2K0CgEOO7JycK5w</string>
+	<key>GCM_SENDER_ID</key>
+	<string>354756252068</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>frequency.frequencypay</string>
+	<key>PROJECT_ID</key>
+	<string>frequencypay-60f47</string>
+	<key>STORAGE_BUCKET</key>
+	<string>frequencypay-60f47.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:354756252068:ios:9815d792a2aeedf5957131</string>
+	<key>DATABASE_URL</key>
+	<string>https://frequencypay-60f47.firebaseio.com</string>
+</dict>
+</plist>

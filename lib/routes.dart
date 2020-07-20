@@ -5,7 +5,9 @@ import 'package:frequencypay/pages/loan_request_page.dart';
 import 'package:frequencypay/pages/authenticate/forgot_password_page.dart';
 import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/pages/search_users.dart';
-import 'package:frequencypay/pages/temp_user_data.dart';
+import 'package:frequencypay/pages/contract_details.dart';
+import 'package:frequencypay/pages/user_contracts_page.dart';
+
 
 final routes = {
 //  '/': (BuildContext context) => Wrapper(),
@@ -14,6 +16,7 @@ final routes = {
   '/register': (BuildContext context) => new Register(),
   '/forgotPassword': (BuildContext context) => new ForgotPasswordPage(),
   '/search_users':(context)=>SearchData(),
-  '/loan_request_page':(context)=>LoanRequest(value: "" ,),
-  '/temp_user_data':(context)=>new currentUserData(),
+  '/loan_request_page':(context)=>LoanRequest(),
+  '/user_contracts':(context)=>new UserContractsPage(),
+  '/contract_details':(context)=>new ContractDetails()
 };

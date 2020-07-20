@@ -4,7 +4,6 @@ import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
 
-import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,7 +24,8 @@ class _HomePageState extends State<HomePage> {
     ProfileScreen(),
     UserBills()
   ];
-  int selectedBottomNavigationBarIndex = 0;
+
+  int bottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
 //  final Auth _auth = Auth(); // instance to correctly sign out
@@ -40,15 +40,14 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     setState(() => {
           //Set the selected index
-          selectedBottomNavigationBarIndex = index
+          bottomNavigationBarIndex = index
         });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: bottomNavigationBarOptions
-          .elementAt(selectedBottomNavigationBarIndex),
+      body: bottomNavigationBarOptions.elementAt(bottomNavigationBarIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -64,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.account_box),
               title: Padding(padding: EdgeInsets.all(0)))
         ],
-        currentIndex: selectedBottomNavigationBarIndex,
+        currentIndex: bottomNavigationBarIndex,
         selectedItemColor: blueHighlight,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,

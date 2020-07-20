@@ -71,7 +71,7 @@ class _SearchResultsState extends State<SearchResults> {
                               child: Text("Select",style: TextStyle(color: Colors.white),),
                               onPressed: (){
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context)=>LoanRequest(value: document['name'],),
+                                  builder: (context)=>LoanRequest(),
                                 ));
                               },
                               color: Colors.blue,

@@ -15,6 +15,9 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   FirebaseUser currentUser;
   final AuthService _auth = AuthService();
 
@@ -25,11 +28,7 @@ class _LandingPageState extends State<LandingPage> {
     super.initState();
   }
 
-  static const Color blueHighlight = const Color(0xFF3665FF);
-
-  LandingBloc createBloc(
-    var context,
-  ) {
+  LandingBloc createBloc(var context,) {
     final user = Provider.of<User>(context, listen: false);
 
     LandingBloc bloc = LandingBloc(FirestoreService(uid: user.uid));
@@ -79,104 +78,52 @@ class _LandingPageState extends State<LandingPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                  ),
-                  label: Text(
-                    "Get current user data",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/temp_user_data');
-                  },
+                Row(
+                  children: <Widget>[
+                    SizedBox(width: 250,),
+                    FlatButton.icon(
+                      icon: Icon(Icons.person,color: Colors.grey,),
+                      label: Text("Log out",style: TextStyle(color: Colors.grey),),
+                      onPressed: () async {
+                        await _auth.signOut();
+                      },
+                    ),
+                  ],
                 ),
 
-                FlatButton.icon(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                  ),
-                  label: Text(
-                    "Loan Request",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/loan_request_page');
-                  },
-                ),
-
-                //ROW 1
+              FlatButton.icon(
+                icon: Icon(Icons.person,color: Colors.grey,),
+                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
+                onPressed: ()  {
+                  Navigator.pushNamed(context, '/loan_request_page');
+                },
+              ),
+          //ROW 1
                 Row(
                   children: <Widget>[
                     Expanded(flex: 1, child: Container()),
                     Expanded(
                       flex: 5,
-                      child: BlocBuilder<LandingBloc, LandingState>(
-                        builder: (context, state) {
-                          if (state is LandingIsLoadedState) {
-                            return RichText(
-                                text: TextSpan(
-                                    style: TextStyle(
-                                        fontFamily: 'Leelawadee UI',
-                                        fontSize: 25),
-                                    children: <TextSpan>[
-                                  TextSpan(
-                                      text: "Good Morning,\n",
-                                      style: TextStyle(color: Colors.black45)),
-                                  TextSpan(
-                                      text: state.getProfile.name + ".\n",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueHighlight)),
-                                  TextSpan(
-                                      text: "<date>",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14))
-                                ]));
-                          } else if (state is LandingIsNotLoadedState) {
-                            return RichText(
-                                text: TextSpan(
-                                    style: TextStyle(
-                                        fontFamily: 'Leelawadee UI',
-                                        fontSize: 25),
-                                    children: <TextSpan>[
-                                  TextSpan(
-                                      text: "Good Morning,\n",
-                                      style: TextStyle(color: Colors.black45)),
-                                  TextSpan(
-                                      text: "error.\n",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueHighlight)),
-                                  TextSpan(
-                                      text: "error",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14))
-                                ]));
-                          } else {
-                            return RichText(
-                                text: TextSpan(
-                                    style: TextStyle(
-                                        fontFamily: 'Leelawadee UI',
-                                        fontSize: 25),
-                                    children: <TextSpan>[
-                                  TextSpan(
-                                      text: "Good Morning,\n",
-                                      style: TextStyle(color: Colors.black45)),
-                                  TextSpan(
-                                      text: "<name>.\n",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: blueHighlight)),
-                                  TextSpan(
-                                      text: "<date>",
-                                      style: TextStyle(
-                                          color: Colors.grey, fontSize: 14))
-                                ]));
-                          }
-                        },
+                      child: BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
+                        if (state is LandingIsLoadedState) {
+                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+                            TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
+                          ]));
+                        } else if (state is LandingIsNotLoadedState) {
+                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+                            TextSpan(text: "error.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+                            TextSpan(text: "error", style: TextStyle(color: Colors.grey, fontSize: 14))
+                          ]));
+                        } else {
+                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+                            TextSpan(text: "<name>.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
+                          ]));
+                        }},
                       ),
                     ),
                     Expanded(flex: 1, child: Container())
@@ -290,47 +237,28 @@ class _LandingPageState extends State<LandingPage> {
                   Expanded(flex: 1, child: Container())
                 ]),
 
-                Container(
-                    height: 100,
-                    child: ListView.separated(
-                      itemCount: 20,
-                      scrollDirection: Axis.horizontal,
-                      separatorBuilder: (context, index) => SizedBox(width: 5),
-                      itemBuilder: (context, index) => CircleAvatar(),
-                    )),
-//            RaisedButton(child: Text("Balance"), onPressed: getBalance,),
-//            Text(balance),
+                Container(height: 100, child: ListView.separated(
+                  itemCount: 20,
+                  scrollDirection: Axis.horizontal,
+                  separatorBuilder: (context, index) => SizedBox(width: 5),
+                  itemBuilder: (context, index) => buildContactListItem(context, index),
+
+                ))
               ],
             ),
           ])),
     );
   }
+  //Populates the contact listview
+  Widget buildContactListItem(BuildContext context, int index) {
 
-  Widget buildActiveContractCard() {
-    return Container(
-        height: 100,
-        child: Card(
-            elevation: 5,
-            child: Row(children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Container(
-                      padding: EdgeInsets.all(10), child: Text("ICON"))),
-              Expanded(
-                flex: 5,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("<Bill Issuer>"),
-                      Text("<Time Left>"),
-                      LinearProgressIndicator(),
-                      Align(
-                          alignment: Alignment.centerRight,
-                          child: Text("<Amount Left>"))
-                    ]),
-              ),
-              Expanded(flex: 1, child: Container())
-            ])));
+    //Create some space on the left border
+    if (index == 0) {
+
+      return SizedBox(width: MediaQuery.of(context).size.width/7);
+    }
+
+    return CircleAvatar();
   }
 
   //KEEP FOR REFERENCE
