@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/pages/profile_page.dart';
-import 'package:frequencypay/pages/user_bills_page.dart';
-import 'package:frequencypay/pages/user_contracts_page.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
-import '../vaulted_pages/firebase_authentication.dart';
-import 'landing_page.dart';
-import 'loan_request_page.dart';
-import 'package:frequencypay/pages/temp_user_data.dart';
 
 class LandingPage extends StatefulWidget {
   final String uid;
@@ -23,6 +15,9 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   FirebaseUser currentUser;
   final AuthService _auth=AuthService();
 
@@ -31,8 +26,6 @@ class _LandingPageState extends State<LandingPage> {
     //this.getCurrentUser();
     super.initState();
   }
-
-  static const Color blueHighlight = const Color(0xFF3665FF);
 
   LandingBloc createBloc(var context,) {
     final user = Provider.of<User>(context, listen: false);
@@ -68,14 +61,6 @@ class _LandingPageState extends State<LandingPage> {
                   ],
                 ),
 
-                FlatButton.icon(
-                  icon: Icon(Icons.person,color: Colors.grey,),
-                  label: Text("Get current user data",style: TextStyle(color: Colors.grey),),
-                  onPressed: ()  {
-                    Navigator.pushNamed(context, '/temp_user_data');
-                  },
-                ),
-
               FlatButton.icon(
                 icon: Icon(Icons.person,color: Colors.grey,),
                 label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
@@ -83,6 +68,8 @@ class _LandingPageState extends State<LandingPage> {
                   Navigator.pushNamed(context, '/loan_request_page');
                 },
               ),
+
+
 
 
                 //ROW 1
@@ -97,7 +84,7 @@ class _LandingPageState extends State<LandingPage> {
                         if (state is LandingIsLoadedState) {
                           return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
                             TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-                            TextSpan(text: state.getProfile.name + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+                            TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
                             TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
                           ]));
                         } else if (state is LandingIsNotLoadedState) {
@@ -197,7 +184,7 @@ class _LandingPageState extends State<LandingPage> {
                   itemCount: 20,
                   scrollDirection: Axis.horizontal,
                   separatorBuilder: (context, index) => SizedBox(width: 5),
-                  itemBuilder: (context, index) => CircleAvatar(),
+                  itemBuilder: (context, index) => buildContactListItem(context, index),
 
                 ))
 
@@ -210,21 +197,16 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget buildActiveContractCard() {
-    return Container(height: 100, child: Card(elevation: 5,child: Row(children: <Widget> [
-      Expanded(flex: 1, child: Container(padding: EdgeInsets.all(10), child: Text("ICON"))),
-      Expanded(
-        flex: 5,
-        child: Column( crossAxisAlignment: CrossAxisAlignment.start,children: <Widget> [
-          Text("<Bill Issuer>"),
-          Text("<Time Left>"),
-          LinearProgressIndicator(),
-          Align(alignment: Alignment.centerRight, child: Text("<Amount Left>"))
+  //Populates the contact listview
+  Widget buildContactListItem(BuildContext context, int index) {
 
-        ]),
-      ),
-      Expanded( flex: 1, child: Container())
-    ])));
+    //Create some space on the left border
+    if (index == 0) {
+
+      return SizedBox(width: MediaQuery.of(context).size.width/7);
+    }
+
+    return CircleAvatar();
   }
 
   //KEEP FOR REFERENCE

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
+import 'package:provider/provider.dart';
 
 import '../vaulted_pages/firebase_authentication.dart';
 import 'landing_page.dart';
@@ -22,7 +23,8 @@ class _HomePageState extends State<HomePage> {
   static const Color blueHighlight = const Color(0xFF3665FF);
 
   static List<Widget> bottomNavigationBarOptions = <Widget>[LandingPage(), UserContractsPage(), ProfileScreen(), UserBills()];
-  int selectedBottomNavigationBarIndex = 0;
+
+  int bottomNavigationBarIndex = 0;
 
   FirebaseUser currentUser;
   final Auth _auth=Auth(); // instance to correctly sign out
@@ -39,7 +41,7 @@ class _HomePageState extends State<HomePage> {
     setState(() => {
 
       //Set the selected index
-      selectedBottomNavigationBarIndex = index
+      bottomNavigationBarIndex = index
     });
   }
 
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-      body: bottomNavigationBarOptions.elementAt(selectedBottomNavigationBarIndex),
+      body: bottomNavigationBarOptions.elementAt(bottomNavigationBarIndex),
 
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem> [
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           )
 
         ],
-        currentIndex: selectedBottomNavigationBarIndex,
+        currentIndex: bottomNavigationBarIndex,
         selectedItemColor: blueHighlight,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,

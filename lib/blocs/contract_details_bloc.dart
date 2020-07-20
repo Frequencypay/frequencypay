@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:frequencypay/PLACEHOLDERS/PlaceholderDataService.dart';
-import 'package:frequencypay/PLACEHOLDERS/PlaceholderUserContractsModel.dart';
 
 //Events
 class ContractDetailsEvent {
@@ -22,12 +20,12 @@ class ContractDetailsIsLoadingState extends ContractDetailsState {
 
 class ContractDetailsIsLoadedState extends ContractDetailsState {
 
-  final _contract;
+  //final _contract;
 
-  ContractDetailsIsLoadedState(PlaceholderUserContractsModel this._contract);
+  //ContractDetailsIsLoadedState(PlaceholderUserContractsModel this._contract);
 
   //Implement getters for each portion of the contract needed by the screen?
-  PlaceholderUserContractsModel get getContract => _contract;
+  //PlaceholderUserContractsModel get getContract => _contract;
 }
 
 class ContractDetailsIsNotLoadedState extends ContractDetailsState {
@@ -36,9 +34,9 @@ class ContractDetailsIsNotLoadedState extends ContractDetailsState {
 
 class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsState> {
 
-  PlaceholderDataService service;
+  //PlaceholderDataService service;
 
-  ContractDetailsBloc(PlaceholderDataService service);
+  //ContractDetailsBloc(PlaceholderDataService service);
 
   @override
   ContractDetailsState get initialState => ContractDetailsIsLoadingState();
@@ -51,8 +49,8 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
 
       try {
 
-        PlaceholderUserContractsModel contract = await service.getLocalUserActiveContractsModel();
-        yield ContractDetailsIsLoadedState(contract);
+        //PlaceholderUserContractsModel contract = await service.getLocalUserActiveContractsModel();
+        //yield ContractDetailsIsLoadedState(contract);
       } catch (_){
 
         print(_);

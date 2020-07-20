@@ -1,21 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class ContractDetails extends StatefulWidget {
-  double percentComplete;
-  ContractDetails({this.percentComplete});
+
+  ContractDetails();
   @override
-  _ContractDetailsState createState() => _ContractDetailsState(percentComplete);
+  _ContractDetailsState createState() => _ContractDetailsState();
 }
 
 class _ContractDetailsState extends State<ContractDetails> {
-  double percentComplete;
 
-  _ContractDetailsState(this.percentComplete);
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
+  _ContractDetailsState();
 
   @override
   Widget build(BuildContext context) {
+
+    //Extracting the contract assigned to load this page
+    final ContractDetailsArguments arguments = ModalRoute.of(context).settings.arguments;
+
+    //The contract to use
+    final Contract contract = arguments.contract;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
@@ -24,6 +34,7 @@ class _ContractDetailsState extends State<ContractDetails> {
               SizedBox(height: 10,),
               Row(
                 children: <Widget>[
+                  BackButton(color: blueHighlight),
                   Text("  Your ",
                     style: TextStyle(color: Colors.grey, fontSize: 25),),
                   Text("Contract ",
@@ -69,7 +80,7 @@ class _ContractDetailsState extends State<ContractDetails> {
     return new LinearPercentIndicator(
       width: 200,
       lineHeight: 10.0,
-      percent: percentComplete,
+      percent: 0,
       progressColor: Colors.deepPurple,
       alignment: MainAxisAlignment.center,
     );
