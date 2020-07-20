@@ -104,7 +104,6 @@ class _UserContractsPageState extends State<UserContractsPage>
   //Each of these need to retrieve the contracts and build the widgets for the list
   //(ListView.builder is the way to implement)
   Widget buildCompleteContractList() {
-
     return BlocBuilder<UserContractsBloc, UserContractsState>(
       builder: (context, state) {
 
@@ -146,7 +145,6 @@ class _UserContractsPageState extends State<UserContractsPage>
   }
 
   Widget buildRepaymentContractList() {
-
     return BlocBuilder<UserContractsBloc, UserContractsState>(
         builder: (context, state) {
 

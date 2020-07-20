@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/profile_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:frequencypay/vaulted_pages/firebase_authentication.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -23,6 +21,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+
+  static const Color blueHighlight = const Color(0xFF3665FF);
+
   File _image;
   ProfileBloc createBloc(
     var context,
@@ -59,6 +60,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
+          appBar: AppBar(
+            title: RichText(
+              text: new TextSpan(
+                // Note: Styles for TextSpans must be explicitly defined.
+                // Child text spans will inherit styles from parent
+                style: new TextStyle(
+                  fontSize: 25.0,
+                  color: Colors.black45,
+                ),
+                children: <TextSpan>[
+                  new TextSpan(text: 'Your '),
+                  new TextSpan(
+                      text: 'Profile',
+                      style: new TextStyle(
+                          fontWeight: FontWeight.bold, color: blueHighlight)),
+                ],
+              ),
+            ),
+            centerTitle: false,
+            backgroundColor: Colors.white10,
+            elevation: 0,
+          ),
           body: ListView(
         children: <Widget>[
           Column(

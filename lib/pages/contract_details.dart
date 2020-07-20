@@ -27,6 +27,7 @@ class _ContractDetailsState extends State<ContractDetails> {
     final Contract contract = arguments.contract;
 
     return Scaffold(
+//      appBar: AppBar(title: Text('Your' + contract()),),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(

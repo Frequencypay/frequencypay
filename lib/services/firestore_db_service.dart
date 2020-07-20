@@ -1,16 +1,14 @@
 // Service class containing all Firestore operations
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/pages/loan_request_page.dart';
 import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
-class FirestoreService{
+class FirestoreService {
   final String uid;
   final String value;
+
   FirebaseUser currentUser;
   FirestoreService({
     this.uid,
@@ -19,10 +17,12 @@ class FirestoreService{
 
     getCurrentUser();
   } // V.I. When we create an instance of this service class, the UID must be passed,
+
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
 
 
   //collection references (we can have one for each collection)
+
   final CollectionReference userDataCollection=Firestore.instance.collection('user_data');
   final CollectionReference contractCollection=Firestore.instance.collection('contracts');
   final CollectionReference userBillsCollection=Firestore.instance.collection('user_bills'); //NOT USED YET
@@ -48,6 +48,7 @@ class FirestoreService{
 
   //Create a contract object in the database
   //This function is called whenever a loan request is submitted
+
   Future createContract(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
     return await contractCollection.document(uid).setData({
       'requester':requester,
@@ -84,11 +85,13 @@ class FirestoreService{
   }
 
   //get user_data stream
-  Stream<UserData> get userData{ //the stream returns data based on UserData model, which is our model that we defined
-    return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot); // map what we get back to our custom model
+  Stream<UserData> get userData {
+    //the stream returns data based on UserData model, which is our model that we defined
+    return userDataCollection
+        .document(uid)
+        .snapshots()
+        .map(_userDataFromSnapshot); // map what we get back to our custom model
   }
-
-
 
 //contract from snapshot (retrieves specific contract based on UID)
 // THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACT DATA WE GET FROM DB INTO OUR CUSTOM contract model
@@ -206,4 +209,3 @@ class FirestoreService{
   }
 
 }
-

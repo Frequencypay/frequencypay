@@ -23,7 +23,9 @@ class _UserBillsState extends State<UserBills> {
 
   final _maxContractsDisplayed = 3;
 
-  UserBillsBloc createBloc(var context,) {
+  UserBillsBloc createBloc(
+    var context,
+  ) {
     final user = Provider.of<User>(context, listen: false);
 
     UserBillsBloc bloc = UserBillsBloc(FirestoreService(uid: user.uid));
@@ -42,31 +44,49 @@ class _UserBillsState extends State<UserBills> {
           child: SafeArea(
             child: Column(
               children: <Widget>[
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   children: <Widget>[
-                    Text("  Your ",style: TextStyle(color: Colors.grey, fontSize: 30),),
-                    Text("Bills ",style: TextStyle(color: Colors.blue, fontSize: 30),),
+                    Text(
+                      "  Your ",
+                      style: TextStyle(color: Colors.grey, fontSize: 30),
+                    ),
+                    Text(
+                      "Bills ",
+                      style: TextStyle(color: Colors.blue, fontSize: 30),
+                    ),
                   ],
                 ),
 
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 Row(
                   children: <Widget>[
-                    Text("    Upcoming: ",style: TextStyle(color: Colors.grey, fontSize: 17),),
+                    Text(
+                      "    Upcoming: ",
+                      style: TextStyle(color: Colors.grey, fontSize: 17),
+                    ),
                   ],
                 ),
 
                 //GENERATING BILL WITH DUMMY DATA
-                getBill("DTE ENERGY","5/15/2020","130"),
-                getBill("T-MOBILE","6/25/2020","75"),
+                getBill("DTE ENERGY", "5/15/2020", "130"),
+                getBill("T-MOBILE", "6/25/2020", "75"),
 
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 viewAllBills(),
 
                 Row(
                   children: <Widget>[
-                    Text("    Contracts: ",style: TextStyle(color: Colors.grey, fontSize: 17),),
+                    Text(
+                      "    Contracts: ",
+                      style: TextStyle(color: Colors.grey, fontSize: 17),
+                    ),
                   ],
                 ),
 
@@ -74,10 +94,13 @@ class _UserBillsState extends State<UserBills> {
                 //getContracts("T-MOBILE","1 WEEK",75,60),
                 buildActiveContractList(),
 
-                SizedBox(height: 20,),
+                SizedBox(
+                  height: 20,
+                ),
                 viewAllContracts(),
-                SizedBox(height: 10,),
-
+                SizedBox(
+                  height: 10,
+                ),
               ],
             ),
           ),
@@ -86,13 +109,12 @@ class _UserBillsState extends State<UserBills> {
     );
   }
 
-  Widget getBill(String billName, String billDue,String billAmount){
+  Widget getBill(String billName, String billDue, String billAmount) {
     return Card(
       margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
-
           children: <Widget>[
             CircleAvatar(
               radius: 30,
@@ -102,9 +124,18 @@ class _UserBillsState extends State<UserBills> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("$billName",style: TextStyle(fontSize: 16),),
-                Text("DUE ON: $billDue",style: TextStyle(fontSize: 16,color: Colors.grey),),
-                Text("\$ $billAmount",style: TextStyle(fontSize: 16),),
+                Text(
+                  "$billName",
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  "DUE ON: $billDue",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                Text(
+                  "\$ $billAmount",
+                  style: TextStyle(fontSize: 16),
+                ),
               ],
             )
           ],
@@ -113,13 +144,13 @@ class _UserBillsState extends State<UserBills> {
     );
   }
 
-  Widget getContracts(String contractName, String timeLeft,double totalAmount, double amountPaid){
+  Widget getContracts(String contractName, String timeLeft, double totalAmount,
+      double amountPaid) {
     return Card(
       margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
-
           children: <Widget>[
             CircleAvatar(
               radius: 30,
@@ -127,21 +158,34 @@ class _UserBillsState extends State<UserBills> {
             ),
             Text("     "),
             Column(
-
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("$contractName",style: TextStyle(fontSize: 16),),
-                Text("$timeLeft LEFT",style: TextStyle(fontSize: 16,color: Colors.grey),),
-                SizedBox(height: 5,),
+                Text(
+                  "$contractName",
+                  style: TextStyle(fontSize: 16),
+                ),
+                Text(
+                  "$timeLeft LEFT",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
                 getProgress(totalAmount, amountPaid),
-                SizedBox(height: 5,),
-                Text("\$ $totalAmount",style: TextStyle(fontSize: 16),),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  "\$ $totalAmount",
+                  style: TextStyle(fontSize: 16),
+                ),
                 FlatButton.icon(
                   icon: Icon(Icons.expand_less),
                   label: Text("View Details"),
-                  onPressed: (){
+                  onPressed: () {
                     setPercentComplete(totalAmount, amountPaid);
-                    Navigator.pushNamed(context, "/contract_details", arguments: ContractDetailsArguments(null));
+                    Navigator.pushNamed(context, "/contract_details",
+                        arguments: ContractDetailsArguments(null));
                   },
                 )
               ],
@@ -152,25 +196,29 @@ class _UserBillsState extends State<UserBills> {
     );
   }
 
-  Widget viewAllBills(){
+  Widget viewAllBills() {
     return FlatButton(
-      child: Text("View All",style: TextStyle(color: Colors.grey),),
+      child: Text(
+        "View All",
+        style: TextStyle(color: Colors.grey),
+      ),
       color: Colors.white24,
-      onPressed: (){},
+      onPressed: () {},
     );
   }
 
-  Widget viewAllContracts(){
+  Widget viewAllContracts() {
     return FlatButton(
-      child: Text("View All",style: TextStyle(color: Colors.grey),),
+      child: Text(
+        "View All",
+        style: TextStyle(color: Colors.grey),
+      ),
       color: Colors.white24,
-      onPressed: (){
-
-      },
+      onPressed: () {},
     );
   }
 
-  Widget getProgress(double totalAmount, double amountPaid){
+  Widget getProgress(double totalAmount, double amountPaid) {
     setPercentComplete(totalAmount, amountPaid);
     return new LinearPercentIndicator(
       width: 200,
@@ -180,35 +228,33 @@ class _UserBillsState extends State<UserBills> {
     );
   }
 
-  void setPercentComplete(double totalAmount, double amountPaid){
-    percentComplete=amountPaid/totalAmount;
+  void setPercentComplete(double totalAmount, double amountPaid) {
+    percentComplete = amountPaid / totalAmount;
   }
 
   Widget buildActiveContractList() {
-
     return BlocBuilder<UserBillsBloc, UserBillsState>(
         builder: (context, state) {
-
-          if (state is UserBillsIsLoadedState) {
-            return ListView.builder(
-
-                itemBuilder: (context, index) {
-                  return ContractCards.buildActiveContractCard(context, state.getContracts.contracts[index]);
-                },
-                itemCount: min<int>(_maxContractsDisplayed, state.getContracts.contracts.length),
-                shrinkWrap: true);
-          } else if (state is UserBillsIsLoadingState) {
-            return ListView.builder(
-
-                itemBuilder: (context, index) {
-                  return ContractCards.buildActiveContractCard(context, null);
-                },
-                itemCount: 2,
-                shrinkWrap: true);//Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
-          } else {
-            return Center(child: Text("error"));
-          }
-        });
+      if (state is UserBillsIsLoadedState) {
+        return ListView.builder(
+            itemBuilder: (context, index) {
+              return ContractCards.buildActiveContractCard(
+                  context, state.getContracts.contracts[index]);
+            },
+            itemCount: min<int>(
+                _maxContractsDisplayed, state.getContracts.contracts.length),
+            shrinkWrap: true);
+      } else if (state is UserBillsIsLoadingState) {
+        return ListView.builder(
+            itemBuilder: (context, index) {
+              return ContractCards.buildActiveContractCard(context, null);
+            },
+            itemCount: 2,
+            shrinkWrap:
+                true); //Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+      } else {
+        return Center(child: Text("error"));
+      }
+    });
   }
-
 }
