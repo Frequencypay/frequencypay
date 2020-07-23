@@ -4,6 +4,7 @@ import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
 
+import 'calendar_page.dart';
 import 'landing_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage> {
 
   static List<Widget> bottomNavigationBarOptions = <Widget>[
     LandingPage(),
-    UserContractsPage(),
+    CalendarPage(),
     ProfileScreen(),
     UserBills()
   ];
