@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/pages/authenticate/sign_in_page.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
@@ -65,9 +66,11 @@ class _LandingPageState extends State<LandingPage> {
             elevation: 0,
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.more_vert),
+                icon: Icon(Icons.person),
                 onPressed: () async {
-                  await _auth.signOut();
+                  //await _auth.signOut();
+//                  getOut();
+                  Navigator.pushReplacementNamed(context, '/sign_in');
 
                 },
                 color: Colors.black45,
@@ -251,6 +254,11 @@ class _LandingPageState extends State<LandingPage> {
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
+
+  void getOut(){
+      FirebaseAuth.instance.signOut();
+    }
+
 
 //  getBalance() async{
 //    PlaidRepository plaidBalanceResponseModel;
