@@ -13,7 +13,7 @@ class ContractService {
 
     List<ScheduledTransaction> transactions = List<ScheduledTransaction>();
 
-
+    
 
     return [ScheduledTransaction(500, DateTime.now())];
   }

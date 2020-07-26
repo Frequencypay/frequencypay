@@ -9,6 +9,7 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
+import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ class _UserBillsState extends State<UserBills> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
+        floatingActionButton: LoanRequestWidgets.LoanRequestFloatingActionButton(context),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Column(

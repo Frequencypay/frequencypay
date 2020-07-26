@@ -5,6 +5,7 @@ import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:provider/provider.dart';
 
 class LandingPage extends StatefulWidget {
@@ -43,6 +44,7 @@ class _LandingPageState extends State<LandingPage> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
+          floatingActionButton: LoanRequestWidgets.LoanRequestFloatingActionButton(context),
           appBar: AppBar(
             title: RichText(
               text: new TextSpan(
@@ -91,13 +93,7 @@ class _LandingPageState extends State<LandingPage> {
                   ],
                 ),
 
-              FlatButton.icon(
-                icon: Icon(Icons.person,color: Colors.grey,),
-                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
-                onPressed: ()  {
-                  Navigator.pushNamed(context, '/loan_request_page');
-                },
-              ),
+
           //ROW 1
                 Row(
                   children: <Widget>[
