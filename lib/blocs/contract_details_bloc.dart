@@ -1,4 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/services/contract_service.dart';
+import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
 class ContractDetailsEvent {
@@ -6,6 +9,13 @@ class ContractDetailsEvent {
 }
 
 class LoadContractDetailsEvent extends ContractDetailsEvent {
+
+  final Contract contract;
+
+  LoadContractDetailsEvent(this.contract);
+}
+
+class EstablishContractContractDetailsEvent extends ContractDetailsEvent {
 
 }
 
@@ -20,12 +30,11 @@ class ContractDetailsIsLoadingState extends ContractDetailsState {
 
 class ContractDetailsIsLoadedState extends ContractDetailsState {
 
-  //final _contract;
+  final _contract;
 
-  //ContractDetailsIsLoadedState(PlaceholderUserContractsModel this._contract);
+  ContractDetailsIsLoadedState(Contract this._contract);
 
-  //Implement getters for each portion of the contract needed by the screen?
-  //PlaceholderUserContractsModel get getContract => _contract;
+  Contract get getContract => _contract;
 }
 
 class ContractDetailsIsNotLoadedState extends ContractDetailsState {
@@ -34,9 +43,12 @@ class ContractDetailsIsNotLoadedState extends ContractDetailsState {
 
 class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsState> {
 
-  //PlaceholderDataService service;
+  final FirestoreService service;
+  final ContractService contractService;
 
-  //ContractDetailsBloc(PlaceholderDataService service);
+  Contract loadedContract;
+
+  ContractDetailsBloc(this.service, this.contractService);
 
   @override
   ContractDetailsState get initialState => ContractDetailsIsLoadingState();
@@ -49,12 +61,22 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
 
       try {
 
-        //PlaceholderUserContractsModel contract = await service.getLocalUserActiveContractsModel();
-        //yield ContractDetailsIsLoadedState(contract);
+        loadedContract = event.contract;
+
+        yield ContractDetailsIsLoadedState(loadedContract);
       } catch (_){
 
         print(_);
         yield ContractDetailsIsNotLoadedState();
+      }
+    } else if (event is EstablishContractContractDetailsEvent) {
+
+      try {
+
+        contractService.acceptContractRequest(loadedContract);
+      } catch (_){
+
+        print(_);
       }
     }
   }

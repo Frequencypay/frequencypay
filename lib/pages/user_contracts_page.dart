@@ -38,6 +38,7 @@ class _UserContractsPageState extends State<UserContractsPage>
       create: (context) => createBloc(context),
       child: DefaultTabController(
         length: 3,
+        initialIndex: 2,
         child: Scaffold(
             body: Column(
           children: <Widget>[
@@ -49,8 +50,10 @@ class _UserContractsPageState extends State<UserContractsPage>
                   Expanded(flex: 1, child: Container()),
                   Expanded(
                     flex: 8,
-                    child: Container(
-                      child: RichText(
+                    child: Row(
+                      children: <Widget> [
+                        BackButton(color: blueHighlight),
+                        RichText(
                           text: TextSpan(
                               style: TextStyle(
                                   fontFamily: 'Leelawadee UI', fontSize: 25),
@@ -63,7 +66,7 @@ class _UserContractsPageState extends State<UserContractsPage>
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: blueHighlight))
-                          ])),
+                          ])),]
                     ),
                   ),
                 ],

@@ -5,21 +5,27 @@ import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
+import 'contract_service.dart';
+
 class FirestoreService {
   final String uid;
   final String value;
 
   FirebaseUser currentUser;
+
+  Future _doneFuture;
+
   FirestoreService({
     this.uid,
     this.value
   }) {
 
-    getCurrentUser();
+    _doneFuture = getCurrentUser();
   } // V.I. When we create an instance of this service class, the UID must be passed,
 
   //so anytime we use this service class, we have the uid of the user (makes things more secure)
 
+  Future get initializationDone => _doneFuture;
 
   //collection references (we can have one for each collection)
 
@@ -48,8 +54,7 @@ class FirestoreService {
 
   //Create a contract object in the database
   //This function is called whenever a loan request is submitted
-
-  Future createContract(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
+  Future createContractRequest(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
     return await contractCollection.document(uid).setData({
       'requester':requester,
       'loaner':loaner,
@@ -58,8 +63,26 @@ class FirestoreService {
       'dueDate':dueDate,
       'numPayments':numPayments,
       'amount':amount,
-      'state':CONTRACT_STATE.OPEN_REQUEST.toString()
+      'state':CONTRACT_STATE.OPEN_REQUEST.toString(),
+      'scheduledTransactions': null,
     });
+  }
+
+  //This is called to attempt to accept a contract, making it an active, established contract which must be repaid between the two users.
+  void acceptEstablishContract(Contract contract, List repaymentTransactions) async {
+
+    //Perform any validation of the operation
+
+    //Establish the contract
+    _establishContract(contract.uid, contract, repaymentTransactions);
+  }
+
+  //This handles the actual process of establishing a contract.
+  void _establishContract(String uid, Contract contract, List transactions) async{
+
+    DocumentReference document = contractCollection.document(uid);
+
+    document.updateData({"state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),"scheduledTransactions":transactions});
   }
 
   //Returns an arbitrary user based on the given uid
@@ -95,15 +118,18 @@ class FirestoreService {
 
 //contract from snapshot (retrieves specific contract based on UID)
 // THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACT DATA WE GET FROM DB INTO OUR CUSTOM contract model
-
   Contract _contractFromSnapshot(DocumentSnapshot snapshot){ //For a single contract
     return Contract(
-      amount: snapshot.data['amount'],
-      dueDate: snapshot.data['dueDate'],
-      state: snapshot.data['state'],
-      loaner: snapshot.data['loaner'],
-      numPayments: snapshot.data['numPayments'],
-      requester: snapshot.data['requester'],
+        uid: snapshot.documentID,
+        amount: snapshot.data['amount'],
+        dueDate: snapshot.data['dueData'],
+        state: contractStateFromString(snapshot.data['state']),
+        loaner: snapshot.data['loaner'],
+        loanerName: snapshot.data['loanerName'],
+        numPayments: snapshot.data['numPayments'],
+        requester: snapshot.data['requester'],
+        requesterName: snapshot.data['requesterName'],
+        transactions: snapshot.data['scheduledTransactions'],
     );
   }
 
@@ -116,6 +142,7 @@ class FirestoreService {
   List<Contract> _activeContractListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
+        uid: doc.documentID,
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
@@ -123,7 +150,8 @@ class FirestoreService {
         loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
-        requesterName: doc.data['requesterName']
+        requesterName: doc.data['requesterName'],
+        transactions: doc.data['scheduledTransactions'],
       );
     }).toList();
   }
@@ -133,6 +161,7 @@ class FirestoreService {
   List<Contract> _pendingContractListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
+        uid: doc.documentID,
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
@@ -140,7 +169,8 @@ class FirestoreService {
         loanerName: doc.data['loanerName'],
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
-        requesterName: doc.data['requesterName']
+        requesterName: doc.data['requesterName'],
+        transactions: doc.data['scheduledTransactions'],
       );
     }).toList();
   }
@@ -150,6 +180,7 @@ class FirestoreService {
   List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
+        uid: doc.documentID,
         amount: doc.data['amount'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
@@ -158,11 +189,21 @@ class FirestoreService {
         numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
+        transactions: doc.data['scheduledTransactions'],
       );
     }).toList();
   }
 
-  Stream<List<Contract>> retrieveContracts(ContractSearchQuery query) {
+  //Returns an arbitrary contract based on the given uid
+  Stream<Contract> _retrieveContract(String uid) {
+
+    return contractCollection.document(uid).snapshots().map(_contractFromSnapshot);
+  }
+
+  Stream<List<Contract>> retrieveContracts(ContractSearchQuery query) async*{
+
+    //Wait for initialization to finish
+    await initializationDone;
 
     //The resulting stream
     Stream<List<Contract>> contractsStream;
@@ -184,7 +225,7 @@ class FirestoreService {
     }
 
     //Return the resulting contract stream
-    return contractsStream;
+    yield* contractsStream;
   }
 
   //user search data from snapshot (retrieves specific contract based on UID)
@@ -203,7 +244,7 @@ class FirestoreService {
   Stream <QuerySnapshot> get userSearchData{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
-  void getCurrentUser() async {
+  Future getCurrentUser() async {
 
     currentUser = await FirebaseAuth.instance.currentUser();
   }

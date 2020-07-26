@@ -401,7 +401,7 @@ class _LoanRequestState extends State<LoanRequest> {
   void sumbitContract(UserData localUser, UserData lender) async{
     AuthService authInstance=new AuthService();
     final user=authInstance.getCurrentUser();
-    await FirestoreService().createContract(currentUser.uid, lender.uid, localUser.fname, lender.fname, dueDateInputController.text, paymentsOf, amount);
+    await FirestoreService().createContractRequest(currentUser.uid, lender.uid, localUser.fname, lender.fname, dueDateInputController.text, paymentsOf, amount);
   }
 
   void getCurrentUser() async {

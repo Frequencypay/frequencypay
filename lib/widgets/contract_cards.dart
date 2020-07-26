@@ -66,7 +66,7 @@ class ContractCards {
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
                       LinearProgressIndicator(),
-                      Text("<amount> from <name>",
+                      Text("\$" + contract.amount.toString() + " from " + contract.loanerName,
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
                       Align(
