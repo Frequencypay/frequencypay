@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 
@@ -104,6 +107,7 @@ class _WebViewPage {
   Widget build(BuildContext context) {
     var webView = new WebView(
       initialUrl: _url,
+      debuggingEnabled: true,
       javascriptMode: JavascriptMode.unrestricted,
       navigationDelegate: (NavigationRequest navigation) {
         if (navigation.url.contains('plaidlink://')) {
@@ -112,7 +116,13 @@ class _WebViewPage {
         }
         return NavigationDecision.navigate;
       },
+
     );
+    final newWebView = new FlutterWebviewPlugin();
+    newWebView.launch(_url);
+
+     newWebView.onUrlChanged.listen((event) {});
+
 
     return Scaffold(body: webView);
   }
@@ -150,3 +160,4 @@ class Result {
 
   Result(this.token, this.accountId, this.response);
 }
+

@@ -101,7 +101,7 @@ class AuthService {
   Future signOut() async {
     try {
       FlutterSecureStorage _storage = FlutterSecureStorage();
-//      await _storage.deleteAll();
+      await _storage.deleteAll();
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());

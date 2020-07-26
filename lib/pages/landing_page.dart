@@ -68,6 +68,7 @@ class _LandingPageState extends State<LandingPage> {
                 icon: Icon(Icons.more_vert),
                 onPressed: () async {
                   await _auth.signOut();
+
                 },
                 color: Colors.black45,
               )
@@ -78,19 +79,6 @@ class _LandingPageState extends State<LandingPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(width: 250,),
-                    FlatButton.icon(
-                      icon: Icon(Icons.person,color: Colors.grey,),
-                      label: Text("Log out",style: TextStyle(color: Colors.grey),),
-                      onPressed: () async {
-                        await _auth.signOut();
-                      },
-                    ),
-                  ],
-                ),
-
               FlatButton.icon(
                 icon: Icon(Icons.person,color: Colors.grey,),
                 label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
@@ -109,7 +97,6 @@ class _LandingPageState extends State<LandingPage> {
                           return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
                             TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
                             TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
                           ]));
                         } else if (state is LandingIsNotLoadedState) {
                           return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
@@ -121,7 +108,6 @@ class _LandingPageState extends State<LandingPage> {
                           return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
                             TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
                             TextSpan(text: "<name>.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
                           ]));
                         }},
                       ),

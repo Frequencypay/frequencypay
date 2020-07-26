@@ -1,1 +1,1 @@
-export 'plaid_token_widget.dart';
+export '../pages/plaid_link_splash_screen.dart';
