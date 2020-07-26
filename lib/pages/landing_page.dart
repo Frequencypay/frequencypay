@@ -6,6 +6,7 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LandingPage extends StatefulWidget {
@@ -100,27 +101,7 @@ class _LandingPageState extends State<LandingPage> {
                     Expanded(flex: 1, child: Container()),
                     Expanded(
                       flex: 5,
-                      child: BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
-                        if (state is LandingIsLoadedState) {
-                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-                            TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
-                          ]));
-                        } else if (state is LandingIsNotLoadedState) {
-                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-                            TextSpan(text: "error.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-                            TextSpan(text: "error", style: TextStyle(color: Colors.grey, fontSize: 14))
-                          ]));
-                        } else {
-                          return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-                            TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-                            TextSpan(text: "<name>.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-                            TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
-                          ]));
-                        }},
-                      ),
+                      child: _greetingMessage(),
                     ),
                     Expanded(flex: 1, child: Container())
                   ],
@@ -183,41 +164,10 @@ class _LandingPageState extends State<LandingPage> {
                           child: Row(children: <Widget>[
                             Expanded(
                                 flex: 1,
-                                child: Stack(children: <Widget>[
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: SizedBox(
-                                          width: 90,
-                                          height: 90,
-                                          child: CircularProgressIndicator(
-                                            backgroundColor: Colors.grey[300],
-                                          ))),
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        "view\ncontracts",
-                                        textAlign: TextAlign.center,
-                                      ))
-                                ])),
+                                child: _progressCircle()),
                             Expanded(
                                 flex: 2,
-                                child: Column(children: <Widget>[
-                                  Expanded(
-                                      flex: 1,
-                                      child: Text("Your Progress",
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.grey))),
-                                  Expanded(
-                                      flex: 1,
-                                      child: Column(children: <Widget>[
-                                        Text("<x>% of loans paid off"),
-                                        Text("<time> until paid in full",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.grey))
-                                      ])),
-                                ]))
+                                child: _progressMessage())
                           ]),
                         )),
                     Expanded(flex: 1, child: Container())
@@ -255,6 +205,89 @@ class _LandingPageState extends State<LandingPage> {
     }
 
     return CircleAvatar();
+  }
+
+  Widget _greetingMessage() {
+
+    return BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
+      if (state is LandingIsLoadedState) {
+        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+          TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+          TextSpan(text: _displayDate(), style: TextStyle(color: Colors.grey, fontSize: 14))
+        ]));
+      } else if (state is LandingIsNotLoadedState) {
+        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+          TextSpan(text: "error.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+          TextSpan(text: "error", style: TextStyle(color: Colors.grey, fontSize: 14))
+        ]));
+      } else {
+        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
+          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
+          TextSpan(text: "<name>.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
+          TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
+        ]));
+      }},
+    );
+  }
+
+  Widget _progressCircle() {
+
+    return ClipOval(
+
+      child: Material(
+        child: InkWell(
+          onTap: () => {
+
+            Navigator.pushNamed(context, "/user_contracts")
+          },
+          child: Stack(children: <Widget>[
+            Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                    width: 90,
+                    height: 90,
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.grey[300],
+                    ))),
+            Align(
+                alignment: Alignment.center,
+                child: Text(
+                  "view\ncontracts",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14)
+                ))
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _progressMessage() {
+
+    return Column(children: <Widget>[
+      Expanded(
+          flex: 1,
+          child: Text("Your Progress",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.grey))),
+      Expanded(
+          flex: 1,
+          child: Column(children: <Widget>[
+            Text("<x>% of loans paid off"),
+            Text("<time> until paid in full",
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey))
+          ])),
+    ]);
+  }
+
+  String _displayDate() {
+
+    return DateFormat.yMMMMd().format(DateTime.now());
   }
 
   //KEEP FOR REFERENCE
