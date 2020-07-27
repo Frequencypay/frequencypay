@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/authenticate/authenticate.dart';
 import 'package:frequencypay/pages/landing_page.dart';
 import 'package:frequencypay/pages/plaid_link_splash_screen.dart';
+import 'package:frequencypay/pages/wake_up_auth.dart';
 import 'package:provider/provider.dart';
 import '../home_page.dart';
 import 'package:frequencypay/models/user_model.dart';
@@ -19,7 +20,7 @@ class Wrapper extends StatelessWidget {
       return Authenticate();
     }
     else{ // we have a user logged in
-      return PlaidLinkSplashScreen();
+      return WakeUpAuth();
     }
   }
 }
