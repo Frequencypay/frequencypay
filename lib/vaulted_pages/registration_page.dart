@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/pages/landing_page.dart';
+import 'package:frequencypay/fuse/blocs/blocs.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function toggleView;
   //RegisterPage({Key key} ) : super(key: key) ;
   RegisterPage({this.toggleView});
-
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -29,12 +30,12 @@ class _RegisterPageState extends State<RegisterPage> {
   initState() {
     //firstNameInputController = new TextEditingController();
     //lastNameInputController = new TextEditingController();
-    nameInputController=new TextEditingController();
+    nameInputController = new TextEditingController();
     emailInputController = new TextEditingController();
     pwdInputController = new TextEditingController();
     confirmPwdInputController = new TextEditingController();
     usernameInputController = new TextEditingController();
-    phoneInputController=new TextEditingController();
+    phoneInputController = new TextEditingController();
     super.initState();
   }
 
@@ -60,16 +61,22 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text("Register"),
           backgroundColor: Colors.blue,
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
-              icon:Icon(Icons.person, color: Colors.white,),
-              label: Text("Log In",style: TextStyle(color: Colors.white),),
-              onPressed: (){
+              icon: Icon(
+                Icons.person,
+                color: Colors.white,
+              ),
+              label: Text(
+                "Log In",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
                 Navigator.pushNamed(context, '/login');
               },
             )
@@ -79,54 +86,63 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
                 child: Form(
-                  key: _registerFormKey,
-                  child: Column(
+              key: _registerFormKey,
+              child: Column(
+                children: <Widget>[
+                  logo(),
+                  Row(
                     children: <Widget>[
-                      logo(),
-                      Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 4,
-                            child: nameInput(),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text(" "),
-                          ),
-
-                        ],
+                      Expanded(
+                        flex: 4,
+                        child: nameInput(),
                       ),
-
-                      SizedBox(height: 10.0,),
-                      emailInput(),
-                      SizedBox(height: 10.0,),
-                      passwordInput(),
-                      SizedBox(height: 10.0,),
-                      passwordConfirmInput(),
-                      SizedBox(height: 10.0,),
-                      usernameInput(),
-                      SizedBox(height: 10.0,),
-                      phoneNumber(),
-                      SizedBox(height: 10.0,),
-
-
-
-                      registerButton(),
-                      Text("Already have an account?"),
-                      FlatButton(
-                        child: Text("Login here!"),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      )
+                      Expanded(
+                        flex: 1,
+                        child: Text(" "),
+                      ),
                     ],
                   ),
-                ))));
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  emailInput(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  passwordInput(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  passwordConfirmInput(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  usernameInput(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  phoneNumber(),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  registerButton(),
+                  Text("Already have an account?"),
+                  FlatButton(
+                    child: Text("Login here!"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            ))));
   }
 
   Widget logo() {
-    return
-      Image.asset('assets/frequency.png',fit: BoxFit.scaleDown, );
+    return Image.asset(
+      'assets/frequency.png',
+      fit: BoxFit.scaleDown,
+    );
   }
 
   /*
@@ -159,7 +175,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
    */
 
-  Widget nameInput(){
+  Widget nameInput() {
     return TextFormField(
       controller: nameInputController,
       decoration: InputDecoration(
@@ -170,10 +186,9 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-
   }
 
-  Widget emailInput(){
+  Widget emailInput() {
     return TextFormField(
       controller: emailInputController,
       decoration: InputDecoration(
@@ -187,8 +202,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-
-  Widget passwordInput(){
+  Widget passwordInput() {
     return TextFormField(
       controller: pwdInputController,
       decoration: InputDecoration(
@@ -202,8 +216,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-
-  Widget passwordConfirmInput(){
+  Widget passwordConfirmInput() {
     return TextFormField(
       controller: confirmPwdInputController,
       decoration: InputDecoration(
@@ -217,7 +230,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget usernameInput(){ // will have some validation in the future
+  Widget usernameInput() {
+    // will have some validation in the future
     return TextFormField(
       controller: usernameInputController,
       decoration: InputDecoration(
@@ -230,7 +244,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget phoneNumber(){ // will have some validation in the future
+  Widget phoneNumber() {
+    // will have some validation in the future
     return TextFormField(
       controller: phoneInputController,
       decoration: InputDecoration(
@@ -243,72 +258,133 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  Widget registerButton() {
+    return RaisedButton(
+      child: Text("Register"),
+      color: Theme.of(context).primaryColor,
+      textColor: Colors.white,
+      onPressed:
+        _registerFuseUser
+       // _registerFrequencyUser
+        ,
+    );
+  }
+  void _registerUser(){
+    _registerFuseUser;
+    _registerFrequencyUser;
+  }
+  void _registerFuseUser() {
+    String zipCode,
+        partnerUserId,
+        partnerProfileId,
+        address1,
+        address2,
+        city,
+        dateOfBirth,
+        email,
+        mobilePhone,
+        name,
+        state,
+        profileType;
+    bool isTest, isPrimary;
+    zipCode = "48390";
+    address1 = "test";
+    city = "test";
+    dateOfBirth = "1997-07-01";
+    name = "test";
+    state = "MI";
+    profileType = "Personal";
 
-  Widget registerButton(){
-    return
-      RaisedButton(
-        child: Text("Register"),
-        color: Theme.of(context).primaryColor,
-        textColor: Colors.white,
-        onPressed: _registerUser,
-      );
+    Map userProfile = {};
+    userProfile["ZipCode"] = zipCode;
+    userProfile["Address1"] = address1;
+    userProfile["City"] = city;
+    userProfile["DateOfBirth"] = dateOfBirth;
+    userProfile["Name"] = name;
+    userProfile["State"] = state;
+    userProfile["ProfileType"] = profileType;
+
+    Map baseUserInfo = {};
+    baseUserInfo["ZipCode"] = zipCode;
+
+    BlocProvider.of<NewUserBloc>(context)
+        .add(NewUserCreated(baseUserInfo: baseUserInfo, userProfile: userProfile));
+
+    BlocBuilder<NewUserBloc, NewUserState>(builder: (context, state) {
+      if (state is NewUserInitial) {
+        print("FuseAPI new user initial");
+        return Center();
+      }
+      if (state is NewUserLoadInProgress) {
+        print("FuseAPI new user load in progress");
+        return Center(child: CircularProgressIndicator());
+      }
+      if (state is NewUserLoadSuccess) {
+        print("FuseAPI new user success");
+        final weather = state.newUser;
+
+        return Container();
+      }
+      return Container();
+    });
   }
 
-  void _registerUser(){
-    String name=nameInputController.text;
-    List<String> splitList=name.split(" ");
-    List<String> indexList=[];
+  void _registerFrequencyUser() {
+    String name = nameInputController.text;
+    List<String> splitList = name.split(" ");
+    List<String> indexList = [];
 
     if (_registerFormKey.currentState.validate()) {
-      if (pwdInputController.text ==
-          confirmPwdInputController.text) {
-
+      if (pwdInputController.text == confirmPwdInputController.text) {
         //for searching functionality:
-        for(int i=0; i<splitList.length;i++){
-          for(int y=1; y<splitList[i].length+1;y++){
-            if(i==1){ // we are on last name
-              indexList.add(splitList[i-1].toLowerCase()+" "+splitList[i].substring(0,y).toLowerCase());
+        for (int i = 0; i < splitList.length; i++) {
+          for (int y = 1; y < splitList[i].length + 1; y++) {
+            if (i == 1) {
+              // we are on last name
+              indexList.add(splitList[i - 1].toLowerCase() +
+                  " " +
+                  splitList[i].substring(0, y).toLowerCase());
             }
-            indexList.add(splitList[i].substring(0,y).toLowerCase());
-            print((splitList[i].substring(0,y).toLowerCase()));
+            indexList.add(splitList[i].substring(0, y).toLowerCase());
+            print((splitList[i].substring(0, y).toLowerCase()));
           }
         }
 
         //creates account and then sets data (2 in 1)
         FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-            email: emailInputController.text,
-            password: pwdInputController.text)
+                email: emailInputController.text,
+                password: pwdInputController.text)
             .then((currentUser) => Firestore.instance
-            .collection("users")
-            .document(currentUser.user.uid)
-            .setData({
-          "uid": currentUser.user.uid,
-          "name":nameInputController.text,
-          "email": emailInputController.text,
-          "phone":phoneInputController.text,
-          "username":usernameInputController.text,
-          "activeContracts":0,
-          "latePayments":0,
-          "searchIndex":indexList,
-          "completeContracts":0,
-        })
-            .then((result) => [
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomePage(
-                    uid: currentUser.user.uid,
-                  )),
-                  (_) => false),
-          //firstNameInputController.clear(),
-          //lastNameInputController.clear(),
-          nameInputController.clear(),
-          emailInputController.clear(),
-          pwdInputController.clear(),
-          confirmPwdInputController.clear()
-        ])
-            .catchError((err) => print(err)))
+                .collection("users")
+                .document(currentUser.user.uid)
+                .setData({
+                  "uid": currentUser.user.uid,
+                  "name": nameInputController.text,
+                  "email": emailInputController.text,
+                  "phone": phoneInputController.text,
+                  "username": usernameInputController.text,
+                  "activeContracts": 0,
+                  "latePayments": 0,
+                  "searchIndex": indexList,
+                  "completeContracts": 0,
+                })
+                .then((result) => [
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage(
+                                    uid: currentUser.user.uid,
+                                  )),
+                          (_) => false),
+                      //firstNameInputController.clear(),
+                      //lastNameInputController.clear(),
+                      nameInputController.clear(),
+                      emailInputController.clear(),
+                      pwdInputController.clear(),
+                      confirmPwdInputController.clear()
+                    ])
+                .catchError((err) => print(err)))
             .catchError((err) => print(err));
       } else {
         showDialog(

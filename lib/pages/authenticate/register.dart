@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:frequencypay/fuse/blocs/blocs.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/pages/authenticate/loading.dart';
 
@@ -228,10 +230,12 @@ class _RegisterState extends State<Register> {
   }
 
   Widget registerButton(){
+
     return RaisedButton(
       color: Colors.blue,
       child: Text("Register",style: TextStyle(color: Colors.white,fontSize: 15),),
       onPressed: () async {
+        _registerFuseUser();
         if(_formKey.currentState.validate()){
           loading=true;
           dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text.trim(),pwdInputController.text,fnameInputController.text.trim(),lnameInputController.text.trim(),usernameInputController.text.trim(),phoneInputController.text.trim(), addressInputController.text.trim());
@@ -247,5 +251,61 @@ class _RegisterState extends State<Register> {
       },
     );
 
+  }
+
+  void _registerFuseUser() {
+    String zipCode,
+        partnerUserId,
+        partnerProfileId,
+        address1,
+        address2,
+        city,
+        dateOfBirth,
+        email,
+        mobilePhone,
+        name,
+        state,
+        profileType;
+    bool isTest, isPrimary;
+    zipCode = "48390";
+    address1 = "test";
+    city = "test";
+    dateOfBirth = "1997-07-01";
+    name = "test";
+    state = "MI";
+    profileType = "Personal";
+
+    Map userProfile = {};
+    userProfile["ZipCode"] = zipCode;
+    userProfile["Address1"] = address1;
+    userProfile["City"] = city;
+    userProfile["DateOfBirth"] = dateOfBirth;
+    userProfile["Name"] = name;
+    userProfile["State"] = state;
+    userProfile["ProfileType"] = profileType;
+    Map baseUserInfo = {};
+    baseUserInfo["ZipCode"] = zipCode;
+
+    BlocProvider.of<NewUserBloc>(context)
+        .add(NewUserCreated(baseUserInfo: baseUserInfo, userProfile: userProfile));
+
+
+    BlocBuilder<NewUserBloc, NewUserState>(builder: (context, state) {
+      if (state is NewUserInitial) {
+        print("FuseAPI new user initial");
+        return Center();
+      }
+      if (state is NewUserLoadInProgress) {
+        print("FuseAPI new user load in progress");
+        return Center(child: CircularProgressIndicator());
+      }
+      if (state is NewUserLoadSuccess) {
+        print("FuseAPI new user success");
+        final weather = state.newUser;
+
+        return Container();
+      }
+      return Container();
+    });
   }
 }
