@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
@@ -18,6 +19,17 @@ class SetLenderLoanRequestEvent extends LoanRequestEvent {
   SetLenderLoanRequestEvent(this.lenderUID);
 }
 
+class SubmitLoanRequestEvent extends LoanRequestEvent {
+
+  final UserData borrower;
+  final UserData lender;
+  final DateTime dueDate;
+  final RepaymentTerms terms;
+  final callback;
+
+  SubmitLoanRequestEvent(this.borrower, this.lender, this.dueDate, this.terms, this.callback);
+}
+
 //States
 class LoanRequestState {
 
@@ -31,6 +43,7 @@ class LoanRequestIsLoadedState extends LoanRequestState {
 
   final _localUser;
   final _lender;
+
 
   LoanRequestIsLoadedState(UserData this._localUser, UserData this._lender);
 
@@ -49,7 +62,7 @@ class LoanRequestBloc extends Bloc<LoanRequestEvent, LoanRequestState> {
   UserData currentUser;
   UserData lender;
 
-  //Expense expense = null;
+  int amount;
 
   LoanRequestBloc(FirestoreService this._service) {
 
@@ -89,6 +102,37 @@ class LoanRequestBloc extends Bloc<LoanRequestEvent, LoanRequestState> {
 
       //Refresh the screen
       yield LoanRequestIsLoadedState(currentUser, lender);
+    } else if (event is SubmitLoanRequestEvent) {
+
+      bool termsValid = validateTerms(event.terms);
+
+      if (termsValid) {
+
+        await FirestoreService().createContractRequest(
+          currentUser.uid, lender.uid, currentUser.fname, lender.fname, event.dueDate.toIso8601String(), event.terms);
+
+        //Message the screen
+        event.callback();
+      }
+
+      //Refresh the screen
+      yield LoanRequestIsLoadedState(currentUser, lender);
     }
+  }
+
+  //Validates terms according to the business logic requirements
+  bool validateTerms(RepaymentTerms terms) {
+
+    bool valid = true;
+
+    if (terms.amount <= 0 || terms.repaymentAmount <= 0 || terms.frequencyWeeks <= 0) {
+      valid = false;
+    }
+
+    if (terms.repaymentAmount > terms.amount) {
+      valid = false;
+    }
+
+    return valid;
   }
 }

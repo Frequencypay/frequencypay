@@ -54,16 +54,15 @@ class FirestoreService {
 
   //Create a contract object in the database
   //This function is called whenever a loan request is submitted
-  Future createContractRequest(String requester, String loaner, String requesterName, String loanerName, String dueDate, double numPayments, double amount) async{
+  Future createContractRequest(String requester, String loaner, String requesterName, String loanerName, String dueDate, RepaymentTerms terms) async{
     return await contractCollection.document(uid).setData({
       'requester':requester,
       'loaner':loaner,
       'requesterName':requesterName,
       'loanerName':loanerName,
       'dueDate':dueDate,
-      'numPayments':numPayments,
-      'amount':amount,
       'state':CONTRACT_STATE.OPEN_REQUEST.toString(),
+      'terms':terms.toList(),
       'scheduledTransactions': null,
     });
   }
@@ -121,12 +120,11 @@ class FirestoreService {
   Contract _contractFromSnapshot(DocumentSnapshot snapshot){ //For a single contract
     return Contract(
         uid: snapshot.documentID,
-        amount: snapshot.data['amount'],
+        terms: snapshot.data['terms'],
         dueDate: snapshot.data['dueData'],
         state: contractStateFromString(snapshot.data['state']),
         loaner: snapshot.data['loaner'],
         loanerName: snapshot.data['loanerName'],
-        numPayments: snapshot.data['numPayments'],
         requester: snapshot.data['requester'],
         requesterName: snapshot.data['requesterName'],
         transactions: snapshot.data['scheduledTransactions'],
@@ -143,12 +141,11 @@ class FirestoreService {
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
         uid: doc.documentID,
-        amount: doc.data['amount'],
+        terms: doc.data['terms'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
-        numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
         transactions: doc.data['scheduledTransactions'],
@@ -162,12 +159,11 @@ class FirestoreService {
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
         uid: doc.documentID,
-        amount: doc.data['amount'],
+        terms: doc.data['terms'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
-        numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
         transactions: doc.data['scheduledTransactions'],
@@ -181,12 +177,11 @@ class FirestoreService {
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
         uid: doc.documentID,
-        amount: doc.data['amount'],
+        terms: doc.data['terms'],
         dueDate: doc.data['dueData'],
         state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
-        numPayments: doc.data['numPayments'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
         transactions: doc.data['scheduledTransactions'],

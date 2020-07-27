@@ -66,7 +66,7 @@ class ContractCards {
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
                       LinearProgressIndicator(),
-                      Text("\$" + contract.amount.toString() + " from " + contract.loanerName,
+                      Text("\$" + contract.terms.amount.toString() + " from " + contract.loanerName,
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
                       Align(
@@ -107,7 +107,7 @@ class ContractCards {
                 children: <Widget>[
                   Text("<duration> repayment",
                       style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                  Text("\$" + contract.amount.toString() + " from " + contract.loanerName,
+                  Text("\$" + contract.terms.amount.toString() + " from " + contract.loanerName,
                       style: TextStyle(color: Colors.grey[600], fontSize: 14))
                 ]),
             trailing: Icon(Icons.priority_high, color: Colors.grey[700]),
