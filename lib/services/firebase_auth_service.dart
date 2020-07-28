@@ -59,7 +59,8 @@ class AuthService {
       String username,
       String phone,
       String address,
-      String pin,) async {
+      String pin,
+      String avatarUrl) async {
     List<String> splitList = (fname + " " + lname).split(" ");
     List<String> indexList = [];
 
@@ -90,7 +91,7 @@ class AuthService {
           username,
           phone,
           address,
-          indexList, pin); //create an instance of the firestore db service (need to pass UID!) and then set the data for the first time
+          indexList, pin,avatarUrl); //create an instance of the firestore db service (need to pass UID!) and then set the data for the first time
       return _userFromFirebaseUser(user); // transform to our custom model
     } catch (e) {
       print(e.toString());

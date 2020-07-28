@@ -43,7 +43,7 @@ dependencies:
   equatable: ^1.2.0
   flutter_bloc: ^4.0.0
   firebase_storage: ^3.1.6
-  image_picker: ^0.5.3+1
+  image_picker: ^0.6.7+4
   flutter_webview_plugin: ^0.3.11
 
 dev_dependencies:

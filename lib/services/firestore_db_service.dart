@@ -33,7 +33,7 @@ class FirestoreService {
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data
-  Future setOrUpdateUserData(String fname, String lname, String email,String username, String phone, String address, List indexList,String pin ) async{
+  Future setOrUpdateUserData(String fname, String lname, String email,String username, String phone, String address, List indexList,String pin,String avatarUrl ) async{
     //if document doesn't exist yet, firestore creates one automatically
     return await userDataCollection.document(uid).setData({
       'fname':fname,
@@ -43,7 +43,8 @@ class FirestoreService {
       'phone':phone,
       'address':address,
       'searchIndex':indexList,
-      'pin':pin
+      'pin':pin,
+      'avatarUrl':avatarUrl
     });
   }
 
@@ -82,7 +83,8 @@ class FirestoreService {
       username: snapshot.data['username'],
       phoneNumber: snapshot.data['phone'],
       address: snapshot.data['address'],
-      pin:snapshot.data['pin']
+      pin:snapshot.data['pin'],
+      avatarUrl: snapshot.data['avatarUrl']
     );
   }
 
@@ -198,7 +200,7 @@ class FirestoreService {
         email: snapshot.data['email'],
         username: snapshot.data['username'],
         phoneNumber: snapshot.data['phone'],
-        address: snapshot.data['phone']
+        address: snapshot.data['address']
     );
   }
 
@@ -206,8 +208,17 @@ class FirestoreService {
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
   void getCurrentUser() async {
-
     currentUser = await FirebaseAuth.instance.currentUser();
+  }
+
+
+  //Set or Update user data
+  //This function is called whenever a user signs up for the first time, or when user wants to update their data
+  Future updateAvatar(String avatarUrl ) async{
+    //if document doesn't exist yet, firestore creates one automatically
+    return await userDataCollection.document(uid).updateData({
+      'avatarUrl':avatarUrl
+    });
   }
 
 }

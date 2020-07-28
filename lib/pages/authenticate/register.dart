@@ -249,13 +249,14 @@ class _RegisterState extends State<Register> {
   }
 
   Widget registerButton(){
+    String avatarUrl='';
     return RaisedButton(
       color: Colors.blue,
       child: Text("Register",style: TextStyle(color: Colors.white,fontSize: 15),),
       onPressed: () async {
         if(_formKey.currentState.validate()){
           loading=true;
-          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text.trim(),pwdInputController.text,fnameInputController.text.trim(),lnameInputController.text.trim(),usernameInputController.text.trim(),phoneInputController.text.trim(), addressInputController.text.trim(),pinInputController.text.trim());
+          dynamic result=await _auth.registerWithEmailAndPassword(emailInputController.text.trim(),pwdInputController.text,fnameInputController.text.trim(),lnameInputController.text.trim(),usernameInputController.text.trim(),phoneInputController.text.trim(), addressInputController.text.trim(),pinInputController.text.trim(),avatarUrl);
           if(result==null){
             setState(() {
               error='Please enter a valid email';

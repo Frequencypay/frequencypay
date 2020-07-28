@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +27,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   static const Color blueHighlight = const Color(0xFF3665FF);
 
   File _image;
-  String _uploadedFileUrl;
+  final picker = ImagePicker();
+  String  _uploadedFileUrl;
+  String finalUrl;
   ProfileBloc createBloc(
       var context,
       ) {
@@ -41,6 +44,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Future uploadFile(BuildContext context) async {
+      String fileName = basename(_image.path);
+      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref()
+          .child(fileName);
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
+      StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+      firebaseStorageRef.getDownloadURL().then((fileURL) async { //X
+        print("Profile Picture uploaded");
+        _uploadedFileUrl = fileURL;
+        print(_uploadedFileUrl);
+        Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text('Profile Picture Uploaded')));
+        FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+        FirestoreService serviceInstance = FirestoreService(
+            uid: currentUser.uid);
+        serviceInstance.updateAvatar(_uploadedFileUrl);
+        Navigator.pushReplacementNamed(context, '/profile_page');
+      });
+    }
+
+    Future getImage() async {
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      uploadFile(context);
+    }
+
+
+
+
 
     return BlocProvider(
       create: (context) => createBloc(context),
@@ -73,17 +107,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: <Widget>[
 
                   SizedBox(
-                    height: 30,
+                    height: 10,
                   ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+
+                    children: <Widget>[
+                      SizedBox(width: 40,),
+                      Container(
+                        child: profileInfo(),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.camera_alt),
+                        onPressed: () async{
+                          getImage();
+                        },
+                      ),
+                    ],
+                  ),
+
 
                   SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    child: profileInfo(),
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: Text(
+                            "x  Late Payments",
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: Text(
+                            "y Active Contracts",
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
+                          child: Text(
+                            "z Complete Contracts",
+                            style: TextStyle(color: Colors.grey, fontSize: 15),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 10,
+                      ),
+                    ],
+
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 15,
                   ),
                   Text(
                     "Confidence Rating",
@@ -92,6 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(
                     height: 20,
                   ),
+
                   Container(
                     child: getConfidenceRating(),
                   ),
@@ -118,74 +204,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   Widget profileInfo() {
-    Future getImage() async{ //get an image from gallery
-      await ImagePicker.pickImage(source: ImageSource.gallery).then((image) {
-        setState(() {
-          _image = image;
-        });
-      });
-    }
 
-
-    Future uploadFile() async {
-      String fileName = basename(_image.path);
-      StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
-      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-      await uploadTask.onComplete;
-      print('File Uploaded');
-      firebaseStorageRef.getDownloadURL().then((fileURL) {
-        setState(() {
-          _uploadedFileUrl = fileURL; // to download late
-          //ASSIGN AS FIELD
-        });
-      });
-    }
 
 
     return Column(
       children: <Widget>[
-        //profile image
         BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
           if (state is ProfileIsLoadedState) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircleAvatar(
-                  radius: 60,
-                  backgroundColor: Colors.blue,
-                  child: ClipOval(
-                    child: SizedBox(
-                      width: 180.0,
-                      height: 180.0,
-                      child: (_image!=null)? Image.file(_image, fit: BoxFit.fill,):Text("No Profile Image was set yet"),
-                    ),
-                  ),
+            return CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.blue,
+              child: ClipOval(
+                child: SizedBox(
+                  width: 180.0,
+                  height: 180.0,
+                  child: Image.network(state.getProfile.avatarUrl,fit:BoxFit.fill),
+//                child: (_image!=null)? Image.file(_image, fit: BoxFit.fill,):Text("No Profile Image was set yet"),
                 ),
-
-                Padding(
-                  padding: EdgeInsets.only(top:60.0),
-                  child: IconButton(
-                    icon: Icon(Icons.camera_alt),
-                    onPressed: () async{
-                      getImage();
-                    },
-                  ),
-                ),
-
-                RaisedButton(
-                  child: Text("Submit"),
-                  onPressed: () async{
-                    String fileName = state.getProfile.uid; //file name is the same as uid
-                    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child(fileName);
-                    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
-                    StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
-                    setState(() {
-                      print("Profile Picture uploaded");
-                      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Profile Picture Uploaded')));
-                    });
-                  },
-                )
-              ],
+              ),
             );
           } else if (state is ProfileIsNotLoadedState) {
             return Text(
@@ -199,7 +235,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
         }),
-
 
         BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
           if (state is ProfileIsLoadedState) {
@@ -240,37 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(
           height: 20,
         ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "x  Late Payments",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "y Active Contracts",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                child: Text(
-                  "z Complete Contracts",
-                  style: TextStyle(color: Colors.grey, fontSize: 15),
-                ),
-              ),
-            ),
-          ],
-        ),
+
       ],
     );
   } // end profile info
