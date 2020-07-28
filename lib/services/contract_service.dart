@@ -220,6 +220,44 @@ class ContractService {
 
     return converted;
   }
+
+  //Compiles the necessary information to display all upcoming payments (for the calendar screen)
+  List<DisplayTransaction> getUpcomingPayments() {
+
+    List<DisplayTransaction> payments = List<DisplayTransaction>();
+
+    //The current contract
+    Contract current;
+
+    //The current contract's transactions
+    List<ScheduledTransaction> transactions;
+
+    //The current transaction
+    ScheduledTransaction currentTransaction;
+
+    //For each active contract
+    for (int index = 0; index < activeContracts.length; index++) {
+
+      current = activeContracts[index];
+      transactions = current.scheduledTransactions;
+
+      //For each scheduled transaction
+      for (int index2 = 0; index2 < transactions.length; index2++) {
+
+        currentTransaction = transactions[index2];
+
+        //If the transaction is in the future
+        if (currentTransaction.time.isAfter(DateTime.now())) {
+
+          //Add it as a display transaction
+          payments.add(DisplayTransaction(current, currentTransaction.amount, currentTransaction.time));
+        }
+      }
+    }
+
+    //Return the detected payments
+    return payments;
+  }
 }
 
 //Just a simple bag of data about the status of repayment
@@ -229,4 +267,15 @@ class RepaymentOverview {
   final String timeUntilCompletion;
 
   RepaymentOverview(this.percentCompletion, this.timeUntilCompletion);
+}
+
+//The information needed to properly display an upcoming transaction
+class DisplayTransaction {
+
+  final Contract sourceContract;
+
+  final double amount;
+  final DateTime time;
+
+  DisplayTransaction(this.sourceContract, this.amount, this.time);
 }
