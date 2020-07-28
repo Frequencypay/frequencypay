@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
 //Events
 class UserBillsEvent {
@@ -52,9 +53,9 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
 
       try {
 
-        //PlaceholderUserBillsModel userExpenses = await service.getLocalUserBillsModel();
-        ContractListModel activeContracts = ContractListModel([Contract(requester: "Borrower", loaner: "Lender", dueDate: "August 20", numPayments: 5, amount: 10.0, state: CONTRACT_STATE.OPEN_REQUEST)]);
-        yield UserBillsIsLoadedState(activeContracts);
+        List<Contract> activeContracts = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
+
+        yield UserBillsIsLoadedState(ContractListModel(activeContracts));
       } catch (_){
 
         print(_);

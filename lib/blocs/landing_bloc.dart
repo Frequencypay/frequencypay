@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
@@ -23,10 +24,12 @@ class LandingIsLoadingState extends LandingState {
 class LandingIsLoadedState extends LandingState {
 
   final _profile;
+  final _repaymentOverview;
 
-  LandingIsLoadedState(UserData this._profile);
+  LandingIsLoadedState(this._profile, this._repaymentOverview);
 
   UserData get getProfile => _profile;
+  RepaymentOverview get getRepaymentOverview => _repaymentOverview;
 }
 
 class LandingIsNotLoadedState extends LandingState {
@@ -36,8 +39,9 @@ class LandingIsNotLoadedState extends LandingState {
 class LandingBloc extends Bloc<LandingEvent, LandingState> {
 
   FirestoreService _service;
+  ContractService _contractService;
 
-  LandingBloc(FirestoreService this._service);
+  LandingBloc(this._service, this._contractService);
 
   @override
   LandingState get initialState => LandingIsLoadingState();
@@ -54,7 +58,9 @@ class LandingBloc extends Bloc<LandingEvent, LandingState> {
 
         UserData currentUser = await userStream.first;
 
-        yield LandingIsLoadedState(currentUser);
+        RepaymentOverview overview = await _contractService.getRepaymentOverview();
+
+        yield LandingIsLoadedState(currentUser, overview);
       } catch (_){
 
         print(_);

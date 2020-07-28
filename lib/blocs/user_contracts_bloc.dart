@@ -56,16 +56,16 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
       try {
 
-
-        /*ContractListModel completeContracts = await _service.getCompleteUserContracts();
-        ContractListModel activeContracts = await _service.getActiveUserContracts();
-        ContractListModel pendingContracts = await _service.getPendingUserContracts();*/
-
         Stream<UserData> userStream = _service.userData;
         UserData currentUser = await userStream.first;
 
         ContractListModel completeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.COMPLETE_CONTRACTS()).first);
-        ContractListModel activeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.ACTIVE_CONTRACTS()).first);
+
+        List<Contract> activeContractsList = await _service.retrieveContracts(ContractSearchQuery.BORROWER_ACTIVE_CONTRACTS()).first;
+
+        activeContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.LENDER_ACTIVE_CONTRACTS()).first);
+
+        ContractListModel activeContracts = ContractListModel(activeContractsList);
 
         List<Contract> pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
         pendingContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS()).first);
