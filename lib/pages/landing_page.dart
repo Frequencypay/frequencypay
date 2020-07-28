@@ -80,10 +80,7 @@ class _LandingPageState extends State<LandingPage> {
               IconButton(
                 icon: Icon(Icons.person),
                 onPressed: () async {
-                  //await _auth.signOut();
-//                  getOut();
                   Navigator.pushReplacementNamed(context, '/sign_in');
-
                 },
                 color: Colors.black45,
               )
@@ -91,25 +88,21 @@ class _LandingPageState extends State<LandingPage> {
           ),
           body: ListView(children: <Widget>[
             Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+//              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-      FlatButton.icon(
-                icon: Icon(Icons.person,color: Colors.grey,),
-                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
-                onPressed: ()  {
-                  Navigator.pushNamed(context, '/loan_request_page');
-                },
-              ),
-          //ROW 1
-                Row(
-                  children: <Widget>[
-                    Expanded(flex: 1, child: Container()),
-                    Expanded(
-                      flex: 5,
-                      child: _greetingMessage(),
-                    ),
-                    Expanded(flex: 1, child: Container())
-                  ],
+                Padding(
+                  padding: const EdgeInsets.only(left:15.0, top: 20),
+                  child: Row(
+                    children: <Widget>[
+                      _greetingMessage()
+//                    Expanded(flex: 1, child: Container()),
+//                    Expanded(
+//                      flex: 5,
+//                      child: _greetingMessage(),
+//                    ),
+//                    Expanded(flex: 1, child: Container())
+                    ],
+                  ),
                 ),
 
                 SizedBox(height: 30),
@@ -319,6 +312,7 @@ class _LandingPageState extends State<LandingPage> {
           Expanded(
               flex: 1,
               child: Column(children: <Widget>[
+
                 Text(state.getRepaymentOverview.percentCompletion +
                     "% of loans paid off"),
                 Text(

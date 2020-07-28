@@ -41,41 +41,39 @@ class _UserContractsPageState extends State<UserContractsPage>
         length: 3,
         initialIndex: 2,
         child: Scaffold(
+            appBar: AppBar(
+              leading: new IconButton(
+                icon: new Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                color: Colors.black,
+              ),
+              title: RichText(
+                text: new TextSpan(
+                  // Note: Styles for TextSpans must be explicitly defined.
+                  // Child text spans will inherit styles from parent
+                  style: new TextStyle(
+                    fontSize: 25.0,
+                    color: Colors.black45,
+                  ),
+                  children: <TextSpan>[
+                    new TextSpan(text: 'Your '),
+                    new TextSpan(
+                        text: 'Contracts',
+                        style: new TextStyle(
+                            fontWeight: FontWeight.bold, color: blueHighlight)),
+                  ],
+                ),
+              ),
+              centerTitle: false,
+              backgroundColor: Colors.white10,
+              elevation: 0,
+            ),
             floatingActionButton:
                 LoanRequestWidgets.LoanRequestFloatingActionButton(context),
             body: Column(
               children: <Widget>[
-                SizedBox(height: 20),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(flex: 1, child: Container()),
-                      Expanded(
-                        flex: 8,
-                        child: Row(children: <Widget>[
-                          BackButton(color: blueHighlight),
-                          RichText(
-                              text: TextSpan(
-                                  style: TextStyle(
-                                      fontFamily: 'Leelawadee UI',
-                                      fontSize: 25),
-                                  children: <TextSpan>[
-                                TextSpan(
-                                    text: "Your ",
-                                    style: TextStyle(color: Colors.black45)),
-                                TextSpan(
-                                    text: "Contracts",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueHighlight))
-                              ])),
-                        ]),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15),
                 Expanded(
                   flex: 2,
                   child: TabBar(
@@ -113,13 +111,15 @@ class _UserContractsPageState extends State<UserContractsPage>
     return BlocBuilder<UserContractsBloc, UserContractsState>(
         builder: (context, state) {
       if (state is UserContractsIsLoadedState) {
-        return ListView.builder(
-            itemBuilder: (context, index) {
-              return ContractCards.buildCompleteContractCard(
-                  context, state.getCompleteContracts.contracts[index]);
-            },
-            itemCount: state.getCompleteContracts.contracts.length,
-            shrinkWrap: true);
+        return  ListView.builder(
+                itemBuilder: (context, index) {
+                  return ContractCards.buildCompleteContractCard(
+                      context, state.getCompleteContracts.contracts[index]);
+                },
+                itemCount: state.getCompleteContracts.contracts.length,
+                shrinkWrap: true
+
+        );
       } else if (state is UserContractsIsLoadingState) {
         return Center(
             child: SizedBox(

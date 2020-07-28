@@ -87,26 +87,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         children: <Widget>[
           Column(
             children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
-              SafeArea(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "  Your ",
-                      style: TextStyle(color: Colors.grey, fontSize: 30),
-                    ),
-                    Text(
-                      "Profile ",
-                      style: TextStyle(color: Colors.blue, fontSize: 30),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

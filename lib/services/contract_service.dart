@@ -263,8 +263,8 @@ class ContractService {
 //Just a simple bag of data about the status of repayment
 class RepaymentOverview {
 
-  final String percentCompletion;
-  final String timeUntilCompletion;
+   final String percentCompletion;
+   final String timeUntilCompletion;
 
   RepaymentOverview(this.percentCompletion, this.timeUntilCompletion);
 }

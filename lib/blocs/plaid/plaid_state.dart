@@ -13,13 +13,14 @@ abstract class PlaidState extends Equatable {
 
 class PlaidInitial extends PlaidState {
   PlaidInitial(){
+    hasUserLoggedIntoPlaid();
   }
 
   hasUserLoggedIntoPlaid(){
-     FlutterSecureStorage _storage = FlutterSecureStorage();
-     if(_storage.read(key: 'access_token') == null){
+    FlutterSecureStorage _storage = FlutterSecureStorage();
+    if(_storage.read(key: 'access_token') == null){
 
-     }
+    }
 
   }
 }

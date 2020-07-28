@@ -52,37 +52,32 @@ class _ContractDetailsState extends State<ContractDetails> {
     return BlocProvider(
       create: (context) => createBloc(context, contract),
       child: Scaffold(
-//      appBar: AppBar(title: Text('Your' + contract()),),
+        appBar: AppBar(
+          title: RichText(
+            text: new TextSpan(
+              // Note: Styles for TextSpans must be explicitly defined.
+              // Child text spans will inherit styles from parent
+              style: new TextStyle(
+                fontSize: 25.0,
+                color: Colors.black45,
+              ),
+              children: <TextSpan>[
+                new TextSpan(text: 'Your '),
+                new TextSpan(
+                    text: 'Contracts',
+                    style: new TextStyle(
+                        fontWeight: FontWeight.bold, color: blueHighlight)),
+              ],
+            ),
+          ),
+          centerTitle: false,
+          backgroundColor: Colors.white10,
+          elevation: 0,
+        ),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    BackButton(color: blueHighlight),
-                    Text("  Your ",
-                        style:
-                        TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
-                    Text("Contract ",
-                        style: TextStyle(
-                            color: blueHighlight,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                SizedBox(height: 50),
-                getBillIssuer(),
-                SizedBox(height: 25),
-                getProgress(),
-                SizedBox(height: 35),
-                summaryBanner(),
-                SizedBox(height: 35),
-                makePaymentButton(),
-                SizedBox(height: 35),
-                RepaymentInfo(),
-                SizedBox(height: 15),
-                ContractDetailsInfo(),
-                SizedBox(height: 30),
                 getHistory(),
                 BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
                   builder: (context, state) {

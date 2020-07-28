@@ -118,10 +118,10 @@ class _WebViewPage {
       },
 
     );
-    final newWebView = new FlutterWebviewPlugin();
-    newWebView.launch(_url);
-
-     newWebView.onUrlChanged.listen((event) {});
+//    final newWebView = new FlutterWebviewPlugin();
+//    newWebView.launch(_url);
+//
+//     newWebView.onUrlChanged.listen((event) {});
 
 
     return Scaffold(body: webView);
