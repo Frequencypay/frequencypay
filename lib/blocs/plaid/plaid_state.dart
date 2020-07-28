@@ -13,7 +13,6 @@ abstract class PlaidState extends Equatable {
 
 class PlaidInitial extends PlaidState {
   PlaidInitial(){
-    hasUserLoggedIntoPlaid();
   }
 
   hasUserLoggedIntoPlaid(){

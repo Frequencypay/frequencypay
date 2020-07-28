@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frequencypay/blocs/plaid/bloc.dart';
 import 'package:frequencypay/blocs/plaid/plaid_blocs.dart';
+import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/plaid_link/plaid_link_webview.dart';
 
-class PlaidToken extends StatefulWidget {
+class PlaidLinkSplashScreen extends StatefulWidget {
   @override
-  _PlaidTokenState createState() => _PlaidTokenState();
+  _PlaidLinkSplashScreenState createState() => _PlaidLinkSplashScreenState();
 }
 
-class _PlaidTokenState extends State<PlaidToken> {
+class _PlaidLinkSplashScreenState extends State<PlaidLinkSplashScreen> {
   PlaidLink plaidLink = PlaidLink();
   static const Color blueHighlight = const Color(0xFF3665FF);
 
@@ -109,5 +110,9 @@ class _PlaidTokenState extends State<PlaidToken> {
         ),
       ),
     );
+  }
+
+  Widget LoadHome(){
+    return HomePage();
   }
 }

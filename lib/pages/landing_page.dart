@@ -78,9 +78,12 @@ class _LandingPageState extends State<LandingPage> {
             elevation: 0,
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.more_vert),
+                icon: Icon(Icons.person),
                 onPressed: () async {
-                  await _auth.signOut();
+                  //await _auth.signOut();
+//                  getOut();
+                  Navigator.pushReplacementNamed(context, '/sign_in');
+
                 },
                 color: Colors.black45,
               )
@@ -90,28 +93,14 @@ class _LandingPageState extends State<LandingPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 250,
-                    ),
-                    FlatButton.icon(
-                      icon: Icon(
-                        Icons.person,
-                        color: Colors.grey,
-                      ),
-                      label: Text(
-                        "Log out",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      onPressed: () async {
-                        await _auth.signOut();
-                      },
-                    ),
-                  ],
-                ),
-
-                //ROW 1
+      FlatButton.icon(
+                icon: Icon(Icons.person,color: Colors.grey,),
+                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
+                onPressed: ()  {
+                  Navigator.pushNamed(context, '/loan_request_page');
+                },
+              ),
+          //ROW 1
                 Row(
                   children: <Widget>[
                     Expanded(flex: 1, child: Container()),
@@ -372,6 +361,11 @@ class _LandingPageState extends State<LandingPage> {
   void getCurrentUser() async {
     currentUser = await FirebaseAuth.instance.currentUser();
   }
+
+  void getOut(){
+      FirebaseAuth.instance.signOut();
+    }
+
 
 //  getBalance() async{
 //    PlaidRepository plaidBalanceResponseModel;
