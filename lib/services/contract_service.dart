@@ -43,13 +43,13 @@ class ContractService {
 
       //The current contract
       Contract current;
-      var currentAmount;
-      var currentAmountPaid;
+      double currentAmount;
+      double currentAmountPaid;
       DateTime currentFinalPayment;
 
       //The current total amount
-      var totalAmount = 0;
-      var totalAmountPaid = 0;
+      double totalAmount = 0.0;
+      double totalAmountPaid = 0.0;
 
       //The current latest date
       DateTime latestDate = DateTime.now();
@@ -140,34 +140,66 @@ class ContractService {
     return numberComponent.toString() + typeComponent;
   }
 
-  //Computes a series of dated transactions required to repay a contract
-  List<ScheduledTransaction> _computeFutureTransactions(Contract contract) {
-
-    List<ScheduledTransaction> transactions = List<ScheduledTransaction>();
-
-    //The next time to schedule a transaction
-    DateTime currentTime = DateTime.now();
-
-    //The amount currently repaid
-    var amountRepaid = 0;
-
-    //Until the contract is fully repaid
-    /*while (amountRepaid < contract.amount) {
-
-      //amountRepaid += contract
-    }*/
-
-    return [ScheduledTransaction(500, DateTime.now()), ScheduledTransaction(500, DateTime.now().add(Duration(days: 7)))];
-  }
-
   //Accepts a contract request
   void acceptContractRequest(Contract contract) {
 
-    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(null);
+    //Compute the transactions using the current moment to begin the schedule
+    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(contract, DateTime.now());
 
+    //Convert the transactions to serializable data
     List serializableTransactions = _convertTransactions(repaymentTransactions);
 
+    //Send the contract data
     data.acceptEstablishContract(contract, serializableTransactions);
+  }
+
+  //Computes a series of dated transactions required to repay a contract
+  List<ScheduledTransaction> _computeFutureTransactions(Contract contract, DateTime startTime) {
+
+    //The list of transactions
+    List<ScheduledTransaction> transactions = List<ScheduledTransaction>();
+
+    //The current transaction
+    ScheduledTransaction currentTransaction;
+
+    //The next time to schedule a transaction
+    DateTime currentTime = startTime;
+
+    //The amount of time between each transaction
+    Duration timeBetweenTransactions = Duration(days: contract.terms.frequencyWeeks * 7);
+
+    //Start at the first payment date after the start time
+    currentTime = currentTime.add(timeBetweenTransactions);
+
+    //The amount currently repaid
+    var amountRepaid = 0.0;
+
+    //The standard payment amount
+    var repaymentAmount = contract.terms.repaymentAmount;
+
+    //Until the contract is fully repaid
+    while (amountRepaid <= contract.terms.amount - repaymentAmount) {
+
+      //Create a new transaction
+      currentTransaction = ScheduledTransaction(repaymentAmount, currentTime);
+      transactions.add(currentTransaction);
+
+      //Count amount as repaid
+      amountRepaid += repaymentAmount;
+
+      //Move forward in time
+      currentTime = currentTime.add(timeBetweenTransactions);
+    }
+
+    //In case the repayment amount isn't an even divider of the total amount
+    if (amountRepaid < contract.terms.amount) {
+
+      //Schedule a final transaction for less than the repayment amount
+      currentTransaction = ScheduledTransaction(contract.terms.amount - amountRepaid, currentTime);
+      transactions.add(currentTransaction);
+    }
+
+    return transactions;
   }
 
   //Converts a scheduled transaction list into a serializable list

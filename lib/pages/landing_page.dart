@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
@@ -11,29 +12,36 @@ import 'package:provider/provider.dart';
 
 class LandingPage extends StatefulWidget {
   final String uid;
+
   LandingPage({Key key, this.uid}) : super(key: key);
+
   @override
   _LandingPageState createState() => _LandingPageState();
 }
 
 class _LandingPageState extends State<LandingPage> {
-
   static const Color blueHighlight = const Color(0xFF3665FF);
 
   FirebaseUser currentUser;
   final AuthService _auth = AuthService();
 
   String balance = "";
+
   @override
   initState() {
     //this.getCurrentUser();
     super.initState();
   }
 
-  LandingBloc createBloc(var context,) {
+  LandingBloc createBloc(
+    var context,
+  ) {
     final user = Provider.of<User>(context, listen: false);
 
-    LandingBloc bloc = LandingBloc(FirestoreService(uid: user.uid));
+    FirestoreService firestoreService = FirestoreService(uid: user.uid);
+    ContractService contractService = ContractService(firestoreService);
+
+    LandingBloc bloc = LandingBloc(firestoreService, contractService);
 
     bloc.add(LoadLandingEvent());
 
@@ -45,7 +53,8 @@ class _LandingPageState extends State<LandingPage> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
-          floatingActionButton: LoanRequestWidgets.LoanRequestFloatingActionButton(context),
+          floatingActionButton:
+              LoanRequestWidgets.LoanRequestFloatingActionButton(context),
           appBar: AppBar(
             title: RichText(
               text: new TextSpan(
@@ -63,7 +72,8 @@ class _LandingPageState extends State<LandingPage> {
                           fontWeight: FontWeight.bold, color: blueHighlight)),
                 ],
               ),
-            ),centerTitle: false,
+            ),
+            centerTitle: false,
             backgroundColor: Colors.white10,
             elevation: 0,
             actions: <Widget>[
@@ -76,17 +86,24 @@ class _LandingPageState extends State<LandingPage> {
               )
             ],
           ),
-
           body: ListView(children: <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    SizedBox(width: 250,),
+                    SizedBox(
+                      width: 250,
+                    ),
                     FlatButton.icon(
-                      icon: Icon(Icons.person,color: Colors.grey,),
-                      label: Text("Log out",style: TextStyle(color: Colors.grey),),
+                      icon: Icon(
+                        Icons.person,
+                        color: Colors.grey,
+                      ),
+                      label: Text(
+                        "Log out",
+                        style: TextStyle(color: Colors.grey),
+                      ),
                       onPressed: () async {
                         await _auth.signOut();
                       },
@@ -94,8 +111,7 @@ class _LandingPageState extends State<LandingPage> {
                   ],
                 ),
 
-
-          //ROW 1
+                //ROW 1
                 Row(
                   children: <Widget>[
                     Expanded(flex: 1, child: Container()),
@@ -162,12 +178,8 @@ class _LandingPageState extends State<LandingPage> {
                         child: Container(
                           height: 100,
                           child: Row(children: <Widget>[
-                            Expanded(
-                                flex: 1,
-                                child: _progressCircle()),
-                            Expanded(
-                                flex: 2,
-                                child: _progressMessage())
+                            Expanded(flex: 1, child: _progressCircle()),
+                            Expanded(flex: 2, child: _progressMessage())
                           ]),
                         )),
                     Expanded(flex: 1, child: Container())
@@ -183,81 +195,124 @@ class _LandingPageState extends State<LandingPage> {
                   Expanded(flex: 1, child: Container())
                 ]),
 
-                Container(height: 100, child: ListView.separated(
-                  itemCount: 20,
-                  scrollDirection: Axis.horizontal,
-                  separatorBuilder: (context, index) => SizedBox(width: 5),
-                  itemBuilder: (context, index) => buildContactListItem(context, index),
-
-                ))
+                Container(
+                    height: 100,
+                    child: ListView.separated(
+                      itemCount: 20,
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (context, index) => SizedBox(width: 5),
+                      itemBuilder: (context, index) =>
+                          buildContactListItem(context, index),
+                    ))
               ],
             ),
           ])),
     );
   }
+
   //Populates the contact listview
   Widget buildContactListItem(BuildContext context, int index) {
-
     //Create some space on the left border
     if (index == 0) {
-
-      return SizedBox(width: MediaQuery.of(context).size.width/7);
+      return SizedBox(width: MediaQuery.of(context).size.width / 7);
     }
 
     return CircleAvatar();
   }
 
   Widget _greetingMessage() {
-
-    return BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
-      if (state is LandingIsLoadedState) {
-        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-          TextSpan(text: state.getProfile.fname + ".\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-          TextSpan(text: _displayDate(), style: TextStyle(color: Colors.grey, fontSize: 14))
-        ]));
-      } else if (state is LandingIsNotLoadedState) {
-        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-          TextSpan(text: "error.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-          TextSpan(text: "error", style: TextStyle(color: Colors.grey, fontSize: 14))
-        ]));
-      } else {
-        return RichText(text:TextSpan(style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25), children: <TextSpan> [
-          TextSpan(text: "Good Morning,\n", style: TextStyle(color: Colors.black45)),
-          TextSpan(text: "<name>.\n", style: TextStyle(fontWeight: FontWeight.bold, color: blueHighlight)),
-          TextSpan(text: "<date>", style: TextStyle(color: Colors.grey, fontSize: 14))
-        ]));
-      }},
+    return BlocBuilder<LandingBloc, LandingState>(
+      builder: (context, state) {
+        if (state is LandingIsLoadedState) {
+          return RichText(
+              text: TextSpan(
+                  style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25),
+                  children: <TextSpan>[
+                TextSpan(
+                    text: "Good Morning,\n",
+                    style: TextStyle(color: Colors.black45)),
+                TextSpan(
+                    text: state.getProfile.fname + ".\n",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: blueHighlight)),
+                TextSpan(
+                    text: _displayDate(),
+                    style: TextStyle(color: Colors.grey, fontSize: 14))
+              ]));
+        } else if (state is LandingIsNotLoadedState) {
+          return RichText(
+              text: TextSpan(
+                  style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25),
+                  children: <TextSpan>[
+                TextSpan(
+                    text: "Good Morning,\n",
+                    style: TextStyle(color: Colors.black45)),
+                TextSpan(
+                    text: "error.\n",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: blueHighlight)),
+                TextSpan(
+                    text: "error",
+                    style: TextStyle(color: Colors.grey, fontSize: 14))
+              ]));
+        } else {
+          return RichText(
+              text: TextSpan(
+                  style: TextStyle(fontFamily: 'Leelawadee UI', fontSize: 25),
+                  children: <TextSpan>[
+                TextSpan(
+                    text: "Good Morning,\n",
+                    style: TextStyle(color: Colors.black45)),
+                TextSpan(
+                    text: "<name>.\n",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: blueHighlight)),
+                TextSpan(
+                    text: "<date>",
+                    style: TextStyle(color: Colors.grey, fontSize: 14))
+              ]));
+        }
+      },
     );
   }
 
   Widget _progressCircle() {
-
     return ClipOval(
-
       child: Material(
         child: InkWell(
-          onTap: () => {
-
-            Navigator.pushNamed(context, "/user_contracts")
-          },
+          onTap: () => {Navigator.pushNamed(context, "/user_contracts")},
           child: Stack(children: <Widget>[
             Align(
                 alignment: Alignment.center,
                 child: SizedBox(
                     width: 90,
                     height: 90,
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.grey[300],
-                    ))),
+                    child: BlocBuilder<LandingBloc, LandingState>(
+                        builder: (context, state) {
+                      if (state is LandingIsLoadedState) {
+
+                        return CircularProgressIndicator(
+                          backgroundColor: Colors.grey[300],
+                          value: double.parse(state.getRepaymentOverview.percentCompletion)/100,
+                        );
+                      } else if (state is LandingIsLoadingState) {
+
+                        return CircularProgressIndicator(
+                          backgroundColor: Colors.grey[300],
+                        );
+                      } else {
+
+                        return CircularProgressIndicator(
+                          backgroundColor: Colors.grey[300],
+                          value: 0,
+                        );
+                      }
+                    }))),
             Align(
                 alignment: Alignment.center,
-                child: Text(
-                  "view\ncontracts",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14)
-                ))
+                child: Text("view\ncontracts",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14)))
           ]),
         ),
       ),
@@ -265,28 +320,51 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Widget _progressMessage() {
-
-    return Column(children: <Widget>[
-      Expanded(
-          flex: 1,
-          child: Text("Your Progress",
-              style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey))),
-      Expanded(
-          flex: 1,
-          child: Column(children: <Widget>[
-            Text("<x>% of loans paid off"),
-            Text("<time> until paid in full",
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey))
-          ])),
-    ]);
+    return BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
+      if (state is LandingIsLoadedState) {
+        return Column(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: Text("Your Progress",
+                  style: TextStyle(fontSize: 18, color: Colors.grey))),
+          Expanded(
+              flex: 1,
+              child: Column(children: <Widget>[
+                Text(state.getRepaymentOverview.percentCompletion +
+                    "% of loans paid off"),
+                Text(
+                    "Paid in full in " +
+                        state.getRepaymentOverview.timeUntilCompletion,
+                    style: TextStyle(fontSize: 14, color: Colors.grey))
+              ])),
+        ]);
+      } else if (state is LandingIsLoadingState) {
+        return Column(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: Text("Your Progress",
+                  style: TextStyle(fontSize: 18, color: Colors.grey))),
+          Expanded(
+              flex: 1,
+              child: Text("loading your progress...",
+                  style: TextStyle(fontSize: 14, color: Colors.grey))),
+        ]);
+      } else {
+        return Column(children: <Widget>[
+          Expanded(
+              flex: 1,
+              child: Text("Your Progress",
+                  style: TextStyle(fontSize: 18, color: Colors.grey))),
+          Expanded(
+              flex: 1,
+              child: Text("error",
+                  style: TextStyle(fontSize: 14, color: Colors.grey))),
+        ]);
+      }
+    });
   }
 
   String _displayDate() {
-
     return DateFormat.yMMMMd().format(DateTime.now());
   }
 
