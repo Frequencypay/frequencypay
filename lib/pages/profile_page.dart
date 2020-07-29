@@ -72,10 +72,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       uploadFile(context);
     }
 
-
-
-
-
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
@@ -204,9 +200,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
 
   Widget profileInfo() {
-
-
-
     return Column(
       children: <Widget>[
         BlocBuilder<ProfileBloc, ProfileState>(builder: (context, state) {
@@ -218,8 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SizedBox(
                   width: 180.0,
                   height: 180.0,
-                  child: Image.network(state.getProfile.avatarUrl,fit:BoxFit.fill),
-//                child: (_image!=null)? Image.file(_image, fit: BoxFit.fill,):Text("No Profile Image was set yet"),
+                  child:(state.getProfile.avatarUrl !=null)? Image.network(state.getProfile.avatarUrl,fit:BoxFit.fill):Image(image: AssetImage('assets/temp_logo.png'),),
                 ),
               ),
             );
