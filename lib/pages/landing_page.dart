@@ -280,10 +280,21 @@ class _LandingPageState extends State<LandingPage> {
                         builder: (context, state) {
                       if (state is LandingIsLoadedState) {
 
-                        return CircularProgressIndicator(
-                          backgroundColor: Colors.grey[300],
-                          value: double.parse(state.getRepaymentOverview.percentCompletion)/100,
-                        );
+                        //If a repayment overview exists
+                        if (state.getRepaymentOverview != null) {
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.grey[300],
+                            value: double.parse(
+                                state.getRepaymentOverview.percentCompletion) /
+                                100,
+                          );
+                        } else {
+
+                          return CircularProgressIndicator(
+                            backgroundColor: Colors.grey[300],
+                            value: 0,
+                          );
+                        }
                       } else if (state is LandingIsLoadingState) {
 
                         return CircularProgressIndicator(
@@ -311,23 +322,35 @@ class _LandingPageState extends State<LandingPage> {
   Widget _progressMessage() {
     return BlocBuilder<LandingBloc, LandingState>(builder: (context, state) {
       if (state is LandingIsLoadedState) {
-        return Column(children: <Widget>[
-          Expanded(
-              flex: 1,
-              child: Text("Your Progress",
-                  style: TextStyle(fontSize: 18, color: Colors.grey))),
-          Expanded(
-              flex: 1,
-              child: Column(children: <Widget>[
-                Text(state.getRepaymentOverview.percentCompletion +
-                    "% of loans paid off"),
-                Text(
-                    "Paid in full in " +
-                        state.getRepaymentOverview.timeUntilCompletion,
-                    style: TextStyle(fontSize: 14, color: Colors.grey))
-              ])),
-        ]);
+
+        if (state.getRepaymentOverview != null) {
+          return Column(children: <Widget>[
+            Expanded(
+                flex: 1,
+                child: Text("Your Progress",
+                    style: TextStyle(fontSize: 18, color: Colors.grey))),
+            Expanded(
+                flex: 1,
+                child: Column(children: <Widget>[
+                  Text(state.getRepaymentOverview.percentCompletion +
+                      "% of loans paid off"),
+                  Text(
+                      "Paid in full in " +
+                          state.getRepaymentOverview.timeUntilCompletion,
+                      style: TextStyle(fontSize: 14, color: Colors.grey))
+                ])),
+          ]);
+        } else {
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+            Text("Future progress here",
+                style: TextStyle(fontSize: 14, color: Colors.grey))
+          ]);
+        }
       } else if (state is LandingIsLoadingState) {
+
         return Column(children: <Widget>[
           Expanded(
               flex: 1,
@@ -339,6 +362,7 @@ class _LandingPageState extends State<LandingPage> {
                   style: TextStyle(fontSize: 14, color: Colors.grey))),
         ]);
       } else {
+
         return Column(children: <Widget>[
           Expanded(
               flex: 1,
