@@ -9,6 +9,7 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
+import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +41,7 @@ class _UserBillsState extends State<UserBills> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
+        floatingActionButton: LoanRequestWidgets.LoanRequestFloatingActionButton(context),
         body: SingleChildScrollView(
           child: SafeArea(
             child: Column(
@@ -214,7 +216,10 @@ class _UserBillsState extends State<UserBills> {
         style: TextStyle(color: Colors.grey),
       ),
       color: Colors.white24,
-      onPressed: () {},
+      onPressed: () {
+
+        Navigator.pushNamed(context, "/user_contracts");
+      },
     );
   }
 
@@ -233,11 +238,13 @@ class _UserBillsState extends State<UserBills> {
   }
 
   Widget buildActiveContractList() {
+
     return BlocBuilder<UserBillsBloc, UserBillsState>(
         builder: (context, state) {
       if (state is UserBillsIsLoadedState) {
         return ListView.builder(
             itemBuilder: (context, index) {
+
               return ContractCards.buildActiveContractCard(
                   context, state.getContracts.contracts[index]);
             },
@@ -245,13 +252,7 @@ class _UserBillsState extends State<UserBills> {
                 _maxContractsDisplayed, state.getContracts.contracts.length),
             shrinkWrap: true);
       } else if (state is UserBillsIsLoadingState) {
-        return ListView.builder(
-            itemBuilder: (context, index) {
-              return ContractCards.buildActiveContractCard(context, null);
-            },
-            itemCount: 2,
-            shrinkWrap:
-                true); //Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
+        return Center(child: SizedBox(width: 50, height: 50,child: CircularProgressIndicator()));
       } else {
         return Center(child: Text("error"));
       }

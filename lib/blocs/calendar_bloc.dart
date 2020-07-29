@@ -1,10 +1,5 @@
 import 'package:bloc/bloc.dart';
 
-/*TODO:
-   This bloc needs to be carefully redesigned to account for the calendar page's ability
-   to move between months and bring up transaction history.
- */
-
 //Events
 class CalendarEvent {
 
