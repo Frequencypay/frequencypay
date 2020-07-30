@@ -31,10 +31,14 @@ class ContractDetailsIsLoadingState extends ContractDetailsState {
 class ContractDetailsIsLoadedState extends ContractDetailsState {
 
   final _contract;
+  final _finalPaymentDate;
+  final _repaymentProjection;
 
-  ContractDetailsIsLoadedState(Contract this._contract);
+  ContractDetailsIsLoadedState(this._contract, this._finalPaymentDate, this._repaymentProjection);
 
   Contract get getContract => _contract;
+  DateTime get getFinalPaymentDate => _finalPaymentDate;
+  RepaymentProjection get getRepaymentProjection => _repaymentProjection;
 }
 
 class ContractDetailsIsNotLoadedState extends ContractDetailsState {
@@ -63,7 +67,13 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
 
         loadedContract = event.contract;
 
-        yield ContractDetailsIsLoadedState(loadedContract);
+        //The date of the final payment of an active or completed contract
+        DateTime finalPaymentDate = contractService.finalPaymentTime(loadedContract);
+
+        //The projected repayment information of a contract request
+        RepaymentProjection repaymentProjection = contractService.projectRepayment(loadedContract);
+
+        yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection);
       } catch (_){
 
         print(_);

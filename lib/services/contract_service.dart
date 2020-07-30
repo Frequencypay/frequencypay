@@ -69,7 +69,7 @@ class ContractService {
         totalAmountPaid += currentAmountPaid;
 
         //Retrieve the contract's final scheduled payment date
-        currentFinalPayment = _finalPaymentTime(current);
+        currentFinalPayment = finalPaymentTime(current);
 
         if (latestDate.isBefore(currentFinalPayment)) {
 
@@ -94,7 +94,7 @@ class ContractService {
   }
 
   //Attempts to retrieve the time of the final transaction of a given contract
-  DateTime _finalPaymentTime(Contract contract) {
+  DateTime finalPaymentTime(Contract contract) {
 
     DateTime result;
 
@@ -261,6 +261,22 @@ class ContractService {
     //Return the detected payments
     return payments;
   }
+
+  //Returns a projection of repayment information given a contract request (unaccepted)
+  RepaymentProjection projectRepayment(Contract contract) {
+
+    //Compute the actual transactions (for algorithm reuse)
+    List<ScheduledTransaction> transactions = _computeFutureTransactions(contract, DateTime.now());
+
+    //Get the final payment date
+    ScheduledTransaction finalPayment = transactions[transactions.length-1];
+
+    //Compute the remainder payment
+    double remainderPayment = (finalPayment.amount == contract.terms.repaymentAmount) ? 0 : finalPayment.amount;
+
+    //Return the repayment projection
+    return RepaymentProjection(finalPayment.time, transactions.length, remainderPayment);
+  }
 }
 
 //Just a simple bag of data about the status of repayment
@@ -270,6 +286,16 @@ class RepaymentOverview {
   final String timeUntilCompletion;
 
   RepaymentOverview(this.percentCompletion, this.timeUntilCompletion);
+}
+
+//Another data class for storing projected repayment information
+class RepaymentProjection {
+
+  final DateTime repaymentDate;
+  final int numPayments;
+  final double remainderPayment;
+
+  RepaymentProjection(this.repaymentDate, this.numPayments, this.remainderPayment);
 }
 
 //The information needed to properly display an upcoming transaction
