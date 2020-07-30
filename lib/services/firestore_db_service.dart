@@ -243,7 +243,8 @@ class FirestoreService {
   Stream <QuerySnapshot> get userSearchData{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
-  void getCurrentUser() async {
+
+  Future getCurrentUser() async {
 
     currentUser = await FirebaseAuth.instance.currentUser();
   }

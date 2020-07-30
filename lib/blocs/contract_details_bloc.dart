@@ -74,6 +74,8 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
       try {
 
         contractService.acceptContractRequest(loadedContract);
+
+        //TODO: make callback to contract details
       } catch (_){
 
         print(_);

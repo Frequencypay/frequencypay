@@ -22,6 +22,9 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   ContractDetailsBloc bloc;
 
+  //The contract being described
+  Contract contract;
+
   _ContractDetailsState();
 
   ContractDetailsBloc createBloc(var context, Contract contract) {
@@ -46,8 +49,8 @@ class _ContractDetailsState extends State<ContractDetails> {
     final ContractDetailsArguments arguments =
         ModalRoute.of(context).settings.arguments;
 
-    //The contract to use
-    final Contract contract = arguments.contract;
+    //Retrieve the contract from the route arguments
+    contract = arguments.contract;
 
     return BlocProvider(
       create: (context) => createBloc(context, contract),
@@ -57,64 +60,45 @@ class _ContractDetailsState extends State<ContractDetails> {
           child: SafeArea(
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    BackButton(color: blueHighlight),
-                    Text("  Your ",
-                        style:
-                        TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
-                    Text("Contract ",
-                        style: TextStyle(
-                            color: blueHighlight,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                SizedBox(height: 50),
-                getBillIssuer(),
+                greetingMessage(),
                 SizedBox(height: 25),
-                getProgress(),
-                SizedBox(height: 35),
+                getBillIssuer(),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: SizedBox(height: 25)),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: getProgress()),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: SizedBox(height: 35)),
                 summaryBanner(),
-                SizedBox(height: 35),
-                makePaymentButton(),
-                SizedBox(height: 35),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: SizedBox(height: 35)),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: makePaymentButton()),
+                Visibility(visible: true, child: SizedBox(height: 35)),
                 RepaymentInfo(),
-                SizedBox(height: 15),
+                Visibility(visible: true, child: SizedBox(height: 15)),
                 ContractDetailsInfo(),
-                SizedBox(height: 30),
-                getHistory(),
-                BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
-                  builder: (context, state) {
-                    if (state is ContractDetailsIsLoadedState) {
-                      return FlatButton(
-                          child: Text("Accept",
-                              style: TextStyle(color: Colors.grey)),
-                          color: Colors.white24,
-                          onPressed: () {
-                            //Attempt to establish the contract
-                            bloc.add(EstablishContractContractDetailsEvent());
-                          });
-                    } else if (state is ContractDetailsIsNotLoadedState) {
-                      return FlatButton(
-                          child: Text("Accept",
-                              style: TextStyle(color: Colors.grey)),
-                          color: Colors.white24,
-                          onPressed: null);
-                    } else {
-                      return FlatButton(
-                          child: Text("Accept",
-                              style: TextStyle(color: Colors.grey)),
-                          color: Colors.white24,
-                          onPressed: null);
-                    }
-                  },
-                )
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: SizedBox(height: 30)),
+                Visibility(visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT, child: getHistory()),
+                Visibility(visible: true, child: SizedBox(height: 30)),
+                Visibility(visible: contract.state == CONTRACT_STATE.OPEN_REQUEST, child: responseButtons()),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget greetingMessage() {
+
+    return Row(
+      children: <Widget>[
+        BackButton(color: blueHighlight),
+        Text("  Your ",
+            style:
+            TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
+        Text("Contract ",
+            style: TextStyle(
+                color: blueHighlight,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
+      ],
     );
   }
 
@@ -134,38 +118,58 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
 
   Widget getProgress() {
-    return new LinearPercentIndicator(
-      width: 235,
-      lineHeight: 8.0,
-      percent: 0.3,
-      progressColor: Color(0xFFB64FFA),
-      alignment: MainAxisAlignment.center,
-    );
+
+    return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
+        builder: (context, state) {
+      if (state is ContractDetailsIsLoadedState) {
+        return new LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      } else if (state is ContractDetailsIsLoadingState) {
+        return new LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      } else {
+        return new LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      }
+    });
   }
 
   Widget summaryBanner() {
     return Row(
       children: <Widget>[
+        Expanded(flex: 1, child: Container()),
         Expanded(
-          flex: 2,
+          flex: 5,
           child: Column(
             children: <Widget>[
               CircleAvatar(
                 child: Text("User"),
                 radius: 20,
               ),
-              Text("<<User>> paid on <<Month>><<Day>>",
+              Text(contract.loanerName + " paid on ",
                   style: TextStyle(color: Color(0xFF595959), fontSize: 10)),
             ],
           ),
         ),
         Expanded(
-          flex: 2,
+          flex: 5,
           child: Text("Repay in full on <<month>>/<<day>>",
               style: TextStyle(color: Color(0xFF595959), fontSize: 10)),
         ),
         Expanded(
-          flex: 2,
+          flex: 5,
           child: Column(
             children: <Widget>[
               Text("<<AMOUNT>>",
@@ -178,6 +182,7 @@ class _ContractDetailsState extends State<ContractDetails> {
             ],
           ),
         ),
+        Expanded(flex: 1, child: Container()),
       ],
     );
   }
@@ -191,7 +196,7 @@ class _ContractDetailsState extends State<ContractDetails> {
       color: Color(0xFFB64FFA),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
       elevation: 10,
     );
   }
@@ -361,6 +366,36 @@ class _ContractDetailsState extends State<ContractDetails> {
       ],
     );
   }
+
+  Widget responseButtons() {
+
+    return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
+      builder: (context, state) {
+        if (state is ContractDetailsIsLoadedState) {
+          return FlatButton(
+              child: Text("Accept",
+                  style: TextStyle(color: Colors.grey)),
+              color: Colors.white24,
+              onPressed: () {
+                //Attempt to establish the contract
+                bloc.add(EstablishContractContractDetailsEvent());
+
+
+              });
+        } else if (state is ContractDetailsIsNotLoadedState) {
+          return FlatButton(
+              child: Text("Accept",
+                  style: TextStyle(color: Colors.grey)),
+              color: Colors.white24,
+              onPressed: null);
+        } else {
+          return FlatButton(
+              child: Text("Accept",
+                  style: TextStyle(color: Colors.grey)),
+              color: Colors.white24,
+              onPressed: null);
+        }
+      },
+    );
+  }
 }
-
-
