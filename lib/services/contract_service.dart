@@ -143,14 +143,17 @@ class ContractService {
   //Accepts a contract request
   void acceptContractRequest(Contract contract) {
 
+    //Store the moment that the contract was accepted
+    DateTime timeAccepted = DateTime.now();
+
     //Compute the transactions using the current moment to begin the schedule
-    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(contract, DateTime.now());
+    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(contract, timeAccepted);
 
     //Convert the transactions to serializable data
     List serializableTransactions = _convertTransactions(repaymentTransactions);
 
     //Send the contract data
-    data.acceptEstablishContract(contract, serializableTransactions);
+    data.acceptEstablishContract(contract, serializableTransactions, timeAccepted);
   }
 
   //Computes a series of dated transactions required to repay a contract

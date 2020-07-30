@@ -8,6 +8,7 @@ class Contract {
   final String requesterName;
   final String loanerName;
   final String dueDate;
+  final String dateAccepted;
   final CONTRACT_STATE state;
 
   RepaymentTerms terms;
@@ -20,6 +21,7 @@ class Contract {
       this.requesterName,
       this.loanerName,
       this.dueDate,
+      this.dateAccepted,
       this.state,
       List terms,
       List transactions}) {
