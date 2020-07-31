@@ -8,6 +8,7 @@ import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LoanRequest extends StatefulWidget {
@@ -22,11 +23,13 @@ class _LoanRequestState extends State<LoanRequest> {
 
   LoanRequestBloc bloc;
 
-  TextEditingController dueDateInputController;
   FirebaseUser currentUser;
+
+  TextEditingController dueDateController;
 
   _LoanRequestState();
 
+  DateTime dueDate;
   double amount = 0;
   double paymentsOf = 0;
   int weeks = 0;
@@ -34,8 +37,6 @@ class _LoanRequestState extends State<LoanRequest> {
 
   @override
   initState() {
-    dueDateInputController = new TextEditingController();
-
     this.getCurrentUser();
     super.initState();
   }
@@ -44,6 +45,8 @@ class _LoanRequestState extends State<LoanRequest> {
     var context,
   ) {
     final user = Provider.of<User>(context, listen: false);
+
+    dueDateController = TextEditingController();
 
     bloc = LoanRequestBloc(FirestoreService(uid: user.uid));
 
@@ -236,6 +239,7 @@ class _LoanRequestState extends State<LoanRequest> {
   }
 
   Widget getDueDate() {
+
     return Column(
       children: <Widget>[
         Text(
@@ -246,13 +250,30 @@ class _LoanRequestState extends State<LoanRequest> {
           height: 10,
         ),
         TextFormField(
-          controller: dueDateInputController,
+          readOnly: true,
+          controller: dueDateController,
+          onTap: pickDueDate,
           decoration: InputDecoration(
             hintText: "eg: 5/25/2020",
           ),
         ),
       ],
     );
+  }
+
+  void pickDueDate() async{
+
+    //Retrieve the current time
+    DateTime currentTime = DateTime.now();
+
+    //Display one year of options
+    dueDate = await showDatePicker(context: context, initialDate: currentTime, firstDate: currentTime, lastDate: DateTime(currentTime.year+1));
+
+    if (dueDate != null) {
+
+      dueDateController.text = DateFormat.yMd().format(dueDate);
+      setState(() {});
+    }
   }
 
   Widget specifyBillAmt() {
@@ -531,7 +552,7 @@ class _LoanRequestState extends State<LoanRequest> {
     if (validateTerms(terms)) {
 
       bloc.add(
-          SubmitLoanRequestEvent(localUser, lender, DateTime.now(), terms, _onContractSubmitted));
+          SubmitLoanRequestEvent(localUser, lender, dueDate, terms, _onContractSubmitted));
     }
   }
 
@@ -545,6 +566,10 @@ class _LoanRequestState extends State<LoanRequest> {
     }
 
     if (terms.repaymentAmount > terms.amount) {
+      valid = false;
+    }
+
+    if (dueDate == null || dueDate.isBefore(DateTime.now())) {
       valid = false;
     }
 

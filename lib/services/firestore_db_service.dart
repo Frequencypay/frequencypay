@@ -66,28 +66,43 @@ class FirestoreService {
       'dateAccepted':null,
       'state':CONTRACT_STATE.OPEN_REQUEST.toString(),
       'terms':terms.toList(),
+      'repaymentStatus':null,
       'scheduledTransactions': null,
     });
   }
 
   //This is called to attempt to accept a contract, making it an active, established contract which must be repaid between the two users.
-  void acceptEstablishContract(Contract contract, List repaymentTransactions, DateTime timeAccepted) async {
+  void acceptEstablishContract(Contract contract, List repaymentTransactions, List repaymentStatus, DateTime timeAccepted) async {
 
     //Perform any validation of the operation
     if (contract.requester == currentUser.uid && contract.loaner != currentUser.uid) {
 
       //Establish the contract
-      _establishContract(contract.uid, contract, repaymentTransactions, timeAccepted);
+      _establishContract(contract.uid, contract, repaymentTransactions, repaymentStatus, timeAccepted);
     }
   }
 
   //This handles the actual process of establishing a contract.
-  void _establishContract(String uid, Contract contract, List transactions, DateTime timeAccepted) async{
+  void _establishContract(String uid, Contract contract, List transactions, List repaymentStatus, DateTime timeAccepted) async{
 
     DocumentReference document = contractCollection.document(uid);
 
-    //Update the state, mark the time accepted, and add the scheduled transactions
-    document.updateData({"state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),"dateAccepted": timeAccepted.toIso8601String(), "scheduledTransactions":transactions});
+    //Update the state, mark the time accepted, add the repayment status, and add the scheduled transactions
+    document.updateData({
+      "state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),
+      "dateAccepted": timeAccepted.toIso8601String(),
+      "repaymentStatus": repaymentStatus,
+      "scheduledTransactions":transactions
+    });
+  }
+
+  //This is called to reject a contract request, making it unable to be accepted or further negotiated
+  void rejectContract(Contract contract) {
+
+    DocumentReference document = contractCollection.document(contract.uid);
+
+    //Update the contract state
+    document.updateData({"state":CONTRACT_STATE.REJECTED_REQUEST.toString()});
   }
 
   //Returns an arbitrary user based on the given uid
@@ -126,16 +141,18 @@ class FirestoreService {
 //contract from snapshot (retrieves specific contract based on UID)
 // THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACT DATA WE GET FROM DB INTO OUR CUSTOM contract model
   Contract _contractFromSnapshot(DocumentSnapshot snapshot){ //For a single contract
+
     return Contract(
         uid: snapshot.documentID,
         terms: snapshot.data['terms'],
-        dueDate: snapshot.data['dueData'],
+        dueDateString: snapshot.data['dueDate'],
         dateAccepted: snapshot.data['dateAccepted'],
         state: contractStateFromString(snapshot.data['state']),
         loaner: snapshot.data['loaner'],
         loanerName: snapshot.data['loanerName'],
         requester: snapshot.data['requester'],
         requesterName: snapshot.data['requesterName'],
+        repayment: snapshot.data['repaymentStatus'],
         transactions: snapshot.data['scheduledTransactions'],
     );
   }
@@ -151,13 +168,14 @@ class FirestoreService {
       return Contract(
         uid: doc.documentID,
         terms: doc.data['terms'],
-        dueDate: doc.data['dueData'],
+        dueDateString: doc.data['dueDate'],
         dateAccepted: doc.data['dateAccepted'],
         state: contractStateFromString(doc.data['state']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
+        repayment: doc.data['repaymentStatus'],
         transactions: doc.data['scheduledTransactions'],
       );
     }).toList();

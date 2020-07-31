@@ -48,10 +48,7 @@ class _ContractDetailsState extends State<ContractDetails> {
   Widget build(BuildContext context) {
     //Extracting the contract assigned to load this page
     final ContractDetailsArguments arguments =
-        ModalRoute
-            .of(context)
-            .settings
-            .arguments;
+        ModalRoute.of(context).settings.arguments;
 
     //Retrieve the contract from the route arguments
     contract = arguments.contract;
@@ -62,42 +59,54 @@ class _ContractDetailsState extends State<ContractDetails> {
 //      appBar: AppBar(title: Text('Your' + contract()),),
         body: SingleChildScrollView(
           child: SafeArea(
-            child: Column(
-              children: <Widget>[
-                greetingMessage(),
-                SizedBox(height: 25),
-                getBillIssuer(),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: SizedBox(height: 15)),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: getProgress()),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: SizedBox(height: 35)),
-                summaryBanner(),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: SizedBox(height: 35)),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: makePaymentButton()),
-                Visibility(visible: true, child: SizedBox(height: 35)),
-                RepaymentInfo(),
-                Visibility(visible: true, child: SizedBox(height: 15)),
-                ContractDetailsInfo(),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: SizedBox(height: 30)),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                    child: getHistory()),
-                Visibility(visible: true, child: SizedBox(height: 30)),
-                Visibility(
-                    visible: contract.state == CONTRACT_STATE.OPEN_REQUEST,
-                    child: responseButtons()),
-              ],
+            child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
+              builder: (context, state) {
+                return Column(
+                  children: <Widget>[
+                    greetingMessage(),
+                    SizedBox(height: 25),
+                    getBillIssuer(),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: SizedBox(height: 15)),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: getProgress()),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: SizedBox(height: 35)),
+                    summaryBanner(),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: SizedBox(height: 25)),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: makePaymentButton()),
+                    Visibility(visible: true, child: SizedBox(height: 30)),
+                    RepaymentInfo(state),
+                    Visibility(visible: true, child: SizedBox(height: 15)),
+                    ContractDetailsInfo(state),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: SizedBox(height: 30)),
+                    Visibility(
+                        visible:
+                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+                        child: getHistory()),
+                    Visibility(visible: true, child: SizedBox(height: 30)),
+                    Visibility(
+                        visible: contract.state == CONTRACT_STATE.OPEN_REQUEST,
+                        child: responseButtons()),
+                    Visibility(visible: true, child: SizedBox(height: 15)),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -138,29 +147,24 @@ class _ContractDetailsState extends State<ContractDetails> {
   Widget getProgress() {
     return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
         builder: (context, state) {
-          if (state is ContractDetailsIsLoadedState) {
-            return new LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          } else if (state is ContractDetailsIsLoadingState) {
-            return new LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          } else {
-            return new LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          }
-        });
+      if (state is ContractDetailsIsLoadedState) {
+        return _progressBar(contract.repaymentProgress);
+      } else if (state is ContractDetailsIsLoadingState) {
+        return _progressBar(0.0);
+      } else {
+        return _progressBar(0.0);
+      }
+    });
+  }
+
+  Widget _progressBar(double amount) {
+    return LinearPercentIndicator(
+      width: 235,
+      lineHeight: 8.0,
+      percent: amount,
+      progressColor: Color(0xFFB64FFA),
+      alignment: MainAxisAlignment.center,
+    );
   }
 
   Widget summaryBanner() {
@@ -183,17 +187,17 @@ class _ContractDetailsState extends State<ContractDetails> {
 
                 if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT ||
                     contract.state == CONTRACT_STATE.COMPLETED_CONTRACT) {
-                  avatarMessage = contract.loanerName + " paid on\n" +
-                      DateFormat.MMMMd().format(
-                          DateTime.parse(contract.dateAccepted));
+                  avatarMessage = contract.loanerName +
+                      " paid on\n" +
+                      DateFormat.MMMMd()
+                          .format(DateTime.parse(contract.dateAccepted));
                 } else {
                   avatarMessage = contract.loanerName;
                 }
 
                 return Text(avatarMessage,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                        color: Colors.grey[700], fontSize: 14));
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
               }),
             ],
           ),
@@ -202,81 +206,128 @@ class _ContractDetailsState extends State<ContractDetails> {
           flex: 5,
           child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
               builder: (context, state) {
-                if (state is ContractDetailsIsLoadedState) {
 
-                  if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
-
-                    return Text("Repay in full\non " + DateFormat.Md().format(state.getFinalPaymentDate),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.grey[700], fontSize: 14));
-                  } else if (contract.state == CONTRACT_STATE.COMPLETED_CONTRACT) {
-
-                    return Text("Repaid in full\non " + "<<date>>",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.grey[700], fontSize: 14));
-                  } else {
-
-                    return Text("Repaid in full\non " + DateFormat.Md().format(state.getRepaymentProjection.repaymentDate),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.grey[700], fontSize: 14));
-                  }
-                } else if (state is ContractDetailsIsLoadingState) {
-
-                  return Text("Repay in full\non ...",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.grey[700], fontSize: 14));
-                } else {
-
-                  return Text("Error obtaining\nrepayment date",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.grey[700], fontSize: 14));
-                }
+            if (state is ContractDetailsIsLoadedState) {
+              if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+                return Text(
+                    "Repay in full\non " +
+                        DateFormat.yMd().format(state.getFinalPaymentDate),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
+              } else if (contract.state == CONTRACT_STATE.COMPLETED_CONTRACT) {
+                return Text("Repaid in full\non " + "<<date>>",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
+              } else {
+                return Text(
+                    "Repaid in full\non " +
+                        DateFormat.yMd()
+                            .format(state.getRepaymentProjection.repaymentDate),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
               }
-          ),
+            } else if (state is ContractDetailsIsLoadingState) {
+              return Text("Repay in full\non ...",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14));
+            } else {
+              return Text("Error obtaining\nrepayment date",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14));
+            }
+          }),
         ),
         Expanded(
           flex: 5,
-          child: Column(
-            children: <Widget>[
-              Text("<<AMOUNT>>",
-                  style: TextStyle(
-                      color: blueHighlight,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold)),
-              Text("Remaining for repayment",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.grey[700], fontSize: 14)),
-            ],
-          ),
+          child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
+              builder: (context, state) {
+            if (state is ContractDetailsIsLoadedState) {
+              return _amountMessage(false);
+            } else if (state is ContractDetailsIsLoadingState) {
+              return _amountMessage(true);
+            } else {
+              return Container();
+            }
+          }),
         ),
         Expanded(flex: 1, child: Container()),
       ],
     );
   }
 
+  Widget _amountMessage(bool stillLoading) {
+    String amountMessage;
+    String subtitle;
+
+    if (contract.state == CONTRACT_STATE.OPEN_REQUEST) {
+      amountMessage = "\$" + contract.terms.amount.toString();
+      subtitle = "to be repaid";
+    } else if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+      if (stillLoading) {
+        amountMessage = "...";
+      } else {
+        amountMessage =
+            "\$" + contract.repaymentStatus.remainingAmount.toString();
+      }
+      subtitle = "remaining for repayment";
+    } else {
+      amountMessage = "\$" + contract.terms.amount.toString();
+      subtitle = "repaid";
+    }
+
+    return Column(children: <Widget>[
+      Text(amountMessage,
+          style: TextStyle(
+              color: blueHighlight, fontSize: 20, fontWeight: FontWeight.bold)),
+      Text(subtitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.grey[700], fontSize: 14))
+    ]);
+  }
+
   Widget makePaymentButton() {
     return RaisedButton(
       child: Text("Make Payment",
           style: TextStyle(
-              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
       onPressed: () {},
       color: Color(0xFFB64FFA),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
       elevation: 10,
     );
   }
 
-  Widget RepaymentInfo() {
+  Widget RepaymentInfo(ContractDetailsState state) {
+    String repaymentMessage;
+    String amountMessage;
+    String occurrenceMessage;
+
+    amountMessage = "\$" + contract.terms.repaymentAmount.toString();
+
+    if (state is ContractDetailsIsLoadedState) {
+      occurrenceMessage = _convertOccurrence(contract.terms.frequencyWeeks);
+    } else {
+      occurrenceMessage = "...";
+    }
+
+    if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+      repaymentMessage = contract.scheduledTransactions.length.toString() +
+          " payments\nremaining";
+    } else if (contract.state == CONTRACT_STATE.OPEN_REQUEST) {
+      if (state is ContractDetailsIsLoadedState) {
+        repaymentMessage = state.getRepaymentProjection.numPayments.toString() +
+            " payments\nof";
+      } else {
+        repaymentMessage = "To be repaid over ...";
+      }
+    } else {
+      repaymentMessage = "repaid over " + "X" + "\npayments";
+    }
+
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         margin: EdgeInsets.symmetric(horizontal: 30),
         decoration: BoxDecoration(
           color: blueHighlight,
@@ -288,7 +339,7 @@ class _ContractDetailsState extends State<ContractDetails> {
               children: <Widget>[
                 Text("Repayment",
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
               ],
             ),
             SizedBox(height: 25),
@@ -296,40 +347,54 @@ class _ContractDetailsState extends State<ContractDetails> {
               children: <Widget>[
                 Expanded(
                     flex: 1,
-                    child: Text("<<Payments>> payments",
+                    child: Text(repaymentMessage,
                         textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
+                        style: TextStyle(color: Colors.white, fontSize: 14))),
                 Expanded(
                     flex: 1,
-                    child: Text("\$<<Amount>>",
+                    child: RichText(
                         textAlign: TextAlign.right,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold))),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Text("remaining",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
-                Expanded(
-                    flex: 1,
-                    child: Text("Every <<Period>>",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
+                        text: TextSpan(children: <TextSpan>[
+                          TextSpan(
+                              text: amountMessage + "\n",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: occurrenceMessage,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14))
+                        ]))),
               ],
             ),
           ],
         ));
   }
 
-  Widget ContractDetailsInfo() {
+  Widget ContractDetailsInfo(ContractDetailsState state) {
+    String paymentMessage;
+    String dueDateMessage;
+
+    dueDateMessage =
+        "Bill due date\n" + DateFormat.MMMd().format(contract.dueDate);
+
+    if (contract.state == CONTRACT_STATE.OPEN_REQUEST) {
+      paymentMessage = contract.loanerName +
+          " will pay \$" +
+          contract.terms.amount.toString() +
+          "\nto " +
+          "<<Bill Issuer>>";
+    } else {
+      paymentMessage = contract.loanerName +
+          " paid \$" +
+          contract.terms.amount.toString() +
+          "\nto " +
+          "<<Bill Issuer>>";
+    }
+
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         margin: EdgeInsets.symmetric(horizontal: 30),
         decoration: BoxDecoration(
           color: blueHighlight,
@@ -341,7 +406,7 @@ class _ContractDetailsState extends State<ContractDetails> {
               children: <Widget>[
                 Text("Contract Details",
                     textAlign: TextAlign.left,
-                    style: TextStyle(color: Colors.white, fontSize: 18)),
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
               ],
             ),
             SizedBox(height: 25),
@@ -349,28 +414,14 @@ class _ContractDetailsState extends State<ContractDetails> {
               children: <Widget>[
                 Expanded(
                     flex: 1,
-                    child: Text("<<User>> paid <<Amount>>",
+                    child: Text(paymentMessage,
                         textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
+                        style: TextStyle(color: Colors.white, fontSize: 14))),
                 Expanded(
                     flex: 1,
-                    child: Text("Bill due date",
+                    child: Text(dueDateMessage,
                         textAlign: TextAlign.right,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                    flex: 1,
-                    child: Text("to <<Bill Issuer>>",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
-                Expanded(
-                    flex: 1,
-                    child: Text("<<Month>> <<DayOrdinal>>",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(color: Colors.white, fontSize: 11))),
+                        style: TextStyle(color: Colors.white, fontSize: 14))),
               ],
             ),
           ],
@@ -441,28 +492,86 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
 
   Widget responseButtons() {
+    return Row(children: <Widget>[
+      Expanded(flex: 1, child: Container()),
+      Expanded(
+          flex: 2, child: _responseButton("Accept", attemptAcceptContract)),
+      Expanded(flex: 1, child: Container()),
+      Expanded(
+          flex: 2, child: _responseButton("Reject", attemptRejectContract)),
+      Expanded(flex: 1, child: Container()),
+    ]);
+  }
+
+  //Builds a response button
+  Widget _responseButton(String text, var pressEvent) {
     return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
       builder: (context, state) {
         if (state is ContractDetailsIsLoadedState) {
-          return FlatButton(
-              child: Text("Accept", style: TextStyle(color: Colors.grey)),
-              color: Colors.white24,
-              onPressed: () {
-                //Attempt to establish the contract
-                bloc.add(EstablishContractContractDetailsEvent());
-              });
+          return _responseButtonWidget(text, pressEvent);
         } else if (state is ContractDetailsIsNotLoadedState) {
-          return FlatButton(
-              child: Text("Accept", style: TextStyle(color: Colors.grey)),
-              color: Colors.white24,
-              onPressed: null);
+          return _responseButtonWidget(text, null);
         } else {
-          return FlatButton(
-              child: Text("Accept", style: TextStyle(color: Colors.grey)),
-              color: Colors.white24,
-              onPressed: null);
+          return _responseButtonWidget(text, null);
         }
       },
     );
+  }
+
+  Widget _responseButtonWidget(String text, var pressEvent) {
+    return /*FlatButton(
+        child: Text(text, style: TextStyle(color: Colors.grey)),
+        color: Colors.white24,
+        onPressed: pressEvent);*/
+
+        RaisedButton(
+      child: Text(text,
+          style: TextStyle(
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold)),
+      onPressed: pressEvent,
+      color: Color(0xFFB64FFA),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      shape:
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+      elevation: 5,
+    );
+  }
+
+  //Attempts to accept the contract
+  void attemptAcceptContract() {
+    //Attempt to establish the contract
+    bloc.add(EstablishContractContractDetailsEvent());
+  }
+
+  //Attempts to reject the contract
+  void attemptRejectContract() {
+    //Attempt to reject the contract
+    bloc.add(RejectContractContractDetailsEvent());
+  }
+
+  //Converts a frequency of payment into a string message
+  String _convertOccurrence(int weeks) {
+    String message;
+
+    switch (weeks) {
+      case 0:
+        message = "invalid duration";
+        break;
+      case 1:
+        message = "Each week";
+        break;
+      case 2:
+        message = "Every other week";
+        break;
+      default:
+        if (weeks < 0) {
+          message = "invalid duration";
+        } else {
+          message = "Every " + weeks.toString() + " weeks";
+        }
+        break;
+    }
+
+    return message;
   }
 }

@@ -152,8 +152,18 @@ class ContractService {
     //Convert the transactions to serializable data
     List serializableTransactions = _convertTransactions(repaymentTransactions);
 
+    //Initialize the repayment status
+    List repaymentStatus = RepaymentStatus(contract.terms.amount, 0).toList();
+
     //Send the contract data
-    data.acceptEstablishContract(contract, serializableTransactions, timeAccepted);
+    data.acceptEstablishContract(contract, serializableTransactions, repaymentStatus, timeAccepted);
+  }
+
+  //Rejects a contract request
+  void rejectContractRequest(Contract contract) {
+
+    //Apply rejection
+    data.rejectContract(contract);
   }
 
   //Computes a series of dated transactions required to repay a contract

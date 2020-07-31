@@ -65,13 +65,13 @@ class ContractCards {
                       Text("<Time Left>",
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
-                      LinearProgressIndicator(),
+                      LinearProgressIndicator(value: contract.repaymentProgress),
                       Text("\$" + contract.terms.amount.toString() + " from " + contract.loanerName,
                           style:
                               TextStyle(color: Colors.grey[600], fontSize: 14)),
                       Align(
                           alignment: Alignment.centerRight,
-                          child: Text("<Amount Left>",
+                          child: Text("\$" + contract.repaymentStatus.remainingAmount.toString(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.grey[600],

@@ -19,6 +19,10 @@ class EstablishContractContractDetailsEvent extends ContractDetailsEvent {
 
 }
 
+class RejectContractContractDetailsEvent extends ContractDetailsEvent {
+
+}
+
 //States
 class ContractDetailsState {
 
@@ -68,10 +72,10 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
         loadedContract = event.contract;
 
         //The date of the final payment of an active or completed contract
-        DateTime finalPaymentDate = contractService.finalPaymentTime(loadedContract);
+        DateTime finalPaymentDate = (loadedContract.state==CONTRACT_STATE.ACTIVE_CONTRACT) ? contractService.finalPaymentTime(loadedContract) : null;
 
         //The projected repayment information of a contract request
-        RepaymentProjection repaymentProjection = contractService.projectRepayment(loadedContract);
+        RepaymentProjection repaymentProjection = (loadedContract.state==CONTRACT_STATE.OPEN_REQUEST) ? contractService.projectRepayment(loadedContract) : null;
 
         yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection);
       } catch (_){
@@ -84,6 +88,17 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
       try {
 
         contractService.acceptContractRequest(loadedContract);
+
+        //TODO: make callback to contract details
+      } catch (_){
+
+        print(_);
+      }
+    } else if (event is RejectContractContractDetailsEvent) {
+
+      try {
+
+        contractService.rejectContractRequest(loadedContract);
 
         //TODO: make callback to contract details
       } catch (_){
