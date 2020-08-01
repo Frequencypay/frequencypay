@@ -65,6 +65,7 @@ class FirestoreService {
       'dueDate':dueDate,
       'dateAccepted':null,
       'state':CONTRACT_STATE.OPEN_REQUEST.toString(),
+      'waitState':WAIT_STATE.ON_LENDER.toString(),
       'terms':terms.toList(),
       'repaymentStatus':null,
       'scheduledTransactions': null,
@@ -90,6 +91,7 @@ class FirestoreService {
     //Update the state, mark the time accepted, add the repayment status, and add the scheduled transactions
     document.updateData({
       "state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),
+      "waitState":WAIT_STATE.NONE.toString(),
       "dateAccepted": timeAccepted.toIso8601String(),
       "repaymentStatus": repaymentStatus,
       "scheduledTransactions":transactions
@@ -102,7 +104,7 @@ class FirestoreService {
     DocumentReference document = contractCollection.document(contract.uid);
 
     //Update the contract state
-    document.updateData({"state":CONTRACT_STATE.REJECTED_REQUEST.toString()});
+    document.updateData({"state":CONTRACT_STATE.REJECTED_REQUEST.toString(), "waitState":WAIT_STATE.NONE.toString()});
   }
 
   //Returns an arbitrary user based on the given uid
@@ -148,6 +150,7 @@ class FirestoreService {
         dueDateString: snapshot.data['dueDate'],
         dateAccepted: snapshot.data['dateAccepted'],
         state: contractStateFromString(snapshot.data['state']),
+        waitState: waitStateFromString(snapshot.data['waitState']),
         loaner: snapshot.data['loaner'],
         loanerName: snapshot.data['loanerName'],
         requester: snapshot.data['requester'],
@@ -171,6 +174,7 @@ class FirestoreService {
         dueDateString: doc.data['dueDate'],
         dateAccepted: doc.data['dateAccepted'],
         state: contractStateFromString(doc.data['state']),
+        waitState: waitStateFromString(doc.data['waitState']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
         requester: doc.data['requester'],

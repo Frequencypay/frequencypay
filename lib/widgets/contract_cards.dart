@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
+import 'package:frequencypay/services/contract_service.dart';
 
 class ContractCards {
 
@@ -83,7 +84,7 @@ class ContractCards {
     );
   }
 
-  static Widget buildRepaymentContractCard(BuildContext context, Contract contract) {
+  static Widget buildPendingContractCard(BuildContext context, Contract contract, bool activeNotification) {
     return Container(
       height: 100,
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -110,7 +111,9 @@ class ContractCards {
                   Text("\$" + contract.terms.amount.toString() + " from " + contract.loanerName,
                       style: TextStyle(color: Colors.grey[600], fontSize: 14))
                 ]),
-            trailing: Icon(Icons.priority_high, color: Colors.grey[700]),
+            trailing: Visibility(
+              visible: activeNotification,
+                child: Icon(Icons.priority_high, color: Colors.grey[700])),
           ),
         ),
       ),

@@ -37,12 +37,14 @@ class ContractDetailsIsLoadedState extends ContractDetailsState {
   final _contract;
   final _finalPaymentDate;
   final _repaymentProjection;
+  final _waitedOnUser;
 
-  ContractDetailsIsLoadedState(this._contract, this._finalPaymentDate, this._repaymentProjection);
+  ContractDetailsIsLoadedState(this._contract, this._finalPaymentDate, this._repaymentProjection, this._waitedOnUser);
 
   Contract get getContract => _contract;
   DateTime get getFinalPaymentDate => _finalPaymentDate;
   RepaymentProjection get getRepaymentProjection => _repaymentProjection;
+  bool get isWaitedOnUse => _waitedOnUser;
 }
 
 class ContractDetailsIsNotLoadedState extends ContractDetailsState {
@@ -77,7 +79,9 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
         //The projected repayment information of a contract request
         RepaymentProjection repaymentProjection = (loadedContract.state==CONTRACT_STATE.OPEN_REQUEST) ? contractService.projectRepayment(loadedContract) : null;
 
-        yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection);
+        bool waitedOn = await contractService.waitingOnUser(event.contract);
+
+        yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection, waitedOn);
       } catch (_){
 
         print(_);

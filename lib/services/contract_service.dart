@@ -1,4 +1,5 @@
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
 import 'firestore_db_service.dart';
@@ -8,17 +9,21 @@ class ContractService {
   FirestoreService data;
 
   List<Contract> activeContracts;
+  UserData user;
 
   //This is a flag that marks initialization
-  Future _doneFuture;
+  Future _doneLoadingContracts;
+  Future _doneLoadingUser;
 
   ContractService(this.data) {
 
-    _doneFuture = loadActiveContracts();
+    _doneLoadingContracts = loadActiveContracts();
+    _doneLoadingUser = loadUser();
   }
 
-  //Returns whether the class is initialized
-  Future get initializationDone => _doneFuture;
+  //Returns whether the contracts list and user are initialized
+  Future get initializationContractsDone => _doneLoadingContracts;
+  Future get initializationUserDone => _doneLoadingUser;
 
   //Used to initialize or update the active contracts list
   Future loadActiveContracts() async{
@@ -26,11 +31,18 @@ class ContractService {
     activeContracts = await data.retrieveContracts(ContractSearchQuery.BORROWER_ACTIVE_CONTRACTS()).first;
   }
 
+  //Used to load the local user data
+  Future loadUser() async{
+
+    user = await data.userData.first;
+  }
+
   //Returns the amount of time (days, weeks, months, years) until the last contract is repaid
   Future<RepaymentOverview> getRepaymentOverview() async{
 
     //Wait until initialization is finished
-    await initializationDone;
+    await initializationContractsDone;
+    await initializationUserDone;
 
     RepaymentOverview overview;
 
@@ -286,6 +298,24 @@ class ContractService {
 
     //Return the repayment projection
     return RepaymentProjection(finalPayment.time, transactions.length, remainderPayment);
+  }
+
+  //Returns whether the given contract request is waiting on the local user
+  Future<bool> waitingOnUser(Contract contract) async {
+
+    await initializationUserDone;
+
+    bool waitingOn = false;
+
+    if (contract.waitState == WAIT_STATE.ON_LENDER && contract.loaner == user.uid) {
+
+      waitingOn = true;
+    } else if (contract.waitState == WAIT_STATE.ON_BORROWER && contract.requester == user.uid) {
+
+      waitingOn = true;
+    }
+
+    return waitingOn;
   }
 }
 

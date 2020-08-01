@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_contracts_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
@@ -26,7 +27,10 @@ class _UserContractsPageState extends State<UserContractsPage>
   UserContractsBloc createBloc(var context) {
     final user = Provider.of<User>(context, listen: false);
 
-    UserContractsBloc bloc = UserContractsBloc(FirestoreService(uid: user.uid));
+    FirestoreService service = FirestoreService(uid: user.uid);
+    ContractService contractService = ContractService(service);
+
+    UserContractsBloc bloc = UserContractsBloc(service, contractService);
 
     bloc.add(LoadUserContractsEvent());
 
@@ -157,8 +161,8 @@ class _UserContractsPageState extends State<UserContractsPage>
       if (state is UserContractsIsLoadedState) {
         return ListView.builder(
             itemBuilder: (context, index) {
-              return ContractCards.buildRepaymentContractCard(
-                  context, state.getPendingContracts.contracts[index]);
+              return ContractCards.buildPendingContractCard(
+                  context, state.getPendingContracts.contracts[index], state.getActiveNotifications[index]);
             },
             itemCount: state.getPendingContracts.contracts.length,
             shrinkWrap: true);

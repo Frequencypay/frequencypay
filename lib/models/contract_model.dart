@@ -9,6 +9,7 @@ class Contract {
   final String loanerName;
   final String dateAccepted;
   final CONTRACT_STATE state;
+  final WAIT_STATE waitState;
 
   DateTime dueDate;
   RepaymentTerms terms;
@@ -25,6 +26,7 @@ class Contract {
       this.loanerName,
       this.dateAccepted,
       this.state,
+      this.waitState,
       String dueDateString,
       List terms,
       List repayment,
@@ -52,10 +54,18 @@ class Contract {
   }
 }
 
+//The status of the contract along its lifetime
 enum CONTRACT_STATE { OPEN_REQUEST, REJECTED_REQUEST, ACTIVE_CONTRACT, COMPLETED_CONTRACT}
+
+//Who the contract request is waiting on
+enum WAIT_STATE { ON_LENDER, ON_BORROWER, NONE}
 
 CONTRACT_STATE contractStateFromString(String str) {
   return CONTRACT_STATE.values.firstWhere((e) => e.toString() == str);
+}
+
+WAIT_STATE waitStateFromString(String str) {
+  return WAIT_STATE.values.firstWhere((e) => e.toString() == str);
 }
 
 class ContractListModel {

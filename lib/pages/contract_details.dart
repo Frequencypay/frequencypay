@@ -101,7 +101,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                         child: getHistory()),
                     Visibility(visible: true, child: SizedBox(height: 30)),
                     Visibility(
-                        visible: contract.state == CONTRACT_STATE.OPEN_REQUEST,
+                        visible: _displayResponseButtons(state),
                         child: responseButtons()),
                     Visibility(visible: true, child: SizedBox(height: 15)),
                   ],
@@ -489,6 +489,11 @@ class _ContractDetailsState extends State<ContractDetails> {
         )
       ],
     );
+  }
+
+  bool _displayResponseButtons(ContractDetailsState state) {
+
+    return contract.state == CONTRACT_STATE.OPEN_REQUEST && state is ContractDetailsIsLoadedState && state.isWaitedOnUse;
   }
 
   Widget responseButtons() {
