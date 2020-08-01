@@ -74,7 +74,7 @@ class ContractService {
 
         //Retrieve the total and paid back amounts
         currentAmount = current.terms.amount;
-        currentAmountPaid = 0;//TODO Make this actually read the amount paid back
+        currentAmountPaid = currentAmount - current.repaymentStatus.remainingAmount;
 
         //Add the amounts to the totals
         totalAmount += currentAmount;
