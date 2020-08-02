@@ -4,10 +4,12 @@ import 'package:frequencypay/pages/authenticate/sign_in_page.dart';
 import 'package:frequencypay/pages/loan_request_page.dart';
 import 'package:frequencypay/pages/authenticate/forgot_password_page.dart';
 import 'package:frequencypay/pages/home_page.dart';
+import 'package:frequencypay/pages/plaid_link_splash_screen.dart';
 import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/search_users.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
+import 'package:frequencypay/pages/wake_up_auth.dart';
 
 
 final routes = {
@@ -20,5 +22,7 @@ final routes = {
   '/loan_request_page':(context)=>LoanRequest(),
   '/user_contracts':(context)=>new UserContractsPage(),
   '/contract_details':(context)=>new ContractDetails(),
-  '/profile_page':(context)=> new ProfileScreen()
+  '/profile_page':(context)=> new ProfileScreen(),
+  '/wake_up':(context)=> new WakeUpAuth(),
+  '/plaid_splash':(context)=> new PlaidLinkSplashScreen(),
 };

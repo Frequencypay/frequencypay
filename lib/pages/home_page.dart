@@ -1,8 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/pages/authenticate/sign_in_page.dart';
 import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
 import 'package:frequencypay/pages/user_contracts_page.dart';
+import 'package:frequencypay/pages/wake_up_auth.dart';
+import 'package:provider/provider.dart';
 
 import 'calendar_page.dart';
 import 'landing_page.dart';
@@ -33,6 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   initState() {
+
     this.getCurrentUser();
     super.initState();
   }

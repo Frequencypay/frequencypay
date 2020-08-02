@@ -4,9 +4,6 @@ import 'package:frequencypay/pages/authenticate/loading.dart';
 
 
 class Register extends StatefulWidget {
-  final Function toggleView;
-  Register({this.toggleView});
-
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -52,7 +49,7 @@ class _RegisterState extends State<Register> {
             icon: Icon(Icons.person,color: Colors.white,),
             label: Text("Sign In",style: TextStyle(color: Colors.white),),
             onPressed: (){
-              widget.toggleView(); // change to opposite screen
+              Navigator.pushReplacementNamed(context, '/sign_in'); // change to opposite screen
             },
           ),
         ],
@@ -262,6 +259,9 @@ class _RegisterState extends State<Register> {
               error='Please enter a valid email';
               loading=false;
             });
+          } else{
+            //Navigator.pushReplacementNamed(context, '/plaid_splash');
+            Navigator.pushReplacementNamed(context, '/home');
           }
           //If the user successfully register, the stream will automatically take them to home screen
           //Stream listens to auth changes

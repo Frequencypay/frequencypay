@@ -47,6 +47,8 @@ dependencies:
   table_calendar: ^2.2.3
   intl: ^0.16.1
   flutter_webview_plugin: ^0.3.11
+  firebase_messaging: ^6.0.16
+
 
 dev_dependencies:
   flutter_test:

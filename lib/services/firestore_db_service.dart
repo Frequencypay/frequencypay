@@ -50,7 +50,8 @@ class FirestoreService {
       'address':address,
       'searchIndex':indexList,
       'pin':pin,
-      'avatarUrl':avatarUrl
+      'avatarUrl':avatarUrl,
+      'notificationToken':uid
     });
   }
 
@@ -127,7 +128,8 @@ class FirestoreService {
       phoneNumber: snapshot.data['phone'],
       address: snapshot.data['address'],
       pin:snapshot.data['pin'],
-      avatarUrl: snapshot.data['avatarUrl']
+      avatarUrl: snapshot.data['avatarUrl'],
+      notificationToken: snapshot.data['notificationToken']
     );
   }
 
@@ -248,6 +250,13 @@ class FirestoreService {
     //if document doesn't exist yet, firestore creates one automatically
     return await userDataCollection.document(uid).updateData({
       'avatarUrl':avatarUrl
+    });
+  }
+
+  // update notification token
+  Future updateNotificationToken(String notificationToken) async{
+    return await userDataCollection.document(uid).updateData({
+      'notificationToken':notificationToken
     });
   }
 

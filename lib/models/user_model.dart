@@ -13,6 +13,7 @@ class UserData{
   final String address;
   final String pin;
   final String avatarUrl;
+  final String notificationToken;
 
   UserData({
     this.uid,
@@ -23,7 +24,8 @@ class UserData{
     this.phoneNumber,
     this.address,
     this.pin,
-    this.avatarUrl
+    this.avatarUrl,
+    this.notificationToken,
 });
 }
 

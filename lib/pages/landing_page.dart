@@ -80,10 +80,8 @@ class _LandingPageState extends State<LandingPage> {
               IconButton(
                 icon: Icon(Icons.person),
                 onPressed: () async {
-                  //await _auth.signOut();
-//                  getOut();
+                  await _auth.signOut();
                   Navigator.pushReplacementNamed(context, '/sign_in');
-
                 },
                 color: Colors.black45,
               )

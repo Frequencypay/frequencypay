@@ -4,8 +4,6 @@ import 'package:frequencypay/pages/authenticate/loading.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 
 class SignIn extends StatefulWidget {
-  final Function toggleView;
-  SignIn({this.toggleView});
 
   @override
   _SignInState createState() => _SignInState();
@@ -47,7 +45,7 @@ class _SignInState extends State<SignIn> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () {
-                    widget.toggleView(); // switch to opposite screen
+                    Navigator.pushReplacementNamed(context, '/register'); // switch to opposite screen
                   },
                 ),
               ],
@@ -155,7 +153,8 @@ class _SignInState extends State<SignIn> {
             });
           }
           if (result != null) {
-              Navigator.pushReplacementNamed(context, '/home');
+              //Navigator.pushReplacementNamed(context, '/plaid_splash');
+             Navigator.pushReplacementNamed(context, '/home');
           }
           //If the user successfully register, the stream will automatically take them to home screen
           //Stream listens to auth changes
