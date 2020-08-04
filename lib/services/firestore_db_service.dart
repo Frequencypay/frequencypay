@@ -196,6 +196,7 @@ class FirestoreService {
   Stream<List<Contract>> retrieveContracts(ContractSearchQuery query) async*{
 
     //Wait for initialization to finish
+    //Without this, the user may not be loaded since the constructor makes an async call
     await initializationDone;
 
     //The resulting stream
