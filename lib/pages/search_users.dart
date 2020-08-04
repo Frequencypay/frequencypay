@@ -96,7 +96,17 @@ class _SearchDataState extends State<SearchData> {
                               color: Colors.grey[200],
                               child: Row(
                                 children: <Widget>[
-                                  CircleAvatar(child: Text("profile pic"), radius: 40,),
+                                  CircleAvatar(
+                                    child: ClipOval(
+                                      child: SizedBox(
+                                        width: 150,
+                                        height: 150,
+                                        child: (document["avatarUrl"] !=null)? Image.network(document["avatarUrl"],fit: BoxFit.fill):Image(image: AssetImage('assets/temp_logo.png'),),
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                    radius: 40,
+                                  ),
                                   SizedBox(width: 50,),
                                   Column(
                                     children: <Widget>[
