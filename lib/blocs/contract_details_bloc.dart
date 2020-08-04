@@ -19,6 +19,10 @@ class EstablishContractContractDetailsEvent extends ContractDetailsEvent {
 
 }
 
+class RejectContractContractDetailsEvent extends ContractDetailsEvent {
+
+}
+
 //States
 class ContractDetailsState {
 
@@ -31,10 +35,16 @@ class ContractDetailsIsLoadingState extends ContractDetailsState {
 class ContractDetailsIsLoadedState extends ContractDetailsState {
 
   final _contract;
+  final _finalPaymentDate;
+  final _repaymentProjection;
+  final _waitedOnUser;
 
-  ContractDetailsIsLoadedState(Contract this._contract);
+  ContractDetailsIsLoadedState(this._contract, this._finalPaymentDate, this._repaymentProjection, this._waitedOnUser);
 
   Contract get getContract => _contract;
+  DateTime get getFinalPaymentDate => _finalPaymentDate;
+  RepaymentProjection get getRepaymentProjection => _repaymentProjection;
+  bool get isWaitedOnUse => _waitedOnUser;
 }
 
 class ContractDetailsIsNotLoadedState extends ContractDetailsState {
@@ -63,7 +73,15 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
 
         loadedContract = event.contract;
 
-        yield ContractDetailsIsLoadedState(loadedContract);
+        //The date of the final payment of an active or completed contract
+        DateTime finalPaymentDate = (loadedContract.state==CONTRACT_STATE.ACTIVE_CONTRACT) ? contractService.finalPaymentTime(loadedContract) : null;
+
+        //The projected repayment information of a contract request
+        RepaymentProjection repaymentProjection = (loadedContract.state==CONTRACT_STATE.OPEN_REQUEST) ? contractService.projectRepayment(loadedContract) : null;
+
+        bool waitedOn = await contractService.waitingOnUser(event.contract);
+
+        yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection, waitedOn);
       } catch (_){
 
         print(_);
@@ -74,6 +92,19 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
       try {
 
         contractService.acceptContractRequest(loadedContract);
+
+        //TODO: make callback to contract details
+      } catch (_){
+
+        print(_);
+      }
+    } else if (event is RejectContractContractDetailsEvent) {
+
+      try {
+
+        contractService.rejectContractRequest(loadedContract);
+
+        //TODO: make callback to contract details
       } catch (_){
 
         print(_);

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
@@ -27,12 +28,14 @@ class UserContractsIsLoadedState extends UserContractsState {
   final _completeContracts;
   final _activeContracts;
   final _pendingContracts;
+  final _activeNotifications;
 
-  UserContractsIsLoadedState(ContractListModel this._completeContracts, ContractListModel this._activeContracts, ContractListModel this._pendingContracts);
+  UserContractsIsLoadedState(ContractListModel this._completeContracts, ContractListModel this._activeContracts, ContractListModel this._pendingContracts, List<bool> this._activeNotifications);
 
   ContractListModel get getCompleteContracts => _completeContracts;
   ContractListModel get getActiveContracts => _activeContracts;
   ContractListModel get getPendingContracts => _pendingContracts;
+  List<bool> get getActiveNotifications => _activeNotifications;
 }
 
 class UserContractsIsNotLoadedState extends UserContractsState {
@@ -42,8 +45,9 @@ class UserContractsIsNotLoadedState extends UserContractsState {
 class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
   FirestoreService _service;
+  ContractService _contractService;
 
-  UserContractsBloc(this._service);
+  UserContractsBloc(this._service, this._contractService);
 
   @override
   UserContractsState get initialState => UserContractsIsLoadingState();
@@ -72,12 +76,28 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
         ContractListModel pendingContracts = ContractListModel(pendingContractsList);
 
-        yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts);
-      } catch (_){
+        List<bool> activeNotifications = await getActiveNotifications(pendingContractsList);
+
+        yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts, activeNotifications);
+      } catch (_, stacktrace){
 
         print("Error loading contracts: " + _.toString());
+        print(stacktrace);
+
         yield UserContractsIsNotLoadedState();
       }
     }
+  }
+
+  Future<List<bool>> getActiveNotifications(List<Contract> contracts) async{
+
+    List<bool> activeNotifications = List<bool>();
+
+    for (int index = 0; index < contracts.length; index++) {
+
+      activeNotifications.add(await _contractService.waitingOnUser(contracts[index]));
+    }
+
+    return activeNotifications;
   }
 }

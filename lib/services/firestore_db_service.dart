@@ -63,27 +63,48 @@ class FirestoreService {
       'requesterName':requesterName,
       'loanerName':loanerName,
       'dueDate':dueDate,
+      'dateAccepted':null,
       'state':CONTRACT_STATE.OPEN_REQUEST.toString(),
+      'waitState':WAIT_STATE.ON_LENDER.toString(),
       'terms':terms.toList(),
+      'repaymentStatus':null,
       'scheduledTransactions': null,
     });
   }
 
   //This is called to attempt to accept a contract, making it an active, established contract which must be repaid between the two users.
-  void acceptEstablishContract(Contract contract, List repaymentTransactions) async {
+  void acceptEstablishContract(Contract contract, List repaymentTransactions, List repaymentStatus, DateTime timeAccepted) async {
 
     //Perform any validation of the operation
+    if (contract.requester == currentUser.uid && contract.loaner != currentUser.uid) {
 
-    //Establish the contract
-    _establishContract(contract.uid, contract, repaymentTransactions);
+      //Establish the contract
+      _establishContract(contract.uid, contract, repaymentTransactions, repaymentStatus, timeAccepted);
+    }
   }
 
   //This handles the actual process of establishing a contract.
-  void _establishContract(String uid, Contract contract, List transactions) async{
+  void _establishContract(String uid, Contract contract, List transactions, List repaymentStatus, DateTime timeAccepted) async{
 
     DocumentReference document = contractCollection.document(uid);
 
-    document.updateData({"state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),"scheduledTransactions":transactions});
+    //Update the state, mark the time accepted, add the repayment status, and add the scheduled transactions
+    document.updateData({
+      "state":CONTRACT_STATE.ACTIVE_CONTRACT.toString(),
+      "waitState":WAIT_STATE.NONE.toString(),
+      "dateAccepted": timeAccepted.toIso8601String(),
+      "repaymentStatus": repaymentStatus,
+      "scheduledTransactions":transactions
+    });
+  }
+
+  //This is called to reject a contract request, making it unable to be accepted or further negotiated
+  void rejectContract(Contract contract) {
+
+    DocumentReference document = contractCollection.document(contract.uid);
+
+    //Update the contract state
+    document.updateData({"state":CONTRACT_STATE.REJECTED_REQUEST.toString(), "waitState":WAIT_STATE.NONE.toString()});
   }
 
   //Returns an arbitrary user based on the given uid
@@ -122,15 +143,19 @@ class FirestoreService {
 //contract from snapshot (retrieves specific contract based on UID)
 // THIS IS THE FUNCTION THAT TRANSFORMS THE CONTRACT DATA WE GET FROM DB INTO OUR CUSTOM contract model
   Contract _contractFromSnapshot(DocumentSnapshot snapshot){ //For a single contract
+
     return Contract(
         uid: snapshot.documentID,
         terms: snapshot.data['terms'],
-        dueDate: snapshot.data['dueData'],
+        dueDateString: snapshot.data['dueDate'],
+        dateAccepted: snapshot.data['dateAccepted'],
         state: contractStateFromString(snapshot.data['state']),
+        waitState: waitStateFromString(snapshot.data['waitState']),
         loaner: snapshot.data['loaner'],
         loanerName: snapshot.data['loanerName'],
         requester: snapshot.data['requester'],
         requesterName: snapshot.data['requesterName'],
+        repayment: snapshot.data['repaymentStatus'],
         transactions: snapshot.data['scheduledTransactions'],
     );
   }
@@ -139,55 +164,22 @@ class FirestoreService {
     return contractCollection.document(uid).snapshots().map(_contractFromSnapshot);
   }
 
-  //ACTIVE contract list from snapshots (retrieves all the active contracts a user has)
+  //Contract list from snapshots (retrieves all the active contracts a user has)
   //mapped to the custom contract model
-  List<Contract> _activeContractListFromSnapshot(QuerySnapshot snapshot){
+  List<Contract> _contractListFromSnapshot(QuerySnapshot snapshot){
     return snapshot.documents.map((doc) { //perform an action for each document
       return Contract(
         uid: doc.documentID,
         terms: doc.data['terms'],
-        dueDate: doc.data['dueData'],
+        dueDateString: doc.data['dueDate'],
+        dateAccepted: doc.data['dateAccepted'],
         state: contractStateFromString(doc.data['state']),
+        waitState: waitStateFromString(doc.data['waitState']),
         loaner: doc.data['loaner'],
         loanerName: doc.data['loanerName'],
         requester: doc.data['requester'],
         requesterName: doc.data['requesterName'],
-        transactions: doc.data['scheduledTransactions'],
-      );
-    }).toList();
-  }
-
-  //PENDING contract list from snapshots (retrieves all the pending contracts a user has)
-  //mapped to the custom contract model
-  List<Contract> _pendingContractListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc) { //perform an action for each document
-      return Contract(
-        uid: doc.documentID,
-        terms: doc.data['terms'],
-        dueDate: doc.data['dueData'],
-        state: contractStateFromString(doc.data['state']),
-        loaner: doc.data['loaner'],
-        loanerName: doc.data['loanerName'],
-        requester: doc.data['requester'],
-        requesterName: doc.data['requesterName'],
-        transactions: doc.data['scheduledTransactions'],
-      );
-    }).toList();
-  }
-
-  //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
-  //mapped to the custom contract model
-  List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot){
-    return snapshot.documents.map((doc) { //perform an action for each document
-      return Contract(
-        uid: doc.documentID,
-        terms: doc.data['terms'],
-        dueDate: doc.data['dueData'],
-        state: contractStateFromString(doc.data['state']),
-        loaner: doc.data['loaner'],
-        loanerName: doc.data['loanerName'],
-        requester: doc.data['requester'],
-        requesterName: doc.data['requesterName'],
+        repayment: doc.data['repaymentStatus'],
         transactions: doc.data['scheduledTransactions'],
       );
     }).toList();
@@ -212,7 +204,7 @@ class FirestoreService {
       contractsStream =
           contractCollection.where('state', isEqualTo: query.state.toString())
               .where('requester', isEqualTo: currentUser.uid)
-              .snapshots().map(_activeContractListFromSnapshot);
+              .snapshots().map(_contractListFromSnapshot);
     }
 
     //Assume loaner required otherwise
@@ -220,7 +212,7 @@ class FirestoreService {
       contractsStream =
           contractCollection.where('state', isEqualTo: query.state.toString())
               .where('loaner', isEqualTo: currentUser.uid)
-              .snapshots().map(_activeContractListFromSnapshot);
+              .snapshots().map(_contractListFromSnapshot);
     }
 
     //Return the resulting contract stream
@@ -243,7 +235,8 @@ class FirestoreService {
   Stream <QuerySnapshot> get userSearchData{
     return (value==null)?Firestore.instance.collection("user_data").snapshots():Firestore.instance.collection("user_data").where("searchIndex",arrayContains: value).snapshots();
   }
-  void getCurrentUser() async {
+
+  Future getCurrentUser() async {
 
     currentUser = await FirebaseAuth.instance.currentUser();
   }

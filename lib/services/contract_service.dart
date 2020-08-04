@@ -1,4 +1,5 @@
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/search_queries/contract_search_query.dart';
 
 import 'firestore_db_service.dart';
@@ -8,17 +9,21 @@ class ContractService {
   FirestoreService data;
 
   List<Contract> activeContracts;
+  UserData user;
 
   //This is a flag that marks initialization
-  Future _doneFuture;
+  Future _doneLoadingContracts;
+  Future _doneLoadingUser;
 
   ContractService(this.data) {
 
-    _doneFuture = loadActiveContracts();
+    _doneLoadingContracts = loadActiveContracts();
+    _doneLoadingUser = loadUser();
   }
 
-  //Returns whether the class is initialized
-  Future get initializationDone => _doneFuture;
+  //Returns whether the contracts list and user are initialized
+  Future get initializationContractsDone => _doneLoadingContracts;
+  Future get initializationUserDone => _doneLoadingUser;
 
   //Used to initialize or update the active contracts list
   Future loadActiveContracts() async{
@@ -26,11 +31,18 @@ class ContractService {
     activeContracts = await data.retrieveContracts(ContractSearchQuery.BORROWER_ACTIVE_CONTRACTS()).first;
   }
 
+  //Used to load the local user data
+  Future loadUser() async{
+
+    user = await data.userData.first;
+  }
+
   //Returns the amount of time (days, weeks, months, years) until the last contract is repaid
   Future<RepaymentOverview> getRepaymentOverview() async{
 
     //Wait until initialization is finished
-    await initializationDone;
+    await initializationContractsDone;
+    await initializationUserDone;
 
     RepaymentOverview overview;
 
@@ -62,14 +74,14 @@ class ContractService {
 
         //Retrieve the total and paid back amounts
         currentAmount = current.terms.amount;
-        currentAmountPaid = 0;//TODO Make this actually read the amount paid back
+        currentAmountPaid = currentAmount - current.repaymentStatus.remainingAmount;
 
         //Add the amounts to the totals
         totalAmount += currentAmount;
         totalAmountPaid += currentAmountPaid;
 
         //Retrieve the contract's final scheduled payment date
-        currentFinalPayment = _finalPaymentTime(current);
+        currentFinalPayment = finalPaymentTime(current);
 
         if (latestDate.isBefore(currentFinalPayment)) {
 
@@ -94,7 +106,7 @@ class ContractService {
   }
 
   //Attempts to retrieve the time of the final transaction of a given contract
-  DateTime _finalPaymentTime(Contract contract) {
+  DateTime finalPaymentTime(Contract contract) {
 
     DateTime result;
 
@@ -143,14 +155,27 @@ class ContractService {
   //Accepts a contract request
   void acceptContractRequest(Contract contract) {
 
+    //Store the moment that the contract was accepted
+    DateTime timeAccepted = DateTime.now();
+
     //Compute the transactions using the current moment to begin the schedule
-    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(contract, DateTime.now());
+    List<ScheduledTransaction> repaymentTransactions = _computeFutureTransactions(contract, timeAccepted);
 
     //Convert the transactions to serializable data
     List serializableTransactions = _convertTransactions(repaymentTransactions);
 
+    //Initialize the repayment status
+    List repaymentStatus = RepaymentStatus(contract.terms.amount, 0).toList();
+
     //Send the contract data
-    data.acceptEstablishContract(contract, serializableTransactions);
+    data.acceptEstablishContract(contract, serializableTransactions, repaymentStatus, timeAccepted);
+  }
+
+  //Rejects a contract request
+  void rejectContractRequest(Contract contract) {
+
+    //Apply rejection
+    data.rejectContract(contract);
   }
 
   //Computes a series of dated transactions required to repay a contract
@@ -258,6 +283,40 @@ class ContractService {
     //Return the detected payments
     return payments;
   }
+
+  //Returns a projection of repayment information given a contract request (unaccepted)
+  RepaymentProjection projectRepayment(Contract contract) {
+
+    //Compute the actual transactions (for algorithm reuse)
+    List<ScheduledTransaction> transactions = _computeFutureTransactions(contract, DateTime.now());
+
+    //Get the final payment date
+    ScheduledTransaction finalPayment = transactions[transactions.length-1];
+
+    //Compute the remainder payment
+    double remainderPayment = (finalPayment.amount == contract.terms.repaymentAmount) ? 0 : finalPayment.amount;
+
+    //Return the repayment projection
+    return RepaymentProjection(finalPayment.time, transactions.length, remainderPayment);
+  }
+
+  //Returns whether the given contract request is waiting on the local user
+  Future<bool> waitingOnUser(Contract contract) async {
+
+    await initializationUserDone;
+
+    bool waitingOn = false;
+
+    if (contract.waitState == WAIT_STATE.ON_LENDER && contract.loaner == user.uid) {
+
+      waitingOn = true;
+    } else if (contract.waitState == WAIT_STATE.ON_BORROWER && contract.requester == user.uid) {
+
+      waitingOn = true;
+    }
+
+    return waitingOn;
+  }
 }
 
 //Just a simple bag of data about the status of repayment
@@ -267,6 +326,16 @@ class RepaymentOverview {
   final String timeUntilCompletion;
 
   RepaymentOverview(this.percentCompletion, this.timeUntilCompletion);
+}
+
+//Another data class for storing projected repayment information
+class RepaymentProjection {
+
+  final DateTime repaymentDate;
+  final int numPayments;
+  final double remainderPayment;
+
+  RepaymentProjection(this.repaymentDate, this.numPayments, this.remainderPayment);
 }
 
 //The information needed to properly display an upcoming transaction
