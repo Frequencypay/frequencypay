@@ -4,12 +4,10 @@ import 'package:frequencypay/repositories/plaid/plaid_repository.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 
-
-class PlaidBloc extends Bloc<PlaidEvent, PlaidState> {
+class BlocPlaidToken extends Bloc<PlaidEvent, PlaidState> {
   final PlaidRepository plaidRepository;
 
-  PlaidBloc({@required this.plaidRepository})
-      : assert(plaidRepository != null);
+  BlocPlaidToken({@required this.plaidRepository}) : assert(plaidRepository != null);
 
   @override
   PlaidState get initialState => PlaidInitial();
@@ -19,8 +17,12 @@ class PlaidBloc extends Bloc<PlaidEvent, PlaidState> {
     if (event is TokenRequested) {
       yield PlaidLoadInProgress();
       try {
-        final PlaidPublicTokenExchangeResponseModel plaidPublicTokenExchangeResponseModel = await plaidRepository.getAccessToken(event.publicToken);
-        yield PlaidLoadSuccess(plaidPublicTokenExchangeResponseModel: plaidPublicTokenExchangeResponseModel);
+        final PlaidPublicTokenExchangeResponseModel
+            plaidPublicTokenExchangeResponseModel =
+            await plaidRepository.getAccessToken(event.publicToken);
+        yield PlaidLoadSuccess(
+            plaidPublicTokenExchangeResponseModel:
+                plaidPublicTokenExchangeResponseModel);
       } catch (_) {
         yield PlaidLoadFailure();
       }
