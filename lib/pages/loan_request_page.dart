@@ -8,6 +8,7 @@ import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LoanRequest extends StatefulWidget {
@@ -287,7 +288,7 @@ class _LoanRequestState extends State<LoanRequest> {
             Expanded(
               flex: 2,
               child: Text(
-                " \$ $amount",
+                " \$ " + amount.toStringAsFixed(2),
                 style: TextStyle(color: Colors.grey, fontSize: 30),
               ),
             ),
@@ -501,7 +502,6 @@ class _LoanRequestState extends State<LoanRequest> {
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           onPressed: () {
-
             sumbitContract(state.getLocalUser, state.getLender);
           },
         );
@@ -529,18 +529,18 @@ class _LoanRequestState extends State<LoanRequest> {
     RepaymentTerms terms = RepaymentTerms(amount, paymentsOf, weeks);
 
     if (validateTerms(terms)) {
-
-      bloc.add(
-          SubmitLoanRequestEvent(localUser, lender, DateTime.now(), terms, _onContractSubmitted));
+      bloc.add(SubmitLoanRequestEvent(
+          localUser, lender, DateTime.now(), terms, _onContractSubmitted));
     }
   }
 
   //Validates terms according to the interface requirements
   bool validateTerms(RepaymentTerms terms) {
-
     bool valid = true;
 
-    if (terms.amount <= 0 || terms.repaymentAmount <= 0 || terms.frequencyWeeks <= 0) {
+    if (terms.amount <= 0 ||
+        terms.repaymentAmount <= 0 ||
+        terms.frequencyWeeks <= 0) {
       valid = false;
     }
 
@@ -553,7 +553,6 @@ class _LoanRequestState extends State<LoanRequest> {
 
   //This is a callback function used to exit the screen after a successful contract request submission
   void _onContractSubmitted() {
-
     //Pop the screen
     Navigator.pop(context);
   }

@@ -22,8 +22,9 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> bottomNavigationBarOptions = <Widget>[
     LandingPage(),
     CalendarPage(),
+    UserBills(),
     ProfileScreen(),
-    UserBills()
+
   ];
 
   int bottomNavigationBarIndex = 0;

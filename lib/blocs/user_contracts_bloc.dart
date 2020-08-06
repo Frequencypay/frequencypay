@@ -43,10 +43,8 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
   FirestoreService _service;
 
-  UserContractsBloc(this._service);
+  UserContractsBloc(this._service) : super(UserContractsIsLoadingState());
 
-  @override
-  UserContractsState get initialState => UserContractsIsLoadingState();
 
   @override
   Stream<UserContractsState> mapEventToState(UserContractsEvent event) async*{

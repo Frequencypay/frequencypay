@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
 
 class PlaidLink {
   Configuration _configuration;
@@ -19,18 +15,20 @@ class PlaidLink {
         plaidBaseUrl: 'https://cdn.plaid.com/link/v2/stable/link.html',
         plaidEnvironment: plaidSandbox ? 'sandbox' : 'production',
         environmentPlaidPathAccessToken:
-        'https://sandbox.plaid.com/item/public_token/exchange',
+            'https://sandbox.plaid.com/item/public_token/exchange',
         plaidClientId: clientID,
         secret: plaidSandbox ? secret : '',
         clientName: 'ClientName',
         webhook: 'http://requestb.in',
         product: 'auth',
-        selectAccount: 'true'
-    );
+        selectAccount: 'true');
     this._configuration = configuration;
   }
 
-  launch(BuildContext context, success(Result result),) {
+  launch(
+    BuildContext context,
+    success(Result result),
+  ) {
     _WebViewPage _webViewPage = new _WebViewPage();
     _webViewPage._init(this._configuration, success, context);
 
@@ -46,8 +44,7 @@ class _WebViewPage {
   Configuration _config;
   BuildContext _context;
 
-  _init(Configuration config, success(Result result),
-      BuildContext context) {
+  _init(Configuration config, success(Result result), BuildContext context) {
     this._success = success;
     this._config = config;
     this._context = context;
@@ -84,19 +81,16 @@ class _WebViewPage {
 
       if (eventName == 'EXIT' || (url?.contains('/exit?') ?? false)) {
         this._closeWebView();
-      }
-      else if (eventName == 'HANDOFF' || eventName == "unknown") {
+      } else if (eventName == 'HANDOFF' || eventName == "unknown") {
         this._closeWebView();
       }
       dynamic token = queryParams['public_token'];
       dynamic accountId = queryParams['account_id'];
       if (token != null && accountId != null) {
-          this._success(Result(token, accountId, queryParams));
-
+        this._success(Result(token, accountId, queryParams));
       }
     }
   }
-
 
   _closeWebView() {
     if (_context != null && Navigator.canPop(_context)) {
@@ -116,13 +110,7 @@ class _WebViewPage {
         }
         return NavigationDecision.navigate;
       },
-
     );
-    final newWebView = new FlutterWebviewPlugin();
-    newWebView.launch(_url);
-
-     newWebView.onUrlChanged.listen((event) {});
-
 
     return Scaffold(body: webView);
   }
@@ -140,17 +128,18 @@ class Configuration {
   String product;
   String selectAccount;
 
-  Configuration(
-      {@required this.plaidPublicKey,
-        @required this.plaidBaseUrl,
-        @required this.plaidEnvironment,
-        @required this.environmentPlaidPathAccessToken,
-        @required this.plaidClientId,
-        @required this.secret,
-        @required this.clientName,
-        @required this.webhook,
-        @required this.product,
-        @required this.selectAccount,});
+  Configuration({
+    @required this.plaidPublicKey,
+    @required this.plaidBaseUrl,
+    @required this.plaidEnvironment,
+    @required this.environmentPlaidPathAccessToken,
+    @required this.plaidClientId,
+    @required this.secret,
+    @required this.clientName,
+    @required this.webhook,
+    @required this.product,
+    @required this.selectAccount,
+  });
 }
 
 class Result {
@@ -160,4 +149,3 @@ class Result {
 
   Result(this.token, this.accountId, this.response);
 }
-

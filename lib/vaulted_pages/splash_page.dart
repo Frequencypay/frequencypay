@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:frequencypay/pages/home_page.dart';
-import 'package:frequencypay/pages/landing_page.dart';
 
 class SplashPage extends StatefulWidget {
   SplashPage({Key key}) : super(key: key);
@@ -17,24 +16,24 @@ class _SplashPageState extends State<SplashPage> {
     FirebaseAuth.instance
         .currentUser()
         .then((currentUser) => {
-      if (currentUser == null)
-        {Navigator.pushReplacementNamed(context, "/welcomeScreen")}
-      else
-        {
-          Firestore.instance
-              .collection("users")
-              .document(currentUser.uid)
-              .get()
-              .then((DocumentSnapshot result) =>
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                        uid: currentUser.uid,
-                      ))))
-              .catchError((err) => print(err))
-        }
-    })
+              if (currentUser == null)
+                {Navigator.pushReplacementNamed(context, "/welcomeScreen")}
+              else
+                {
+                  Firestore.instance
+                      .collection("users")
+                      .document(currentUser.uid)
+                      .get()
+                      .then((DocumentSnapshot result) =>
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        uid: currentUser.uid,
+                                      ))))
+                      .catchError((err) => print(err))
+                }
+            })
         .catchError((err) => print(err));
     super.initState();
   }
@@ -44,7 +43,9 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       body: Center(
         child: Container(
-          child: Image.asset('assets/bank.png',),
+          child: Image.asset(
+            'assets/bank.png',
+          ),
         ),
       ),
     );

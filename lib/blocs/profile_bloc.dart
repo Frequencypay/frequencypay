@@ -37,10 +37,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   FirestoreService _service;
 
-  ProfileBloc(FirestoreService this._service);
+  ProfileBloc(FirestoreService this._service) : super(ProfileIsLoadingState());
 
-  @override
-  ProfileState get initialState => ProfileIsLoadingState();
+
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async*{

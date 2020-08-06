@@ -1,25 +1,16 @@
 import 'package:bloc/bloc.dart';
 
 //Events
-class CalendarEvent {
+class CalendarEvent {}
 
-}
-
-class LoadCalendarEvent extends CalendarEvent {
-
-}
+class LoadCalendarEvent extends CalendarEvent {}
 
 //States
-class CalendarState {
+class CalendarState {}
 
-}
-
-class CalendarIsLoadingState extends CalendarState {
-
-}
+class CalendarIsLoadingState extends CalendarState {}
 
 class CalendarIsLoadedState extends CalendarState {
-
   //final _schedule;
 
   //CalendarIsLoadedState(PlaceholderTransactionScheduleModel this._schedule);
@@ -27,31 +18,20 @@ class CalendarIsLoadedState extends CalendarState {
   //PlaceholderTransactionScheduleModel get getSchedule => _schedule;
 }
 
-class CalendarIsNotLoadedState extends CalendarState {
-
-}
+class CalendarIsNotLoadedState extends CalendarState {}
 
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
-
-  //PlaceholderDataService service;
-
-  //CalendarBloc(PlaceholderDataService service);
+  CalendarBloc(CalendarState initialState) : super(initialState);
 
   @override
-  CalendarState get initialState => CalendarIsLoadingState();
-
-  @override
-  Stream<CalendarState> mapEventToState(CalendarEvent event) async*{
-
+  Stream<CalendarState> mapEventToState(CalendarEvent event) async* {
     if (event is LoadCalendarEvent) {
       yield CalendarIsLoadingState();
 
       try {
-
         //PlaceholderTransactionScheduleModel schedule = await service.getLocalUserTransactionSchedule();
         //yield CalendarIsLoadedState(schedule);
-      } catch (_){
-
+      } catch (_) {
         print(_);
         yield CalendarIsNotLoadedState();
       }

@@ -34,10 +34,8 @@ class SearchIsNotLoadedState extends SearchState {
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   FirestoreService _service;
-  SearchBloc(FirestoreService this._service);
+  SearchBloc(FirestoreService this._service) : super(SearchIsLoadingState());
 
-  @override
-  SearchState get initialState => SearchIsLoadingState();
 
   @override
   Stream<SearchState> mapEventToState(SearchEvent event) async*{

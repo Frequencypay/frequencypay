@@ -8,20 +8,19 @@ import 'package:bloc/bloc.dart';
 class BlocPlaidBalance extends Bloc<PlaidEventBalance, PlaidStateBalance> {
   final PlaidRepository plaidRepository;
 
-  BlocPlaidBalance({@required this.plaidRepository}) : assert(plaidRepository != null), super(PlaidBalanceInitial());
-
+  BlocPlaidBalance({@required this.plaidRepository})
+      : assert(plaidRepository != null),
+        super(PlaidBalanceInitial());
 
   @override
   Stream<PlaidStateBalance> mapEventToState(PlaidEventBalance event) async* {
     if (event is BalanceRequested) {
       yield PlaidBalanceLoadInProgress();
       try {
-        final PlaidBalanceResponseModel
-            plaidBalanceResponseModel =
+        final PlaidBalanceResponseModel plaidBalanceResponseModel =
             await plaidRepository.getBalance();
         yield PlaidBalanceLoadSuccess(
-            plaidBalanceResponseModel:
-                plaidBalanceResponseModel);
+            plaidBalanceResponseModel: plaidBalanceResponseModel);
       } catch (_) {
         yield PlaidBalanceLoadFailure();
       }

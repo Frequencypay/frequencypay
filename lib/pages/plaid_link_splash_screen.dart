@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:frequencypay/blocs/plaid/bloc.dart';
-import 'package:frequencypay/blocs/plaid/plaid_blocs.dart';
-import 'package:frequencypay/pages/home_page.dart';
+import 'package:frequencypay/blocs/plaid/token/bloc_plaid_token.dart';
+import 'package:frequencypay/blocs/plaid/token/plaid_blocs.dart';
 import 'package:frequencypay/plaid_link/plaid_link_webview.dart';
 
 class PlaidLinkSplashScreen extends StatefulWidget {
@@ -40,14 +39,17 @@ class _PlaidLinkSplashScreenState extends State<PlaidLinkSplashScreen> {
         ),
       ),
       body: Center(
-        child: BlocBuilder<PlaidBloc, PlaidState>(
+        child: BlocBuilder<BlocPlaidToken, PlaidState>(
           builder: (context, state) {
+            FlutterSecureStorage _storage = FlutterSecureStorage();
+
             if (state is PlaidInitial) {
               return Column(
                 children: <Widget>[
-                 
-                      Image.asset('assets/frequency.png', fit: BoxFit.scaleDown,),
-
+                  Image.asset(
+                    'assets/frequency.png',
+                    fit: BoxFit.scaleDown,
+                  ),
                   Container(
                       padding: EdgeInsets.all(15),
                       child: RichText(
@@ -58,34 +60,37 @@ class _PlaidLinkSplashScreenState extends State<PlaidLinkSplashScreen> {
                                 'get you in tune with your finances. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget posuere dolor. Mauris imperdiet ac arcu sed accumsan. Nam congue sapien a feugiat facilisis. '),
                       )),
                   Expanded(
-                    child:  Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          RaisedButton(
-                            color: Colors.blue,
-                            child: Text("Launch Plaid"),
-                            textColor: Colors.white,
-                            onPressed: () => plaidLink.launch(context, (result) {
-                              if (result.token != null) {
-                                BlocProvider.of<PlaidBloc>(context)
-                                    .add(TokenRequested(publicToken: result.token));
-                              }
-                            }),
-                          ),
-                          RaisedButton(
+                      child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        RaisedButton(
+                          color: Colors.blue,
+                          child: Text("Launch Plaid"),
+                          textColor: Colors.white,
+                          onPressed: () => plaidLink.launch(context, (result) {
+                            if (result.token != null) {
+                              BlocProvider.of<BlocPlaidToken>(context).add(
+                                  TokenRequested(publicToken: result.token));
+                            }
+                          }),
+                        ),
+                        RaisedButton(
                             child: Text("No Thanks"),
                             textColor: Colors.white,
-                            onPressed: () =>
-                                Navigator.of(context).pushReplacementNamed('/home'),
-                          ),
+                            onPressed: () {
+                              _storage.write(key: 'access_token', value: "0");
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            }),
 //                          Padding(padding: EdgeInsets.fromLTRB(0,0,0,500))
-                        ],
-                      ),
-                    )
-                  ),
-                  Padding(padding: EdgeInsets.only(bottom: 40),)
+                      ],
+                    ),
+                  )),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 40),
+                  )
                 ],
               );
             }
@@ -94,7 +99,6 @@ class _PlaidLinkSplashScreenState extends State<PlaidLinkSplashScreen> {
             }
             if (state is PlaidLoadSuccess) {
               final token = state.plaidPublicTokenExchangeResponseModel;
-              FlutterSecureStorage _storage = FlutterSecureStorage();
               _storage.write(key: 'access_token', value: token.accessToken);
 
               Navigator.of(context).pushReplacementNamed('/home');
@@ -110,9 +114,5 @@ class _PlaidLinkSplashScreenState extends State<PlaidLinkSplashScreen> {
         ),
       ),
     );
-  }
-
-  Widget LoadHome(){
-    return HomePage();
   }
 }

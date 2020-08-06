@@ -64,14 +64,11 @@ class LoanRequestBloc extends Bloc<LoanRequestEvent, LoanRequestState> {
 
   int amount;
 
-  LoanRequestBloc(FirestoreService this._service) {
+  LoanRequestBloc(this._service) : super(LoanRequestIsLoadingState()) {
 
     currentUser = null;
     lender = null;
   }
-
-  @override
-  LoanRequestState get initialState => LoanRequestIsLoadingState();
 
   @override
   Stream<LoanRequestState> mapEventToState(LoanRequestEvent event) async*{

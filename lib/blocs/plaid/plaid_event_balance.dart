@@ -1,15 +1,15 @@
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
-abstract class PlaidEvent extends Equatable {
-  const PlaidEvent();
+abstract class PlaidEventBalance extends Equatable {
+  const PlaidEventBalance();
 }
 
-class TokenRequested extends PlaidEvent {
-  final String publicToken;
+class BalanceRequested extends PlaidEventBalance {
+//  final String accessToken;
 
-  const TokenRequested({@required this.publicToken}) : assert(publicToken != null);
+  const BalanceRequested();
 
   @override
-  List<Object> get props => [publicToken];
+  List<Object> get props => [];
 }

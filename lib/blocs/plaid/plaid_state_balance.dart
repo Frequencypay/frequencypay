@@ -1,38 +1,28 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frequencypay/models/plaid/models.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
 
-abstract class PlaidState extends Equatable {
-  const PlaidState();
+abstract class PlaidStateBalance extends Equatable {
+  const PlaidStateBalance();
 
   @override
   List<Object> get props => [];
 }
 
-class PlaidInitial extends PlaidState {
-  PlaidInitial(){
-  }
-
-  hasUserLoggedIntoPlaid(){
-     FlutterSecureStorage _storage = FlutterSecureStorage();
-     if(_storage.read(key: 'access_token') == null){
-
-     }
-
-  }
+class PlaidBalanceInitial extends PlaidStateBalance {
+  PlaidBalanceInitial();
 }
 
-class PlaidLoadInProgress extends PlaidState {}
+class PlaidBalanceLoadInProgress extends PlaidStateBalance {}
 
-class PlaidLoadSuccess extends PlaidState {
-  final PlaidPublicTokenExchangeResponseModel plaidPublicTokenExchangeResponseModel;
+class PlaidBalanceLoadSuccess extends PlaidStateBalance {
+  final PlaidBalanceResponseModel plaidBalanceResponseModel;
 
-  const PlaidLoadSuccess({@required this.plaidPublicTokenExchangeResponseModel}) : assert(plaidPublicTokenExchangeResponseModel != null);
+  const PlaidBalanceLoadSuccess({@required this.plaidBalanceResponseModel}) : assert(plaidBalanceResponseModel != null);
 
   @override
-  List<Object> get props => [plaidPublicTokenExchangeResponseModel];
+  List<Object> get props => [plaidBalanceResponseModel];
 }
 
-class PlaidLoadFailure extends PlaidState {}
+class PlaidBalanceLoadFailure extends PlaidStateBalance {}

@@ -6,6 +6,7 @@
 //(not sure about its copyright status though)
 
 import 'package:flutter/material.dart';
+import 'package:frequencypay/widgets/app_bar_header.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -144,9 +145,7 @@ class _CalendarPageState extends State<CalendarPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Calendar"),
-      ),
+      appBar: CustomAppBar('Calendar', context),
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[

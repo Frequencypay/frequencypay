@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_contracts_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/widgets/app_bar_header.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:provider/provider.dart';
@@ -41,41 +42,12 @@ class _UserContractsPageState extends State<UserContractsPage>
         length: 3,
         initialIndex: 2,
         child: Scaffold(
+          appBar: CustomAppBar('Contracts', context),
             floatingActionButton:
                 LoanRequestWidgets.LoanRequestFloatingActionButton(context),
             body: Column(
               children: <Widget>[
                 SizedBox(height: 20),
-                Expanded(
-                  flex: 1,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(flex: 1, child: Container()),
-                      Expanded(
-                        flex: 8,
-                        child: Row(children: <Widget>[
-                          BackButton(color: blueHighlight),
-                          RichText(
-                              text: TextSpan(
-                                  style: TextStyle(
-                                      fontFamily: 'Leelawadee UI',
-                                      fontSize: 25),
-                                  children: <TextSpan>[
-                                TextSpan(
-                                    text: "Your ",
-                                    style: TextStyle(color: Colors.black45)),
-                                TextSpan(
-                                    text: "Contracts",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: blueHighlight))
-                              ])),
-                        ]),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 15),
                 Expanded(
                   flex: 2,
                   child: TabBar(

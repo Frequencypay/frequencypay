@@ -4,14 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_bills_bloc.dart';
-import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
+import 'package:frequencypay/widgets/app_bar_header.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
 
 class UserBills extends StatefulWidget {
@@ -41,27 +40,11 @@ class _UserBillsState extends State<UserBills> {
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
+        appBar: CustomAppBar('Bills', context),
         floatingActionButton: LoanRequestWidgets.LoanRequestFloatingActionButton(context),
         body: SingleChildScrollView(
-          child: SafeArea(
             child: Column(
               children: <Widget>[
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "  Your ",
-                      style: TextStyle(color: Colors.grey, fontSize: 30),
-                    ),
-                    Text(
-                      "Bills ",
-                      style: TextStyle(color: Colors.blue, fontSize: 30),
-                    ),
-                  ],
-                ),
-
                 SizedBox(
                   height: 20,
                 ),
@@ -105,7 +88,6 @@ class _UserBillsState extends State<UserBills> {
                 ),
               ],
             ),
-          ),
         ),
       ),
     );

@@ -4,25 +4,16 @@ import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
-class LandingEvent {
+class LandingEvent {}
 
-}
-
-class LoadLandingEvent extends LandingEvent {
-
-}
+class LoadLandingEvent extends LandingEvent {}
 
 //States
-class LandingState {
+class LandingState {}
 
-}
-
-class LandingIsLoadingState extends LandingState {
-
-}
+class LandingIsLoadingState extends LandingState {}
 
 class LandingIsLoadedState extends LandingState {
-
   final _profile;
   final _repaymentOverview;
 
@@ -32,37 +23,30 @@ class LandingIsLoadedState extends LandingState {
   RepaymentOverview get getRepaymentOverview => _repaymentOverview;
 }
 
-class LandingIsNotLoadedState extends LandingState {
-
-}
+class LandingIsNotLoadedState extends LandingState {}
 
 class LandingBloc extends Bloc<LandingEvent, LandingState> {
-
   FirestoreService _service;
   ContractService _contractService;
 
-  LandingBloc(this._service, this._contractService);
+  LandingBloc(this._service, this._contractService)
+      : super(LandingIsLoadingState());
 
   @override
-  LandingState get initialState => LandingIsLoadingState();
-
-  @override
-  Stream<LandingState> mapEventToState(LandingEvent event) async*{
-
+  Stream<LandingState> mapEventToState(LandingEvent event) async* {
     if (event is LoadLandingEvent) {
       yield LandingIsLoadingState();
 
       try {
-
         Stream<UserData> userStream = _service.userData;
 
         UserData currentUser = await userStream.first;
 
-        RepaymentOverview overview = await _contractService.getRepaymentOverview();
+        RepaymentOverview overview =
+            await _contractService.getRepaymentOverview();
 
         yield LandingIsLoadedState(currentUser, overview);
-      } catch (_){
-
+      } catch (_) {
         print(_);
         yield LandingIsNotLoadedState();
       }

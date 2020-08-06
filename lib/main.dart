@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:frequencypay/blocs/plaid/bloc.dart';
+import 'package:frequencypay/blocs/plaid/token/bloc_plaid_token.dart';
 import 'package:frequencypay/blocs/plaid/simple_bloc_delegate.dart';
 import 'package:frequencypay/pages/authenticate/wrapper.dart';
 import 'package:frequencypay/repositories/plaid/plaid_api_client.dart';
@@ -12,7 +12,7 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:http/http.dart' as http;
 
 void main() {
-  BlocSupervisor.delegate = SimpleBlocDelegate();
+  Bloc.observer = SimpleBlocObserver();
 
   final PlaidRepository plaidRepository = PlaidRepository(
     plaidAPIClient: PlaidAPIClient(
@@ -45,9 +45,9 @@ class MyApp extends StatelessWidget {
         ),
         home: MultiBlocProvider(
           providers: [
-            BlocProvider<PlaidBloc>(
+            BlocProvider<BlocPlaidToken>(
               create: (BuildContext context) =>
-                  PlaidBloc(plaidRepository: plaidRepository),
+                  BlocPlaidToken(plaidRepository: plaidRepository),
             ),
           ],
           child: Wrapper(),

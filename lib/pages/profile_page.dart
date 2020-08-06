@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/profile_bloc.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -22,7 +21,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   static const Color blueHighlight = const Color(0xFF3665FF);
 
   File _image;
@@ -40,24 +38,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    Future getImage() async{
-      var image= await ImagePicker.pickImage(source: ImageSource.gallery);
+    Future getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       setState(() {
-        _image=image;
+        _image = image;
       });
     }
 
-    Future uploadPic(BuildContext context) async{
-      String filename=basename(_image.path);
-      StorageReference firebaseStorageRef=FirebaseStorage.instance.ref().child(filename);
-      StorageUploadTask uploadTask=firebaseStorageRef.putFile(_image);
-      StorageTaskSnapshot taskSnapshot=await uploadTask.onComplete;
+    Future uploadPic(BuildContext context) async {
+      String filename = basename(_image.path);
+      StorageReference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child(filename);
+      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
       setState(() {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Profile Picture Uploaded"),));
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("Profile Picture Uploaded"),
+        ));
       });
-
     }
+
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
@@ -84,111 +83,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
             elevation: 0,
           ),
           body: ListView(
-        children: <Widget>[
-          Column(
             children: <Widget>[
-              SizedBox(
-                height: 20,
-              ),
-              SafeArea(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "  Your ",
-                      style: TextStyle(color: Colors.grey, fontSize: 30),
+              Column(
+                children: <Widget>[
+                  SizedBox(
+                    height: 20,
+                  ),
+                  SafeArea(
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          "  Your ",
+                          style: TextStyle(color: Colors.grey, fontSize: 30),
+                        ),
+                        Text(
+                          "Profile ",
+                          style: TextStyle(color: Colors.blue, fontSize: 30),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Profile ",
-                      style: TextStyle(color: Colors.blue, fontSize: 30),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-
-                    CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Color(0xff476cfb),
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 180.0,
-                            height: 180.0 ,
-                            child:(_image !=null)?Image.file(_image,fit:BoxFit.fill):Icon(Icons.person,size: 80.0,) ,
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Color(0xff476cfb),
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 180.0,
+                                height: 180.0,
+                                child: (_image != null)
+                                    ? Image.file(_image, fit: BoxFit.fill)
+                                    : Icon(
+                                        Icons.person,
+                                        size: 80.0,
+                                      ),
+                              ),
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(top: 60.0),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.camera_alt,
+                              size: 30.0,
+                            ),
+                            onPressed: () {
+                              getImage();
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 60.0),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.check,
+                              size: 30.0,
+                            ),
+                            onPressed: () {
+                              uploadPic(context);
+                            },
                           ),
                         )
+                      ],
                     ),
-
-                    Padding(
-                      padding: EdgeInsets.only(top:60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.camera_alt,
-                          size: 30.0,
-                        ),
-                        onPressed: (){
-                          getImage();
-                        },
-                      ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: profileInfo(),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Text(
+                    "Confidence Rating",
+                    style: TextStyle(color: Colors.black54, fontSize: 20),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: getConfidenceRating(),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    child: getMailandPhone(),
+                  ),
+                  RaisedButton(
+                    child: Text(
+                      "Edit",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
                     ),
-
-                    Padding(
-                      padding: EdgeInsets.only(top:60.0),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.check,
-                          size: 30.0,
-                        ),
-                        onPressed: (){
-                          uploadPic(context);
-                        },
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                child: profileInfo(),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Text(
-                "Confidence Rating",
-                style: TextStyle(color: Colors.black54, fontSize: 20),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                child: getConfidenceRating(),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Container(
-                child: getMailandPhone(),
-              ),
-              RaisedButton(
-                child: Text(
-                  "Edit",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                color: Colors.grey,
-                onPressed: () {},
+                    color: Colors.grey,
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
-      )),
+          )),
     );
   }
 
@@ -196,40 +196,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-
         CircleAvatar(
-          radius: 60,
-          backgroundColor: Color(0xff476cfb),
-          child: ClipOval(
-            child: SizedBox(
-              width: 180.0,
-              height: 180.0 ,
-              child:(_image !=null)?Image.file(_image,fit:BoxFit.fill):Icon(Icons.person,size: 80.0,) ,
-            ),
-          )
-        ),
-
+            radius: 60,
+            backgroundColor: Color(0xff476cfb),
+            child: ClipOval(
+              child: SizedBox(
+                width: 180.0,
+                height: 180.0,
+                child: (_image != null)
+                    ? Image.file(_image, fit: BoxFit.fill)
+                    : Icon(
+                        Icons.person,
+                        size: 80.0,
+                      ),
+              ),
+            )),
         Padding(
-          padding: EdgeInsets.only(top:60.0),
+          padding: EdgeInsets.only(top: 60.0),
           child: IconButton(
             icon: Icon(
               Icons.camera_alt,
               size: 30.0,
             ),
-            onPressed: (){
+            onPressed: () {
               //getImage();
             },
           ),
         ),
-
         Padding(
-          padding: EdgeInsets.only(top:60.0),
+          padding: EdgeInsets.only(top: 60.0),
           child: IconButton(
             icon: Icon(
               Icons.check,
               size: 30.0,
             ),
-            onPressed: (){
+            onPressed: () {
               //uploadPic(context);
             },
           ),

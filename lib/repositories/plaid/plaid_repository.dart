@@ -1,4 +1,4 @@
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frequencypay/models/plaid/models.dart';
 import 'package:frequencypay/repositories/plaid/plaid_api_client.dart';
 import 'dart:async';
@@ -19,8 +19,13 @@ class PlaidRepository {
     return accessToken;
   }
 
-  Future<PlaidBalanceResponseModel> getBalance(String accessToken) async{
+  Future<PlaidBalanceResponseModel> getBalance() async {
+    String accessToken;
+    FlutterSecureStorage _storage = FlutterSecureStorage();
+    accessToken = await _storage.read(key: 'access_token');
+    final PlaidBalanceResponseModel plaidBalanceResponseModel =
+        await plaidAPIClient.getPlaidBalance(accessToken);
 
+    return plaidBalanceResponseModel;
   }
-
 }

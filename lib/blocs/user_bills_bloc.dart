@@ -40,10 +40,9 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
 
   FirestoreService _service;
 
-  UserBillsBloc(FirestoreService this._service);
+  UserBillsBloc(FirestoreService this._service) : super(UserBillsIsLoadingState());
 
-  @override
-  UserBillsState get initialState => UserBillsIsLoadingState();
+
 
   @override
   Stream<UserBillsState> mapEventToState(UserBillsEvent event) async*{
