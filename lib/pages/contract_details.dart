@@ -290,13 +290,34 @@ class _ContractDetailsState extends State<ContractDetails> {
       child: Text("Make Payment",
           style: TextStyle(
               color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-      onPressed: () {},
+      onPressed: () {
+        attemptMakePayment();
+      },
       color: Color(0xFFB64FFA),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       shape:
           RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
       elevation: 10,
     );
+  }
+
+  //Attempts to make one standard payment towards an active contract
+  void attemptMakePayment() {
+
+    bloc.add(MakePaymentContractDetailsEvent());
+    bloc.add(ReloadContractDetailsEvent(_reloadPage));
+  }
+
+  //A callback function that reloads this page with the updated contract
+  void _reloadPage() {
+
+    //Get the bloc state
+    /*ContractDetailsIsLoadedState state = bloc.state;
+
+    //Reload the page with the new contract data
+    Navigator.popAndPushNamed(context, "/contract_details", arguments: ContractDetailsArguments(state.getContract));*/
+
+    setState(() {});
   }
 
   Widget RepaymentInfo(ContractDetailsState state) {
@@ -544,14 +565,22 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Attempts to accept the contract
   void attemptAcceptContract() {
+
     //Attempt to establish the contract
     bloc.add(EstablishContractContractDetailsEvent());
+
+    //Leave the contract details screen
+    Navigator.pop(context);
   }
 
   //Attempts to reject the contract
   void attemptRejectContract() {
+
     //Attempt to reject the contract
     bloc.add(RejectContractContractDetailsEvent());
+
+    //Leave the contract details screen
+    Navigator.pop(context);
   }
 
   //Converts a frequency of payment into a string message

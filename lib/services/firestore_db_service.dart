@@ -77,7 +77,7 @@ class FirestoreService {
   void acceptEstablishContract(Contract contract, List repaymentTransactions, List repaymentStatus, DateTime timeAccepted) async {
 
     //Perform any validation of the operation
-    if (contract.requester == currentUser.uid && contract.loaner != currentUser.uid) {
+    if (contract.requester == currentUser.uid || contract.loaner == currentUser.uid) {
 
       //Establish the contract
       _establishContract(contract.uid, contract, repaymentTransactions, repaymentStatus, timeAccepted);
@@ -108,10 +108,58 @@ class FirestoreService {
     document.updateData({"state":CONTRACT_STATE.REJECTED_REQUEST.toString(), "waitState":WAIT_STATE.NONE.toString()});
   }
 
+  //This is called to make a simulated payment towards the given contract
+  void makePayment(Contract contract, RepaymentStatus repayment, List remainingTransactions) {
+
+    //Perform any validation of the operation
+    if (contract.requester == currentUser.uid && contract.loaner != currentUser.uid && contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+
+      //Make the payment
+      _makePayment(contract, repayment, remainingTransactions);
+    }
+  }
+
+  //This handles the actual process of updating a contract model after a payment
+  void _makePayment(Contract contract, RepaymentStatus repayment, List remainingTransactions) {
+
+    DocumentReference document = contractCollection.document(contract.uid);
+
+    //Update the repayment status as remaining scheduled transactions
+    document.updateData({
+      "repaymentStatus": repayment.toList(),
+      "scheduledTransactions":remainingTransactions
+    });
+  }
+
+  //This marks a contract as completed
+  void completeContract(Contract contract) {
+
+    if (contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+
+      _completeContract(contract);
+    }
+  }
+
+  void _completeContract(Contract contract) {
+
+    DocumentReference document = contractCollection.document(contract.uid);
+
+    //Update the contract state
+    document.updateData({
+      "state": CONTRACT_STATE.COMPLETED_CONTRACT.toString()
+    });
+  }
+
   //Returns an arbitrary user based on the given uid
   Stream<UserData> retrieveUser(String uid) {
 
     return userDataCollection.document(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
+  //Returns an arbitrary contract based on the given uid
+  Stream<Contract> retrieveContract(String uid) {
+
+    return contractCollection.document(uid).snapshots().map(_contractFromSnapshot);
   }
 
   //CRUD OPERATION: READ
@@ -243,7 +291,6 @@ class FirestoreService {
 
     currentUser = await FirebaseAuth.instance.currentUser();
   }
-
 
   //Set or Update user data
   //This function is called whenever a user signs up for the first time, or when user wants to update their data

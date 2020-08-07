@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:frequencypay/blocs/user_bills_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
@@ -29,7 +31,10 @@ class _UserBillsState extends State<UserBills> {
   ) {
     final user = Provider.of<User>(context, listen: false);
 
-    UserBillsBloc bloc = UserBillsBloc(FirestoreService(uid: user.uid));
+    FirestoreService service = FirestoreService(uid: user.uid);
+    ContractService contractService = ContractService(service);
+
+    UserBillsBloc bloc = UserBillsBloc(service, contractService);
 
     bloc.add(LoadUserBillsEvent());
 
@@ -94,7 +99,7 @@ class _UserBillsState extends State<UserBills> {
 
                 //getContracts("DTE ENERGY","3 WEEKS",130,75),
                 //getContracts("T-MOBILE","1 WEEK",75,60),
-                buildActiveContractList(),
+                buildPendingContractList(),
 
                 SizedBox(
                   height: 20,
@@ -237,7 +242,7 @@ class _UserBillsState extends State<UserBills> {
     percentComplete = amountPaid / totalAmount;
   }
 
-  Widget buildActiveContractList() {
+  Widget buildPendingContractList() {
 
     return BlocBuilder<UserBillsBloc, UserBillsState>(
         builder: (context, state) {
@@ -245,8 +250,8 @@ class _UserBillsState extends State<UserBills> {
         return ListView.builder(
             itemBuilder: (context, index) {
 
-              return ContractCards.buildActiveContractCard(
-                  context, state.getContracts.contracts[index]);
+              return ContractCards.buildPendingContractCard(
+                  context, state.getContracts.contracts[index], state.getActiveNotifications[index]);
             },
             itemCount: min<int>(
                 _maxContractsDisplayed, state.getContracts.contracts.length),

@@ -23,6 +23,17 @@ class RejectContractContractDetailsEvent extends ContractDetailsEvent {
 
 }
 
+class MakePaymentContractDetailsEvent extends ContractDetailsEvent {
+
+}
+
+class ReloadContractDetailsEvent extends ContractDetailsEvent {
+
+  final reloadCallback;
+
+  ReloadContractDetailsEvent(this.reloadCallback);
+}
+
 //States
 class ContractDetailsState {
 
@@ -105,6 +116,54 @@ class ContractDetailsBloc extends Bloc<ContractDetailsEvent, ContractDetailsStat
         contractService.rejectContractRequest(loadedContract);
 
         //TODO: make callback to contract details
+      } catch (_){
+
+        print(_);
+      }
+    } else if (event is MakePaymentContractDetailsEvent) {
+
+      //The payment amount
+      double amount = 0.0;
+
+      //If the remaining amount is enough to make a standard payment
+      if (loadedContract.repaymentStatus.remainingAmount >= loadedContract.terms.repaymentAmount) {
+
+        amount = loadedContract.terms.repaymentAmount;
+      } else {
+
+        //Pay off the rest of the contract
+        amount = loadedContract.repaymentStatus.remainingAmount;
+      }
+
+      try {
+
+        contractService.makePayment(loadedContract, amount);
+
+        //TODO: make callback to contract details
+      } catch (_){
+
+        print(_);
+      }
+    } else if (event is ReloadContractDetailsEvent) {
+
+      try {
+
+        //Reload the current contract
+        loadedContract = await service.retrieveContract(loadedContract.uid).first;
+
+        //The date of the final payment of an active or completed contract
+        DateTime finalPaymentDate = (loadedContract.state==CONTRACT_STATE.ACTIVE_CONTRACT) ? contractService.finalPaymentTime(loadedContract) : null;
+
+        //The projected repayment information of a contract request
+        RepaymentProjection repaymentProjection = (loadedContract.state==CONTRACT_STATE.OPEN_REQUEST) ? contractService.projectRepayment(loadedContract) : null;
+
+        bool waitedOn = await contractService.waitingOnUser(loadedContract);
+
+        yield ContractDetailsIsLoadedState(loadedContract, finalPaymentDate, repaymentProjection, waitedOn);
+
+        //Activate the screen reload
+        event.reloadCallback();
+
       } catch (_){
 
         print(_);
