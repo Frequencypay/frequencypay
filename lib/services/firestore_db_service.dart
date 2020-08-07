@@ -166,25 +166,10 @@ class FirestoreService {
 
   //PENDING contract list from snapshots (retrieves all the pending contracts a user has)
   //mapped to the custom contract model
-  List<Contract> _pendingContractListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      //perform an action for each document
-      return Contract(
-        uid: doc.documentID,
-        terms: doc.data['terms'],
-        dueDate: doc.data['dueData'],
-        state: contractStateFromString(doc.data['state']),
-        loaner: doc.data['loaner'],
-        loanerName: doc.data['loanerName'],
-        requester: doc.data['requester'],
-        requesterName: doc.data['requesterName'],
-        transactions: doc.data['scheduledTransactions'],
-      );
-    }).toList();
-  }
 
   //COMPLETE contract list from snapshots (retrieves all the pending contracts a user has)
   //mapped to the custom contract model
+  // ignore: unused_element
   List<Contract> _completeContractListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       //perform an action for each document
@@ -203,6 +188,7 @@ class FirestoreService {
   }
 
   //Returns an arbitrary contract based on the given uid
+  // ignore: unused_element
   Stream<Contract> _retrieveContract(String uid) {
     return contractCollection
         .document(uid)
@@ -240,6 +226,7 @@ class FirestoreService {
   }
 
   //user search data from snapshot (retrieves specific contract based on UID)
+  // ignore: unused_element
   UserData _userSearchDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
         uid: uid,

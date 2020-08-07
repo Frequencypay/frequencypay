@@ -6,11 +6,8 @@ import 'package:frequencypay/blocs/landing_bloc.dart';
 import 'package:frequencypay/blocs/plaid/bloc_plaid_balance.dart';
 import 'package:frequencypay/blocs/plaid/plaid_event_balance.dart';
 import 'package:frequencypay/blocs/plaid/plaid_state_balance.dart';
-import 'package:frequencypay/blocs/plaid/token/bloc_plaid_token.dart';
-import 'package:frequencypay/blocs/plaid/token/plaid_blocs.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/pages/plaid_link_splash_screen.dart';
-import 'package:frequencypay/plaid_link/plaid_link_webview.dart';
 import 'package:frequencypay/repositories/plaid/plaid_api_client.dart';
 import 'package:frequencypay/repositories/plaid/plaid_repository.dart';
 import 'package:frequencypay/services/contract_service.dart';
@@ -45,6 +42,11 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    FlutterSecureStorage _storage = FlutterSecureStorage();
+    String key;
+    _storage.read(key: 'access_token').then((value) => key = value);
+    print("Key: $key");
+
     final user = Provider.of<User>(context, listen: false);
 
     FirestoreService firestoreService = FirestoreService(uid: user.uid);
@@ -166,10 +168,7 @@ class _LandingPageState extends State<LandingPage> {
         }
         if (state is PlaidBalanceLoadFailure) {
           print('failed to load balance');
-          return FlatButton(
-              onPressed: () => MaterialPageRoute(
-                  builder: (context) => PlaidLinkSplashScreen()),
-              child: Text('load plaid balance'));
+          return Text('load plaid balance');
         }
         return Container();
       },

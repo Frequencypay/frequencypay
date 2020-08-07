@@ -17,8 +17,6 @@ class UserContractsPage extends StatefulWidget {
 
 class _UserContractsPageState extends State<UserContractsPage>
     with SingleTickerProviderStateMixin {
-  static const Color blueHighlight = const Color(0xFF3665FF);
-
   @override
   void initState() {
     super.initState();
@@ -42,7 +40,7 @@ class _UserContractsPageState extends State<UserContractsPage>
         length: 3,
         initialIndex: 2,
         child: Scaffold(
-          appBar: CustomAppBar('Contracts', context),
+            appBar: CustomAppBar('Contracts', context),
             floatingActionButton:
                 LoanRequestWidgets.LoanRequestFloatingActionButton(context),
             body: Column(

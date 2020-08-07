@@ -7,7 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:frequencypay/widgets/app_bar_header.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 //ISSUES
@@ -187,11 +186,12 @@ class _CalendarPageState extends State<CalendarPage>
           const SizedBox(height: 30.0),
           _buildEventList(),
           const SizedBox(height: 25.0),
+          // ignore: todo
           //TODO: Make the bottom sheet appear partially by default and open up the rest when pressed
         ],
       ),
       floatingActionButton: new FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           _openBottomSheet(context);
         },
         child: new Icon(Icons.add),
@@ -231,7 +231,7 @@ class _CalendarPageState extends State<CalendarPage>
             fontWeight: FontWeight.bold),
         selectedColor: Color(0xFF3665FF),
         markersColor:
-        Color(0xFFE5E5E5), //Should be full circle rather than just marker
+            Color(0xFFE5E5E5), //Should be full circle rather than just marker
         renderDaysOfWeek: false,
         highlightToday: false,
       ),
@@ -240,23 +240,6 @@ class _CalendarPageState extends State<CalendarPage>
         formatButtonVisible: false,
         titleTextBuilder: (date, locale) => _monthIntToString(date.month),
         titleTextStyle: TextStyle(color: Color(0xFF8C8C8C), fontSize: 17.0),
-      ),
-    );
-  }
-
-  Widget _buildEventsMarker(DateTime date, List events) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: 16.0,
-      height: 16.0,
-      child: Center(
-        child: Text(
-          '${events.length}',
-          style: TextStyle().copyWith(
-            color: Colors.white,
-            fontSize: 12.0,
-          ),
-        ),
       ),
     );
   }
@@ -292,20 +275,21 @@ class _CalendarPageState extends State<CalendarPage>
                 child: Column(
                   children: <Widget>[
                     //Text('payments due placeholder', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                    // ignore: todo
                     //TODO: Add placeholder for when no events on day; should say 'No payments due'
                     Column(
                       children: _selectedEvents
                           .map(
                             (event) => Container(
-                          child: ListTile(
-                            title: Text(event.toString(),
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () => print('$event tapped!'),
-                          ),
-                        ),
-                      )
+                              child: ListTile(
+                                title: Text(event.toString(),
+                                    style: TextStyle(
+                                        fontSize: 18.0,
+                                        fontWeight: FontWeight.bold)),
+                                onTap: () => print('$event tapped!'),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -317,13 +301,12 @@ class _CalendarPageState extends State<CalendarPage>
     );
   }
 
-  void _openBottomSheet(context){
+  void _openBottomSheet(context) {
     showModalBottomSheet(
         context: context,
-        builder: (BuildContext bc){
+        builder: (BuildContext bc) {
           return _buildBottomSheetContents();
-        }
-    );
+        });
   }
 
   Widget _buildBottomSheetContents() {
@@ -356,8 +339,8 @@ class _CalendarPageState extends State<CalendarPage>
                   )),
               Expanded(
                   flex: 1,
-                  child: Icon(Icons.search,
-                      color: Color(0xFF8C8C8C), size: 25.0)),
+                  child:
+                      Icon(Icons.search, color: Color(0xFF8C8C8C), size: 25.0)),
               Expanded(flex: 1, child: Container()),
             ],
           ),
@@ -396,7 +379,7 @@ class _CalendarPageState extends State<CalendarPage>
           flex: 3,
           child: Column(
             children: <Widget>[
-              Text('${borrower} paid ${lender}',
+              Text('$borrower paid $lender',
                   style: TextStyle(color: Color(0xFF595959), fontSize: 10.0)),
               Text('${_monthIntToString(date.month)} ${date.day.toString()}',
                   style: TextStyle(color: Color(0xFF8C8C8C), fontSize: 10.0)),
@@ -407,12 +390,16 @@ class _CalendarPageState extends State<CalendarPage>
           flex: 1,
           child: (() {
             if (amount > 0) {
-              return Text('\$${amount}', style: TextStyle(color: Color(0xFF68BA76), fontSize: 11.0));
+              return Text('\$$amount',
+                  style: TextStyle(color: Color(0xFF68BA76), fontSize: 11.0));
             } else if (amount < 0) {
-              return Text('-\$${amount * -1}', style: TextStyle(color: Color(0xFFEE5353), fontSize: 11.0));
-            } else {  //amount = 0
-              return Text('\$0', style: TextStyle(color: Color(0xFF000000), fontSize: 11.0));
-            };
+              return Text('-\$${amount * -1}',
+                  style: TextStyle(color: Color(0xFFEE5353), fontSize: 11.0));
+            } else {
+              //amount = 0
+              return Text('\$0',
+                  style: TextStyle(color: Color(0xFF000000), fontSize: 11.0));
+            }
           }()),
         ),
       ],

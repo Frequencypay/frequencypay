@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/loan_request_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/models/user_model.dart';
-import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class LoanRequest extends StatefulWidget {
@@ -508,6 +505,7 @@ class _LoanRequestState extends State<LoanRequest> {
       } else if (state is LoanRequestIsNotLoadedState) {
         return RaisedButton(
           color: Colors.blue,
+          onPressed: () {},
           child: Text(
             "Submit",
             style: TextStyle(color: Colors.white, fontSize: 18),
@@ -516,6 +514,7 @@ class _LoanRequestState extends State<LoanRequest> {
       } else {
         return RaisedButton(
           color: Colors.blue,
+          onPressed: () {},
           child: Text(
             "Submit",
             style: TextStyle(color: Colors.white, fontSize: 18),

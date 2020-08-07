@@ -62,7 +62,7 @@ class _ContractDetailsState extends State<ContractDetails> {
                     BackButton(color: blueHighlight),
                     Text("  Your ",
                         style:
-                        TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
+                            TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
                     Text("Contract ",
                         style: TextStyle(
                             color: blueHighlight,
@@ -191,11 +191,12 @@ class _ContractDetailsState extends State<ContractDetails> {
       color: Color(0xFFB64FFA),
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       shape:
-      RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
       elevation: 10,
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget RepaymentInfo() {
     return Container(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -249,6 +250,7 @@ class _ContractDetailsState extends State<ContractDetails> {
         ));
   }
 
+  // ignore: non_constant_identifier_names
   Widget ContractDetailsInfo() {
     return Container(
         padding: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -362,5 +364,3 @@ class _ContractDetailsState extends State<ContractDetails> {
     );
   }
 }
-
-

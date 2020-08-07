@@ -18,8 +18,10 @@ class PlaidBalanceModelList {
 class PlaidBalanceResponseModel {
   List<Account> accounts;
   Item item;
+  // ignore: non_constant_identifier_names
   String request_id;
 
+  // ignore: non_constant_identifier_names
   PlaidBalanceResponseModel({this.accounts, this.item, this.request_id});
 
   factory PlaidBalanceResponseModel.fromJson(Map<String, dynamic> json) {
@@ -34,19 +36,23 @@ class PlaidBalanceResponseModel {
 }
 
 class Account {
+  // ignore: non_constant_identifier_names
   String account_id;
   Balances balances;
   String mask;
   String name;
+  // ignore: non_constant_identifier_names
   String official_name;
   String subtype;
   String type;
 
   Account(
+      // ignore: non_constant_identifier_names
       {this.account_id,
       this.balances,
       this.mask,
       this.name,
+      // ignore: non_constant_identifier_names
       this.official_name,
       this.subtype,
       this.type});
@@ -68,15 +74,19 @@ class Account {
 class Balances {
   double available;
   double current;
+  // ignore: non_constant_identifier_names
   String iso_currency_code;
   Object limit;
+  // ignore: non_constant_identifier_names
   String unofficial_currency_code;
 
   Balances(
       {this.available,
       this.current,
+      // ignore: non_constant_identifier_names
       this.iso_currency_code,
       this.limit,
+      // ignore: non_constant_identifier_names
       this.unofficial_currency_code});
 
   factory Balances.fromJson(Map<String, dynamic> json) {
@@ -91,20 +101,30 @@ class Balances {
 }
 
 class Item {
+  // ignore: non_constant_identifier_names
   List<String> available_products;
+  // ignore: non_constant_identifier_names
   List<String> billed_products;
+  // ignore: non_constant_identifier_names
   Object consent_expiration_time;
   Object error;
+  // ignore: non_constant_identifier_names
   String institution_id;
+  // ignore: non_constant_identifier_names
   String item_id;
   String webhook;
 
   Item(
+      // ignore: non_constant_identifier_names
       {this.available_products,
+      // ignore: non_constant_identifier_names
       this.billed_products,
+      // ignore: non_constant_identifier_names
       this.consent_expiration_time,
       this.error,
+      // ignore: non_constant_identifier_names
       this.institution_id,
+      // ignore: non_constant_identifier_names
       this.item_id,
       this.webhook});
 

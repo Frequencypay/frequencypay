@@ -8,8 +8,6 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:path/path.dart';
 
 void main() => runApp(MaterialApp(
       home: ProfileScreen(),
@@ -39,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     Future getImage() async {
+      // ignore: deprecated_member_use
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
       setState(() {
         _image = image;
@@ -46,10 +45,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     Future uploadPic(BuildContext context) async {
-      String filename = basename(_image.path);
-      StorageReference firebaseStorageRef =
-          FirebaseStorage.instance.ref().child(filename);
-      StorageUploadTask uploadTask = firebaseStorageRef.putFile(_image);
       setState(() {
         Scaffold.of(context).showSnackBar(SnackBar(
           content: Text("Profile Picture Uploaded"),

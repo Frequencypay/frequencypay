@@ -1,5 +1,3 @@
-import 'package:frequencypay/services/contract_service.dart';
-
 class Contract {
   //the contract properties we want:
   final String uid;
@@ -23,7 +21,6 @@ class Contract {
       this.state,
       List terms,
       List transactions}) {
-
     this.terms = RepaymentTerms.fromList(terms);
 
     if (transactions == null) {
@@ -44,7 +41,7 @@ class ContractListModel {
   //The contracts
   List<Contract> contracts;
 
-  ContractListModel(List<Contract> this.contracts);
+  ContractListModel(this.contracts);
 }
 
 class ScheduledTransaction {

@@ -22,7 +22,7 @@ class ContractDetailsIsLoadingState extends ContractDetailsState {}
 class ContractDetailsIsLoadedState extends ContractDetailsState {
   final _contract;
 
-  ContractDetailsIsLoadedState(Contract this._contract);
+  ContractDetailsIsLoadedState(this._contract);
 
   Contract get getContract => _contract;
 }

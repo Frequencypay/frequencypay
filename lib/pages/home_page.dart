@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/profile_page.dart';
 import 'package:frequencypay/pages/user_bills_page.dart';
-import 'package:frequencypay/pages/user_contracts_page.dart';
 
 import 'calendar_page.dart';
 import 'landing_page.dart';
@@ -24,7 +23,6 @@ class _HomePageState extends State<HomePage> {
     CalendarPage(),
     UserBills(),
     ProfileScreen(),
-
   ];
 
   int bottomNavigationBarIndex = 0;

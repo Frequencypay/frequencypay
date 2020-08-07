@@ -3,59 +3,42 @@ import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 
 //Events
-class ProfileEvent {
+class ProfileEvent {}
 
-}
-
-class LoadProfileEvent extends ProfileEvent {
-
-}
+class LoadProfileEvent extends ProfileEvent {}
 
 //States
-class ProfileState {
+class ProfileState {}
 
-}
-
-class ProfileIsLoadingState extends ProfileState {
-
-}
+class ProfileIsLoadingState extends ProfileState {}
 
 class ProfileIsLoadedState extends ProfileState {
-
   final _profile;
 
-  ProfileIsLoadedState(UserData this._profile);
+  ProfileIsLoadedState(this._profile);
 
   UserData get getProfile => _profile;
 }
 
-class ProfileIsNotLoadedState extends ProfileState {
-
-}
+class ProfileIsNotLoadedState extends ProfileState {}
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-
   FirestoreService _service;
 
-  ProfileBloc(FirestoreService this._service) : super(ProfileIsLoadingState());
-
-
+  ProfileBloc(this._service) : super(ProfileIsLoadingState());
 
   @override
-  Stream<ProfileState> mapEventToState(ProfileEvent event) async*{
-
+  Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
     if (event is LoadProfileEvent) {
       yield ProfileIsLoadingState();
 
       try {
-
         Stream<UserData> userStream = _service.userData;
 
         UserData currentUser = await userStream.first;
 
         yield ProfileIsLoadedState(currentUser);
-      } catch (_){
-
+      } catch (_) {
         print(_);
         yield ProfileIsNotLoadedState();
       }

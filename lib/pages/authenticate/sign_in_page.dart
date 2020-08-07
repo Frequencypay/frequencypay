@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/pages/authenticate/loading.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
@@ -29,7 +28,6 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-
     return loading
         ? Loading()
         : Scaffold(
@@ -155,7 +153,7 @@ class _SignInState extends State<SignIn> {
             });
           }
           if (result != null) {
-              Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/home');
           }
           //If the user successfully register, the stream will automatically take them to home screen
           //Stream listens to auth changes
