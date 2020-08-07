@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/plaid/bloc.dart';
 import 'package:frequencypay/blocs/plaid/simple_bloc_delegate.dart';
 import 'package:frequencypay/pages/authenticate/sign_in_page.dart';
-import 'package:frequencypay/pages/authenticate/wrapper.dart';
+import 'package:frequencypay/vaulted_pages/wrapper.dart';
 import 'package:frequencypay/pages/home_page.dart';
 import 'package:frequencypay/repositories/plaid/plaid_api_client.dart';
 import 'package:frequencypay/repositories/plaid/plaid_repository.dart';
@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
                   PlaidBloc(plaidRepository: plaidRepository),
             ),
           ],
-          child: Wrapper(),
+          child: SignIn(),
         ),
         routes: routes,
       ),

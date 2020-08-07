@@ -260,8 +260,8 @@ class _RegisterState extends State<Register> {
               loading=false;
             });
           } else{
-            //Navigator.pushReplacementNamed(context, '/plaid_splash');
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pushReplacementNamed(context, '/plaid_splash');
+            //Navigator.pushReplacementNamed(context, '/home');
           }
           //If the user successfully register, the stream will automatically take them to home screen
           //Stream listens to auth changes

@@ -153,8 +153,7 @@ class _SignInState extends State<SignIn> {
             });
           }
           if (result != null) {
-              //Navigator.pushReplacementNamed(context, '/plaid_splash');
-             Navigator.pushReplacementNamed(context, '/home');
+             Navigator.pushReplacementNamed(context, '/plaid_splash');
           }
           //If the user successfully register, the stream will automatically take them to home screen
           //Stream listens to auth changes
