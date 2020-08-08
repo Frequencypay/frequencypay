@@ -14,12 +14,10 @@ import 'package:provider/provider.dart';
 const Color blueHighlight = const Color(0xFF3665FF);
 
 class ContractDetails extends StatefulWidget {
-
   //Whether the contract has been changed since opening it
   bool changed;
 
   ContractDetails() {
-
     changed = false;
   }
 
@@ -28,7 +26,6 @@ class ContractDetails extends StatefulWidget {
 }
 
 class _ContractDetailsState extends State<ContractDetails> {
-
   ContractDetailsBloc bloc;
 
   //The contract being described
@@ -46,18 +43,19 @@ class _ContractDetailsState extends State<ContractDetails> {
 
     bloc.add(LoadContractDetailsEvent(contract));
 
-    print("Selected contract transactions: " + contract.scheduledTransactions.toString());
+    print("Selected contract transactions: " +
+        contract.scheduledTransactions.toString());
 
     return bloc;
   }
 
   @override
   Widget build(BuildContext context) {
-
     //If this is the first build of this screen
     if (!widget.changed) {
       //Extracting the contract assigned to load this page
-      final ContractDetailsArguments arguments = ModalRoute.of(context).settings.arguments;
+      final ContractDetailsArguments arguments =
+          ModalRoute.of(context).settings.arguments;
 
       //Retrieve the contract from the route arguments
       contract = arguments.contract;
@@ -71,7 +69,6 @@ class _ContractDetailsState extends State<ContractDetails> {
           child: SafeArea(
             child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
               builder: (context, state) {
-
                 return makeDetailsScreen(context, state);
               },
             ),
@@ -83,59 +80,51 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Returns the main group of widgets in the contract details screen
   Widget makeDetailsScreen(BuildContext context, ContractDetailsState state) {
+    //Load changes
+    if (widget.changed && state is ContractDetailsIsLoadedState) {
+      //Load the changed contract
+      contract = state.getContract;
+    }
 
-      //Load changes
-      if (widget.changed && state is ContractDetailsIsLoadedState) {
-
-        //Load the changed contract
-        contract = state.getContract;
-      }
-
-      return Column(
-        children: <Widget>[
-          GreetingMessageWidget(),
-          SizedBox(height: 25),
-          BillIssuerWidget(),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: SizedBox(height: 15)),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: ProgressBarWidget(getContract)),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: SizedBox(height: 35)),
-          SummaryBannerWidget(contract),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: SizedBox(height: 25)),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: makePaymentButton()),
-          Visibility(visible: true, child: SizedBox(height: 30)),
-          RepaymentInfo(state),
-          Visibility(visible: true, child: SizedBox(height: 15)),
-          ContractDetailsInfo(state),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: SizedBox(height: 30)),
-          Visibility(
-              visible:
-              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-              child: getHistory()),
-          Visibility(visible: true, child: SizedBox(height: 30)),
-          Visibility(
-              visible: _displayResponseButtons(state),
-              child: responseButtons()),
-          Visibility(visible: true, child: SizedBox(height: 15)),
-        ],
-      );
+    return Column(
+      children: <Widget>[
+        GreetingMessageWidget(),
+        SizedBox(height: 25),
+        BillIssuerWidget(),
+        FadeCollapseContainer(
+          visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+          child: SizedBox(height: 15),
+        ),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: ProgressBarWidget(getContract)),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: SizedBox(height: 35)),
+        SummaryBannerWidget(contract),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: SizedBox(height: 25)),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: makePaymentButton()),
+        SizedBox(height: 30),
+        RepaymentInfo(state),
+        SizedBox(height: 15),
+        ContractDetailsInfo(state),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: SizedBox(height: 30)),
+        FadeCollapseContainer(
+            visible: contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+            child: getHistory()),
+        SizedBox(height: 30),
+        FadeCollapseContainer(
+            visible: _displayResponseButtons(state),
+            child: responseButtons()),
+        SizedBox(height: 15),
+      ],
+    );
   }
 
   Widget makePaymentButton() {
@@ -156,7 +145,6 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Attempts to make one standard payment towards an active contract
   void attemptMakePayment() {
-
     //Mark the contract as changed
     widget.changed = true;
 
@@ -373,8 +361,9 @@ class _ContractDetailsState extends State<ContractDetails> {
   }
 
   bool _displayResponseButtons(ContractDetailsState state) {
-
-    return contract.state == CONTRACT_STATE.OPEN_REQUEST && state is ContractDetailsIsLoadedState && state.isWaitedOnUse;
+    return contract.state == CONTRACT_STATE.OPEN_REQUEST &&
+        state is ContractDetailsIsLoadedState &&
+        state.isWaitedOnUse;
   }
 
   Widget responseButtons() {
@@ -425,7 +414,6 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Attempts to accept the contract
   void attemptAcceptContract() {
-
     //Mark the contract as changed
     widget.changed = true;
 
@@ -438,7 +426,6 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Attempts to reject the contract
   void attemptRejectContract() {
-
     //Mark the contract as changed
     widget.changed = true;
 
@@ -477,50 +464,41 @@ class _ContractDetailsState extends State<ContractDetails> {
 
   //Returns the contract data for inner widgets
   Contract getContract() {
-
     return contract;
   }
 }
 
 class GreetingMessageWidget extends StatefulWidget {
-
-
   @override
   State<GreetingMessageWidget> createState() => GreetingMessageState();
 }
 
 class GreetingMessageState extends State<GreetingMessageWidget> {
-
   @override
   Widget build(BuildContext context) {
-
-      return Row(
-        children: <Widget>[
-          BackButton(color: blueHighlight),
-          Text("  Your ",
-              style: TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
-          Text("Contract ",
-              style: TextStyle(
-                  color: blueHighlight,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
-        ],
-      );
-    }
+    return Row(
+      children: <Widget>[
+        BackButton(color: blueHighlight),
+        Text("  Your ",
+            style: TextStyle(color: Color(0xFF8C8C8C), fontSize: 18)),
+        Text("Contract ",
+            style: TextStyle(
+                color: blueHighlight,
+                fontSize: 18,
+                fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
 }
 
 class BillIssuerWidget extends StatefulWidget {
-
-
   @override
   State<BillIssuerWidget> createState() => BillIssuerState();
 }
 
 class BillIssuerState extends State<BillIssuerWidget> {
-
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: <Widget>[
         CircleAvatar(
@@ -537,7 +515,6 @@ class BillIssuerState extends State<BillIssuerWidget> {
 }
 
 class ProgressBarWidget extends StatefulWidget {
-
   var getContract;
 
   ProgressBarWidget(this.getContract);
@@ -547,40 +524,38 @@ class ProgressBarWidget extends StatefulWidget {
 }
 
 class ProgressBarState extends State<ProgressBarWidget> {
-
   @override
   Widget build(BuildContext context) {
-
     return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
         builder: (context, state) {
-          if (state is ContractDetailsIsLoadedState) {
-            return LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              percent: widget.getContract().repaymentProgress,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          } else if (state is ContractDetailsIsLoadingState) {
-            print("loading");
-            return LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              percent: 0.0,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          } else {
-            print("error");
-            return LinearPercentIndicator(
-              width: 235,
-              lineHeight: 8.0,
-              percent: 0.0,
-              progressColor: Color(0xFFB64FFA),
-              alignment: MainAxisAlignment.center,
-            );
-          }
-        });
+      if (state is ContractDetailsIsLoadedState) {
+        return LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          percent: widget.getContract().repaymentProgress,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      } else if (state is ContractDetailsIsLoadingState) {
+        print("loading");
+        return LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          percent: 0.0,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      } else {
+        print("error");
+        return LinearPercentIndicator(
+          width: 235,
+          lineHeight: 8.0,
+          percent: 0.0,
+          progressColor: Color(0xFFB64FFA),
+          alignment: MainAxisAlignment.center,
+        );
+      }
+    });
   }
 
   Widget _progressBar(double amount) {
@@ -595,7 +570,6 @@ class ProgressBarState extends State<ProgressBarWidget> {
 }
 
 class SummaryBannerWidget extends StatefulWidget {
-
   Contract contract;
 
   SummaryBannerWidget(this.contract);
@@ -605,10 +579,8 @@ class SummaryBannerWidget extends StatefulWidget {
 }
 
 class SummaryBannerState extends State<SummaryBannerWidget> {
-
   @override
   Widget build(BuildContext context) {
-
     return Row(
       children: <Widget>[
         Expanded(flex: 1, child: Container()),
@@ -627,7 +599,8 @@ class SummaryBannerState extends State<SummaryBannerWidget> {
                 String avatarMessage = "";
 
                 if (widget.contract.state == CONTRACT_STATE.ACTIVE_CONTRACT ||
-                    widget.contract.state == CONTRACT_STATE.COMPLETED_CONTRACT) {
+                    widget.contract.state ==
+                        CONTRACT_STATE.COMPLETED_CONTRACT) {
                   avatarMessage = widget.contract.loanerName +
                       " paid on\n" +
                       DateFormat.MMMMd()
@@ -643,59 +616,53 @@ class SummaryBannerState extends State<SummaryBannerWidget> {
             ],
           ),
         ),
-
-
-
         Expanded(
           flex: 5,
           child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
               builder: (context, state) {
-
-                if (state is ContractDetailsIsLoadedState) {
-                  if (widget.contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
-                    return Text(
-                        "Repay in full\non " +
-                            DateFormat.yMd().format(state.getFinalPaymentDate),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14));
-                  } else if (widget.contract.state == CONTRACT_STATE.COMPLETED_CONTRACT) {
-                    return Text("Repaid in full\non " + "<<date>>",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14));
-                  } else {
-                    return Text(
-                        "Repaid in full\non " +
-                            DateFormat.yMd()
-                                .format(state.getRepaymentProjection.repaymentDate),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14));
-                  }
-                } else if (state is ContractDetailsIsLoadingState) {
-                  return Text("Repay in full\non ...",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 14));
-                } else {
-                  return Text("Error obtaining\nrepayment date",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[700], fontSize: 14));
-                }
-              }),
+            if (state is ContractDetailsIsLoadedState) {
+              if (widget.contract.state == CONTRACT_STATE.ACTIVE_CONTRACT) {
+                return Text(
+                    "Repay in full\non " +
+                        DateFormat.yMd().format(state.getFinalPaymentDate),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
+              } else if (widget.contract.state ==
+                  CONTRACT_STATE.COMPLETED_CONTRACT) {
+                return Text("Repaid in full\non " + "<<date>>",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
+              } else {
+                return Text(
+                    "Repaid in full\non " +
+                        DateFormat.yMd()
+                            .format(state.getRepaymentProjection.repaymentDate),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14));
+              }
+            } else if (state is ContractDetailsIsLoadingState) {
+              return Text("Repay in full\non ...",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14));
+            } else {
+              return Text("Error obtaining\nrepayment date",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14));
+            }
+          }),
         ),
-
-
-
         Expanded(
           flex: 5,
           child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
               builder: (context, state) {
-                if (state is ContractDetailsIsLoadedState) {
-                  return _amountMessage(false);
-                } else if (state is ContractDetailsIsLoadingState) {
-                  return _amountMessage(true);
-                } else {
-                  return Container();
-                }
-              }),
+            if (state is ContractDetailsIsLoadedState) {
+              return _amountMessage(false);
+            } else if (state is ContractDetailsIsLoadingState) {
+              return _amountMessage(true);
+            } else {
+              return Container();
+            }
+          }),
         ),
         Expanded(flex: 1, child: Container()),
       ],
@@ -733,50 +700,31 @@ class SummaryBannerState extends State<SummaryBannerWidget> {
   }
 }
 
-/*class GreetingMessageWidget extends StatefulWidget {
+class FadeCollapseContainer extends StatefulWidget {
+  final bool visible;
+  final Widget child;
 
+  FadeCollapseContainer({this.visible, this.child});
 
   @override
-  State<> createState() => ;
+  State<FadeCollapseContainer> createState() => FadeCollapseState();
 }
 
-class GreetingMessageState extends State<GreetingMessageWidget> {
+//Partial reference
+//https://stackoverflow.com/questions/53768384/flutter-animate-change-on-height-when-child-of-container-renders
+class FadeCollapseState extends State<FadeCollapseContainer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
-
+    return AnimatedOpacity(
+      opacity: widget.visible ? 1 : 0,
+      curve: Curves.easeInOut,
+      duration: Duration(milliseconds: 400),
+      child: AnimatedSize(
+          vsync: this,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          child: Container(child: Container(child: widget.visible ? widget.child : null))),
+    );
   }
-}*/
-
-/*class GreetingMessageWidget extends StatefulWidget {
-
-
-  @override
-  State<> createState() => ;
 }
-
-class GreetingMessageState extends State<GreetingMessageWidget> {
-
-  @override
-  Widget build(BuildContext context) {
-
-
-  }
-}*/
-
-/*class GreetingMessageWidget extends StatefulWidget {
-
-
-  @override
-  State<> createState() => ;
-}
-
-class GreetingMessageState extends State<GreetingMessageWidget> {
-
-  @override
-  Widget build(BuildContext context) {
-
-
-  }
-}*/
