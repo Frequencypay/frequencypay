@@ -14,7 +14,14 @@ import 'package:provider/provider.dart';
 const Color blueHighlight = const Color(0xFF3665FF);
 
 class ContractDetails extends StatefulWidget {
-  ContractDetails();
+
+  //Whether the contract has been changed since opening it
+  bool changed;
+
+  ContractDetails() {
+
+    changed = false;
+  }
 
   @override
   _ContractDetailsState createState() => _ContractDetailsState();
@@ -39,20 +46,22 @@ class _ContractDetailsState extends State<ContractDetails> {
 
     bloc.add(LoadContractDetailsEvent(contract));
 
-    print("Selected contract transactions: " +
-        contract.scheduledTransactions.toString());
+    print("Selected contract transactions: " + contract.scheduledTransactions.toString());
 
     return bloc;
   }
 
   @override
   Widget build(BuildContext context) {
-    //Extracting the contract assigned to load this page
-    final ContractDetailsArguments arguments =
-        ModalRoute.of(context).settings.arguments;
 
-    //Retrieve the contract from the route arguments
-    contract = arguments.contract;
+    //If this is the first build of this screen
+    if (!widget.changed) {
+      //Extracting the contract assigned to load this page
+      final ContractDetailsArguments arguments = ModalRoute.of(context).settings.arguments;
+
+      //Retrieve the contract from the route arguments
+      contract = arguments.contract;
+    }
 
     return BlocProvider(
       create: (context) => createBloc(context, contract),
@@ -62,57 +71,71 @@ class _ContractDetailsState extends State<ContractDetails> {
           child: SafeArea(
             child: BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
               builder: (context, state) {
-                return Column(
-                  children: <Widget>[
-                    GreetingMessageWidget(),
-                    SizedBox(height: 25),
-                    BillIssuerWidget(),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: SizedBox(height: 15)),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: ProgressBarWidget(getContract)),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: SizedBox(height: 35)),
-                    SummaryBannerWidget(contract),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: SizedBox(height: 25)),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: makePaymentButton()),
-                    Visibility(visible: true, child: SizedBox(height: 30)),
-                    RepaymentInfo(state),
-                    Visibility(visible: true, child: SizedBox(height: 15)),
-                    ContractDetailsInfo(state),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: SizedBox(height: 30)),
-                    Visibility(
-                        visible:
-                            contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
-                        child: getHistory()),
-                    Visibility(visible: true, child: SizedBox(height: 30)),
-                    Visibility(
-                        visible: _displayResponseButtons(state),
-                        child: responseButtons()),
-                    Visibility(visible: true, child: SizedBox(height: 15)),
-                  ],
-                );
+
+                return makeDetailsScreen(context, state);
               },
             ),
           ),
         ),
       ),
     );
+  }
+
+  //Returns the main group of widgets in the contract details screen
+  Widget makeDetailsScreen(BuildContext context, ContractDetailsState state) {
+
+      //Load changes
+      if (widget.changed && state is ContractDetailsIsLoadedState) {
+
+        //Load the changed contract
+        contract = state.getContract;
+      }
+
+      return Column(
+        children: <Widget>[
+          GreetingMessageWidget(),
+          SizedBox(height: 25),
+          BillIssuerWidget(),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: SizedBox(height: 15)),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: ProgressBarWidget(getContract)),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: SizedBox(height: 35)),
+          SummaryBannerWidget(contract),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: SizedBox(height: 25)),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: makePaymentButton()),
+          Visibility(visible: true, child: SizedBox(height: 30)),
+          RepaymentInfo(state),
+          Visibility(visible: true, child: SizedBox(height: 15)),
+          ContractDetailsInfo(state),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: SizedBox(height: 30)),
+          Visibility(
+              visible:
+              contract.state == CONTRACT_STATE.ACTIVE_CONTRACT,
+              child: getHistory()),
+          Visibility(visible: true, child: SizedBox(height: 30)),
+          Visibility(
+              visible: _displayResponseButtons(state),
+              child: responseButtons()),
+          Visibility(visible: true, child: SizedBox(height: 15)),
+        ],
+      );
   }
 
   Widget makePaymentButton() {
@@ -134,12 +157,15 @@ class _ContractDetailsState extends State<ContractDetails> {
   //Attempts to make one standard payment towards an active contract
   void attemptMakePayment() {
 
+    //Mark the contract as changed
+    widget.changed = true;
+
     bloc.add(MakePaymentContractDetailsEvent());
-    bloc.add(ReloadContractDetailsEvent(_reloadPage));
+    //bloc.add(ReloadContractDetailsEvent(_reloadPage));
   }
 
   //A callback function that reloads this page with the updated contract
-  void _reloadPage() {
+  /*void _reloadPage() {
 
     //Get the bloc state
     ContractDetailsIsLoadedState state = bloc.state;
@@ -152,7 +178,7 @@ class _ContractDetailsState extends State<ContractDetails> {
     print("Out of widget: " + contract.repaymentStatus.remainingAmount.toString());
 
     this.setState(() {});
-  }
+  }*/
 
   Widget RepaymentInfo(ContractDetailsState state) {
     String repaymentMessage;
@@ -400,21 +426,27 @@ class _ContractDetailsState extends State<ContractDetails> {
   //Attempts to accept the contract
   void attemptAcceptContract() {
 
+    //Mark the contract as changed
+    widget.changed = true;
+
     //Attempt to establish the contract
     bloc.add(EstablishContractContractDetailsEvent());
 
     //Leave the contract details screen
-    Navigator.pop(context);
+    //Navigator.pop(context);
   }
 
   //Attempts to reject the contract
   void attemptRejectContract() {
 
+    //Mark the contract as changed
+    widget.changed = true;
+
     //Attempt to reject the contract
     bloc.add(RejectContractContractDetailsEvent());
 
     //Leave the contract details screen
-    Navigator.pop(context);
+    //Navigator.pop(context);
   }
 
   //Converts a frequency of payment into a string message
@@ -519,12 +551,9 @@ class ProgressBarState extends State<ProgressBarWidget> {
   @override
   Widget build(BuildContext context) {
 
-    print("In widget: " + widget.getContract().repaymentStatus.remainingAmount.toString());
-
     return BlocBuilder<ContractDetailsBloc, ContractDetailsState>(
         builder: (context, state) {
           if (state is ContractDetailsIsLoadedState) {
-            print("In widget: " + widget.getContract().repaymentStatus.remainingAmount.toString());
             return LinearPercentIndicator(
               width: 235,
               lineHeight: 8.0,
