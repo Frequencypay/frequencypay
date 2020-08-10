@@ -91,13 +91,6 @@ class _LandingPageState extends State<LandingPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-      FlatButton.icon(
-                icon: Icon(Icons.person,color: Colors.grey,),
-                label: Text("Loan Request",style: TextStyle(color: Colors.grey),),
-                onPressed: ()  {
-                  Navigator.pushNamed(context, '/loan_request_page');
-                },
-              ),
           //ROW 1
                 Row(
                   children: <Widget>[
