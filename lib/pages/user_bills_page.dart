@@ -15,6 +15,7 @@ import 'package:frequencypay/widgets/loan_request_button.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/platform_interface.dart';
 
 class UserBills extends StatefulWidget {
   @override
@@ -26,6 +27,8 @@ class _UserBillsState extends State<UserBills> {
 
   final _maxContractsDisplayed = 3;
 
+  UserBillsBloc bloc;
+
   UserBillsBloc createBloc(
     var context,
   ) {
@@ -34,7 +37,7 @@ class _UserBillsState extends State<UserBills> {
     FirestoreService service = FirestoreService(uid: user.uid);
     ContractService contractService = ContractService(service);
 
-    UserBillsBloc bloc = UserBillsBloc(service, contractService);
+    bloc = UserBillsBloc(service, contractService);
 
     bloc.add(LoadUserBillsEvent());
 
@@ -223,9 +226,18 @@ class _UserBillsState extends State<UserBills> {
       color: Colors.white24,
       onPressed: () {
 
-        Navigator.pushNamed(context, "/user_contracts");
+        _viewContracts();
       },
     );
+  }
+
+  void _viewContracts() async{
+
+    var onReturn = Navigator.pushNamed(context, "/user_contracts");
+
+    //Call return event
+    await onReturn;
+    _onReturnFromContractsPage();
   }
 
   Widget getProgress(double totalAmount, double amountPaid) {
@@ -251,7 +263,7 @@ class _UserBillsState extends State<UserBills> {
             itemBuilder: (context, index) {
 
               return ContractCards.buildPendingContractCard(
-                  context, state.getContracts.contracts[index], state.getActiveNotifications[index]);
+                  context, state.getContracts.contracts[index], state.getActiveNotifications[index], _onReturnFromContractDetails);
             },
             itemCount: min<int>(
                 _maxContractsDisplayed, state.getContracts.contracts.length),
@@ -262,5 +274,17 @@ class _UserBillsState extends State<UserBills> {
         return Center(child: Text("error"));
       }
     });
+  }
+
+  //Called when the screen is returned to from viewing the user's contracts
+  void _onReturnFromContractsPage() {
+    
+    bloc.add(ReloadUserBillsEvent());
+  }
+
+  //Called when the screen is returned to from viewing a contract
+  void _onReturnFromContractDetails() {
+
+    bloc.add(ReloadUserBillsEvent());
   }
 }

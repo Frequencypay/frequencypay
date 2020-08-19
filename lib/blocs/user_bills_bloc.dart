@@ -14,6 +14,10 @@ class LoadUserBillsEvent extends UserBillsEvent {
 
 }
 
+class ReloadUserBillsEvent extends UserBillsEvent {
+
+}
+
 //States
 class UserBillsState {
 
@@ -45,6 +49,10 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
 
   ContractService _contractService;
 
+  List<Contract> pendingContractsList;
+
+  List<bool> activeNotifications;
+
   UserBillsBloc(FirestoreService this._service, ContractService this._contractService);
 
   @override
@@ -58,9 +66,20 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
 
       try {
 
-        List<Contract> pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
+        await _loadContracts();
 
-        List<bool> activeNotifications = await getActiveNotifications(pendingContractsList);
+        yield UserBillsIsLoadedState(ContractListModel(pendingContractsList), activeNotifications);
+      } catch (_){
+
+        print(_);
+        yield UserBillsIsNotLoadedState();
+      }
+    } else if (event is ReloadUserBillsEvent) {
+      yield UserBillsIsLoadingState();
+
+      try {
+
+        await _loadContracts();
 
         yield UserBillsIsLoadedState(ContractListModel(pendingContractsList), activeNotifications);
       } catch (_){
@@ -69,6 +88,13 @@ class UserBillsBloc extends Bloc<UserBillsEvent, UserBillsState> {
         yield UserBillsIsNotLoadedState();
       }
     }
+  }
+
+  Future _loadContracts() async{
+
+    pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
+
+    activeNotifications = await getActiveNotifications(pendingContractsList);
   }
 
   Future<List<bool>> getActiveNotifications(List<Contract> contracts) async{

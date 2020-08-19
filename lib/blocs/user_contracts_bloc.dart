@@ -14,6 +14,11 @@ class LoadUserContractsEvent extends UserContractsEvent {
 
 }
 
+class ReloadUserContractsEvent extends UserContractsEvent {
+
+
+}
+
 //States
 class UserContractsState {
 
@@ -47,6 +52,11 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
   FirestoreService _service;
   ContractService _contractService;
 
+  ContractListModel completeContracts;
+  ContractListModel activeContracts;
+  ContractListModel pendingContracts;
+  List<bool> activeNotifications;
+
   UserContractsBloc(this._service, this._contractService);
 
   @override
@@ -60,23 +70,7 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
       try {
 
-        Stream<UserData> userStream = _service.userData;
-        UserData currentUser = await userStream.first;
-
-        ContractListModel completeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.COMPLETE_CONTRACTS()).first);
-
-        List<Contract> activeContractsList = await _service.retrieveContracts(ContractSearchQuery.BORROWER_ACTIVE_CONTRACTS()).first;
-
-        activeContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.LENDER_ACTIVE_CONTRACTS()).first);
-
-        ContractListModel activeContracts = ContractListModel(activeContractsList);
-
-        List<Contract> pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
-        pendingContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS()).first);
-
-        ContractListModel pendingContracts = ContractListModel(pendingContractsList);
-
-        List<bool> activeNotifications = await getActiveNotifications(pendingContractsList);
+        await _loadContracts();
 
         yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts, activeNotifications);
       } catch (_, stacktrace){
@@ -86,7 +80,35 @@ class UserContractsBloc extends Bloc<UserContractsEvent, UserContractsState> {
 
         yield UserContractsIsNotLoadedState();
       }
+    } else if (event is ReloadUserContractsEvent) {
+
+      yield UserContractsIsLoadingState();
+
+      await _loadContracts();
+
+      yield UserContractsIsLoadedState(completeContracts, activeContracts, pendingContracts, activeNotifications);
     }
+  }
+
+  Future _loadContracts() async{
+
+    Stream<UserData> userStream = _service.userData;
+    UserData currentUser = await userStream.first;
+
+    completeContracts = ContractListModel(await _service.retrieveContracts(ContractSearchQuery.COMPLETE_CONTRACTS()).first);
+
+    List<Contract> activeContractsList = await _service.retrieveContracts(ContractSearchQuery.BORROWER_ACTIVE_CONTRACTS()).first;
+
+    activeContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.LENDER_ACTIVE_CONTRACTS()).first);
+
+    activeContracts = ContractListModel(activeContractsList);
+
+    List<Contract> pendingContractsList = await _service.retrieveContracts(ContractSearchQuery.INBOUND_PENDING_CONTRACTS()).first;
+    pendingContractsList.addAll(await _service.retrieveContracts(ContractSearchQuery.OUTBOUND_PENDING_CONTRACTS()).first);
+
+    pendingContracts = ContractListModel(pendingContractsList);
+
+    activeNotifications = await getActiveNotifications(pendingContractsList);
   }
 
   Future<List<bool>> getActiveNotifications(List<Contract> contracts) async{
