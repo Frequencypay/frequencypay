@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_bills_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_expense_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
 import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
+import 'package:frequencypay/widgets/user_expense_cards.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
@@ -120,38 +122,10 @@ class _UserBillsState extends State<UserBills> {
   }
 
   Widget getBill(String billName, String billDue, String billAmount) {
-    return Card(
-      margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: <Widget>[
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blue[900],
-            ),
-            Text("     "),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "$billName",
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  "DUE ON: $billDue",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                Text(
-                  "\$ $billAmount",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+
+    UserExpense expense = UserExpense(billName, "", billAmount, DateTime.now().toIso8601String());
+
+    return UserExpenseCards.buildExpenseCard(context, expense, _onReturnFromLoanRequest);
   }
 
   Widget getContracts(String contractName, String timeLeft, double totalAmount,
@@ -274,6 +248,12 @@ class _UserBillsState extends State<UserBills> {
         return Center(child: Text("error"));
       }
     });
+  }
+
+  //Called when the screen is returned to from the loan request page
+  void _onReturnFromLoanRequest() {
+
+    bloc.add(ReloadUserBillsEvent());
   }
 
   //Called when the screen is returned to from viewing the user's contracts
