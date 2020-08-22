@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -5,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/loan_request_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_expense_model.dart';
 import 'package:frequencypay/models/user_model.dart';
+import 'package:frequencypay/route_arguments/loan_request_arguments.dart';
 import 'package:frequencypay/services/firebase_auth_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:intl/intl.dart';
@@ -22,6 +26,8 @@ class _LoanRequestState extends State<LoanRequest> {
   static const Color blueHighlight = const Color(0xFF3665FF);
 
   LoanRequestBloc bloc;
+
+  UserExpense expense;
 
   FirebaseUser currentUser;
 
@@ -57,6 +63,29 @@ class _LoanRequestState extends State<LoanRequest> {
 
   @override
   Widget build(BuildContext context) {
+
+    //Extracting the expense assigned to load this page
+    final LoanRequestArguments arguments =
+        ModalRoute.of(context).settings.arguments;
+
+    //If the arguments are valid
+    if (arguments != null) {
+
+      //Retrieve the expense from the route arguments
+      expense = arguments.expense;
+
+      //Initialize the amount to the corresponding value
+      amount = expense.amount;
+
+      //Initialize the due date to the corresponding value
+      dueDate = expense.dueDate;
+    }
+
+    if (expense != null) {
+
+      dueDateController = TextEditingController(text:DateFormat.yMd().format(dueDate));
+    }
+
     return BlocProvider(
       create: (context) => createBloc(context),
       child: Scaffold(
@@ -124,6 +153,22 @@ class _LoanRequestState extends State<LoanRequest> {
   }
 
   Widget getBillIssuer() {
+    return Builder(
+      builder:(context) {
+
+        if (expense == null) {
+
+          return _billIssuer("<<Bill Issuer>>");
+        } else {
+
+          return _billIssuer(expense.issuerName);
+        }
+      }
+    );
+  }
+
+  Widget _billIssuer(String issuerName) {
+
     return Column(
       children: <Widget>[
         CircleAvatar(
@@ -135,7 +180,7 @@ class _LoanRequestState extends State<LoanRequest> {
           height: 10,
         ),
         Text(
-          "<<Bill Issuer>>",
+          issuerName,
           style: TextStyle(fontSize: 20, color: Colors.grey),
         ),
       ],

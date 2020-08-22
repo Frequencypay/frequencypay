@@ -16,7 +16,7 @@ class Contract {
   RepaymentStatus repaymentStatus;
   List<ScheduledTransaction> scheduledTransactions;
 
-  double get repaymentProgress => (1.0 - repaymentStatus.remainingAmount / terms.amount);
+  double get repaymentProgress => (repaymentStatus != null) ? (1.0 - repaymentStatus.remainingAmount / terms.amount) : 0.0;
 
   Contract(
       {this.uid,

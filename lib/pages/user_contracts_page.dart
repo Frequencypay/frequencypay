@@ -19,6 +19,8 @@ class _UserContractsPageState extends State<UserContractsPage>
     with SingleTickerProviderStateMixin {
   static const Color blueHighlight = const Color(0xFF3665FF);
 
+  UserContractsBloc bloc;
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +32,7 @@ class _UserContractsPageState extends State<UserContractsPage>
     FirestoreService service = FirestoreService(uid: user.uid);
     ContractService contractService = ContractService(service);
 
-    UserContractsBloc bloc = UserContractsBloc(service, contractService);
+    bloc = UserContractsBloc(service, contractService);
 
     bloc.add(LoadUserContractsEvent());
 
@@ -120,7 +122,7 @@ class _UserContractsPageState extends State<UserContractsPage>
         return ListView.builder(
             itemBuilder: (context, index) {
               return ContractCards.buildCompleteContractCard(
-                  context, state.getCompleteContracts.contracts[index]);
+                  context, state.getCompleteContracts.contracts[index], _onReturnFromContractDetails);
             },
             itemCount: state.getCompleteContracts.contracts.length,
             shrinkWrap: true);
@@ -141,7 +143,7 @@ class _UserContractsPageState extends State<UserContractsPage>
         return ListView.builder(
             itemBuilder: (context, index) {
               return ContractCards.buildActiveContractCard(
-                  context, state.getActiveContracts.contracts[index]);
+                  context, state.getActiveContracts.contracts[index], _onReturnFromContractDetails);
             },
             itemCount: state.getActiveContracts.contracts.length,
             shrinkWrap: true);
@@ -162,7 +164,7 @@ class _UserContractsPageState extends State<UserContractsPage>
         return ListView.builder(
             itemBuilder: (context, index) {
               return ContractCards.buildPendingContractCard(
-                  context, state.getPendingContracts.contracts[index], state.getActiveNotifications[index]);
+                  context, state.getPendingContracts.contracts[index], state.getActiveNotifications[index], _onReturnFromContractDetails);
             },
             itemCount: state.getPendingContracts.contracts.length,
             shrinkWrap: true);
@@ -174,5 +176,11 @@ class _UserContractsPageState extends State<UserContractsPage>
         return Center(child: Text("error"));
       }
     });
+  }
+
+  //Called when the screen is returned to from viewing a contract
+  void _onReturnFromContractDetails() {
+
+    bloc.add(ReloadUserContractsEvent());
   }
 }

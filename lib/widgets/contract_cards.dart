@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frequencypay/models/contract_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
-import 'package:frequencypay/services/contract_service.dart';
 
 class ContractCards {
 
-  static Widget buildCompleteContractCard(BuildContext context, Contract contract) {
+  static Widget buildCompleteContractCard(BuildContext context, Contract contract, var returnCallback) {
     return Container(
       height: 100,
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -14,9 +13,9 @@ class ContractCards {
         elevation: 5,
         child: InkWell(
           onTap: () {
+
             //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details",
-                arguments: ContractDetailsArguments(contract));
+            viewContractDetails(context, contract, returnCallback);
           },
           child: ListTile(
               leading: FlutterLogo(),
@@ -39,7 +38,7 @@ class ContractCards {
     );
   }
 
-  static Widget buildActiveContractCard(BuildContext context, Contract contract) {
+  static Widget buildActiveContractCard(BuildContext context, Contract contract, var returnCallback) {
     return Container(
       height: 100,
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -47,9 +46,9 @@ class ContractCards {
         elevation: 5,
         child: InkWell(
           onTap: () {
+
             //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details",
-                arguments: ContractDetailsArguments(contract));
+            viewContractDetails(context, contract, returnCallback);
           },
           child: ListTile(
               leading: FlutterLogo(),
@@ -84,7 +83,7 @@ class ContractCards {
     );
   }
 
-  static Widget buildPendingContractCard(BuildContext context, Contract contract, bool activeNotification) {
+  static Widget buildPendingContractCard(BuildContext context, Contract contract, bool activeNotification, var returnCallback) {
     return Container(
       height: 100,
       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -92,9 +91,9 @@ class ContractCards {
         elevation: 5,
         child: InkWell(
           onTap: () {
+
             //Transition to viewing the contract details using the contract loaded into this card
-            Navigator.pushNamed(context, "/contract_details",
-                arguments: ContractDetailsArguments(contract));
+            viewContractDetails(context, contract, returnCallback);
           },
           child: ListTile(
             leading: FlutterLogo(),
@@ -118,5 +117,21 @@ class ContractCards {
         ),
       ),
     );
+  }
+
+  //Navigates to the contract details screen using the given contract, calling the given method on return
+  static void viewContractDetails(BuildContext context, Contract contract, var returnCallback) async{
+
+    //Navigate to the given contract
+    var hasReturned = Navigator.pushNamed(context, "/contract_details",
+        arguments: ContractDetailsArguments(contract));
+
+    await hasReturned;
+
+    //Activate a return callback if given
+    if (returnCallback != null) {
+
+      returnCallback();
+    }
   }
 }

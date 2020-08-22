@@ -1,18 +1,23 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frequencypay/blocs/user_bills_bloc.dart';
 import 'package:frequencypay/models/contract_model.dart';
+import 'package:frequencypay/models/user_expense_model.dart';
 import 'package:frequencypay/models/user_model.dart';
 import 'package:frequencypay/route_arguments/contract_details_arguments.dart';
+import 'package:frequencypay/services/contract_service.dart';
 import 'package:frequencypay/services/firestore_db_service.dart';
 import 'package:frequencypay/widgets/contract_cards.dart';
 import 'package:frequencypay/widgets/loan_request_button.dart';
+import 'package:frequencypay/widgets/user_expense_cards.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:frequencypay/pages/contract_details.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/platform_interface.dart';
 
 class UserBills extends StatefulWidget {
   @override
@@ -24,12 +29,17 @@ class _UserBillsState extends State<UserBills> {
 
   final _maxContractsDisplayed = 3;
 
+  UserBillsBloc bloc;
+
   UserBillsBloc createBloc(
     var context,
   ) {
     final user = Provider.of<User>(context, listen: false);
 
-    UserBillsBloc bloc = UserBillsBloc(FirestoreService(uid: user.uid));
+    FirestoreService service = FirestoreService(uid: user.uid);
+    ContractService contractService = ContractService(service);
+
+    bloc = UserBillsBloc(service, contractService);
 
     bloc.add(LoadUserBillsEvent());
 
@@ -94,7 +104,7 @@ class _UserBillsState extends State<UserBills> {
 
                 //getContracts("DTE ENERGY","3 WEEKS",130,75),
                 //getContracts("T-MOBILE","1 WEEK",75,60),
-                buildActiveContractList(),
+                buildPendingContractList(),
 
                 SizedBox(
                   height: 20,
@@ -112,38 +122,10 @@ class _UserBillsState extends State<UserBills> {
   }
 
   Widget getBill(String billName, String billDue, String billAmount) {
-    return Card(
-      margin: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: <Widget>[
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.blue[900],
-            ),
-            Text("     "),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "$billName",
-                  style: TextStyle(fontSize: 16),
-                ),
-                Text(
-                  "DUE ON: $billDue",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                Text(
-                  "\$ $billAmount",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+
+    UserExpense expense = UserExpense(billName, "", billAmount, DateTime.now().toIso8601String());
+
+    return UserExpenseCards.buildExpenseCard(context, expense, _onReturnFromLoanRequest);
   }
 
   Widget getContracts(String contractName, String timeLeft, double totalAmount,
@@ -218,9 +200,18 @@ class _UserBillsState extends State<UserBills> {
       color: Colors.white24,
       onPressed: () {
 
-        Navigator.pushNamed(context, "/user_contracts");
+        _viewContracts();
       },
     );
+  }
+
+  void _viewContracts() async{
+
+    var onReturn = Navigator.pushNamed(context, "/user_contracts");
+
+    //Call return event
+    await onReturn;
+    _onReturnFromContractsPage();
   }
 
   Widget getProgress(double totalAmount, double amountPaid) {
@@ -237,7 +228,7 @@ class _UserBillsState extends State<UserBills> {
     percentComplete = amountPaid / totalAmount;
   }
 
-  Widget buildActiveContractList() {
+  Widget buildPendingContractList() {
 
     return BlocBuilder<UserBillsBloc, UserBillsState>(
         builder: (context, state) {
@@ -245,8 +236,8 @@ class _UserBillsState extends State<UserBills> {
         return ListView.builder(
             itemBuilder: (context, index) {
 
-              return ContractCards.buildActiveContractCard(
-                  context, state.getContracts.contracts[index]);
+              return ContractCards.buildPendingContractCard(
+                  context, state.getContracts.contracts[index], state.getActiveNotifications[index], _onReturnFromContractDetails);
             },
             itemCount: min<int>(
                 _maxContractsDisplayed, state.getContracts.contracts.length),
@@ -257,5 +248,23 @@ class _UserBillsState extends State<UserBills> {
         return Center(child: Text("error"));
       }
     });
+  }
+
+  //Called when the screen is returned to from the loan request page
+  void _onReturnFromLoanRequest() {
+
+    bloc.add(ReloadUserBillsEvent());
+  }
+
+  //Called when the screen is returned to from viewing the user's contracts
+  void _onReturnFromContractsPage() {
+    
+    bloc.add(ReloadUserBillsEvent());
+  }
+
+  //Called when the screen is returned to from viewing a contract
+  void _onReturnFromContractDetails() {
+
+    bloc.add(ReloadUserBillsEvent());
   }
 }

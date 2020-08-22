@@ -96,7 +96,7 @@ class ContractService {
       String duration = _convertDuration(daysLeft);
 
       //Compute the payback ratio
-      String paybackRatio = (totalAmountPaid / totalAmount * 100).toString();
+      String paybackRatio = (totalAmountPaid / totalAmount * 100).toStringAsFixed(1);
 
       overview = RepaymentOverview(paybackRatio, duration);
     }
@@ -179,7 +179,7 @@ class ContractService {
   }
 
   //Computes a series of dated transactions required to repay a contract
-  List<ScheduledTransaction> _computeFutureTransactions(Contract contract, DateTime startTime) {
+  List<ScheduledTransaction> _computeFutureTransactions(Contract contract, DateTime startTime, {double alternateContractAmount = -1.0}) {
 
     //The list of transactions
     List<ScheduledTransaction> transactions = List<ScheduledTransaction>();
@@ -202,8 +202,18 @@ class ContractService {
     //The standard payment amount
     var repaymentAmount = contract.terms.repaymentAmount;
 
+    //The total amount to be repaid
+    var totalRepayment = contract.terms.amount;
+
+    //If an alternate amount is to be used for calculation
+    if (alternateContractAmount > 0.0) {
+
+      //Use the alternate amount instead
+      totalRepayment = alternateContractAmount;
+    }
+
     //Until the contract is fully repaid
-    while (amountRepaid <= contract.terms.amount - repaymentAmount) {
+    while (amountRepaid <= totalRepayment - repaymentAmount) {
 
       //Create a new transaction
       currentTransaction = ScheduledTransaction(repaymentAmount, currentTime);
@@ -217,10 +227,10 @@ class ContractService {
     }
 
     //In case the repayment amount isn't an even divider of the total amount
-    if (amountRepaid < contract.terms.amount) {
+    if (amountRepaid < totalRepayment) {
 
       //Schedule a final transaction for less than the repayment amount
-      currentTransaction = ScheduledTransaction(contract.terms.amount - amountRepaid, currentTime);
+      currentTransaction = ScheduledTransaction(totalRepayment - amountRepaid, currentTime);
       transactions.add(currentTransaction);
     }
 
@@ -316,6 +326,47 @@ class ContractService {
     }
 
     return waitingOn;
+  }
+
+  //Makes a payment towards an active contract
+  //DEMO VERSION - PAYMENT NOT ACTUALLY PROCESSED
+  void makePayment(Contract contract, double amount) {
+
+    //Compute the remaining costs
+    double remaining = contract.repaymentStatus.remainingAmount - amount;
+
+    //The leftover payment schedule
+    List newTransactions;
+
+    //If the payment will complete the contract
+    if (remaining == 0.0) {
+
+      //Empty the transactions
+      newTransactions = [];
+    } else if (remaining > 0.0) {
+
+      //Compute the new transactions with the remaining amount
+      List<ScheduledTransaction> transactions = _computeFutureTransactions(contract, DateTime.parse(contract.dateAccepted), alternateContractAmount: remaining);
+
+      //Convert the new transactions
+      newTransactions = _convertTransactions(transactions);
+    } else {
+
+      throw Exception("Attempted to make payment higher than remaining amount.");
+    }
+
+    //Create the new repayment status
+    RepaymentStatus newRepaymentStatus = RepaymentStatus(remaining, contract.repaymentStatus.missedPayments);
+
+    //Apply changes to the repayment state
+    data.makePayment(contract, newRepaymentStatus, newTransactions);
+
+    //If the contract has been completed
+    if (remaining == 0.0) {
+
+      //Complete the contract
+      data.completeContract(contract);
+    }
   }
 }
 
